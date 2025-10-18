@@ -9,7 +9,7 @@ public class ProductDTO {
 
     // Các trường ánh xạ trực tiếp từ bảng 'products'
     private String productID;
-    private String name;
+    private String product_name;
     private String description;
     private String material;
     private String gender;
@@ -28,7 +28,7 @@ public class ProductDTO {
     // Constructor đầy đủ tham số
     public ProductDTO(String productID, String name, String description, String material, String gender, String brandID, String categoryID, String sportTypeID, String reviewUrl, String createdAt) {
         this.productID = productID;
-        this.name = name;
+        this.product_name = name;
         this.description = description;
         this.material = material;
         this.gender = gender;
@@ -46,7 +46,7 @@ public class ProductDTO {
     }
 
     public String getName() {
-        return name;
+        return product_name;
     }
 
     public String getDescription() {
@@ -87,8 +87,8 @@ public class ProductDTO {
         this.productID = productID;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setProduct_name(String name) {
+        this.product_name = name;
     }
 
     public void setDescription(String description) {
@@ -128,7 +128,7 @@ public class ProductDTO {
     public String toString() {
         return "ProductDTO{" +
                 "productID='" + productID + '\'' +
-                ", name='" + name + '\'' +
+                ", name='" + product_name + '\'' +
                 ", description='" + description + '\'' +
                 ", material='" + material + '\'' +
                 ", gender='" + gender + '\'' +
