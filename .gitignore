@@ -1,1 +1,16 @@
+# Build artifacts
 /build/
+/dist/
+/out/
+/target/
+
+# NetBeans private config
+/nbproject/private/
+
+# Classes & libs generated
+/web/WEB-INF/classes/
+/web/lib/*.jar
+
+# OS junk
+.DS_Store
+Thumbs.db
