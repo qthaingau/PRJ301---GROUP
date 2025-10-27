@@ -20,8 +20,8 @@ public class ProductDAO {
     public ProductDAO() {
     }
 
-    public List<ProductDTO> getAllProduct() {
-        List<ProductDTO> listProduct = new ArrayList<>();
+    public ArrayList<ProductDTO> getAllProduct() {
+        ArrayList<ProductDTO> listProduct = new ArrayList<>();
         try {
             Connection conn = DBUtils.getConnection();
             String sql = "SELECT * FROM Product";
@@ -99,6 +99,19 @@ public class ProductDAO {
         } catch (Exception e) {
         }
         return listProduct;
+    }
+    
+    public boolean insert(ProductDTO product) {
+        try {
+            Connection c = DBUtils.getConnection();
+            String sql = "INSERT INTO Product(productID, productName, description, categoryID, brandID, createdAT, isActive)"
+                    + "VALUES(?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement pst = c.prepareStatement(sql);
+            pst.setString(1, product.getProductID());
+            pst.setString(2, product.getProductName());
+//            pst.
+        } catch (Exception e) {
+        }
     }
 
     public boolean sortDelete(String productID) {
