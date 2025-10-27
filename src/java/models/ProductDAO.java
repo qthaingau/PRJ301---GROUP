@@ -46,12 +46,20 @@ public class ProductDAO {
 
     public ProductDTO getProductByID(String productID) {
         try {
+            // 1 - Tạo kết nối
             Connection conn = DBUtils.getConnection();
+            
+            // 2 - Tạo câu lệnh
             String sql = "SELECT * FROM Product WHERE productID = ?";
+            
+            // 3 - Tạo statement de co the run cau lenh
             PreparedStatement pst = conn.prepareStatement(sql);
             pst.setString(1, productID);
+            
+            // 4 - Thực thi câu lệnh
             ResultSet rs = pst.executeQuery();
 
+            // 5 - Kiểm tra
             while (rs.next()) {
                 ProductDTO product = new ProductDTO();
                 product.setProductID(rs.getString("productID"));
