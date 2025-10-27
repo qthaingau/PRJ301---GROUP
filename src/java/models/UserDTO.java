@@ -10,4 +10,5 @@ package models;
  */
 public class UserDTO {
     private String abc;
+    private String xyz;
 }
