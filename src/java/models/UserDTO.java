@@ -9,5 +9,5 @@ package models;
  * @author Admin
  */
 public class UserDTO {
-    
+    private String abc;
 }
