@@ -4,6 +4,11 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/D:/PRJ301/WebBanHang/src/java/models/ProductImageDTO.java</file>
+            <file>file:/D:/PRJ301/WebBanHang/src/java/models/ProductDAO.java</file>
+            <file>file:/D:/PRJ301/WebBanHang/src/java/filters/AdminFilter.java</file>
+            <file>file:/D:/PRJ301/WebBanHang/src/java/models/ProductVariantDTO.java</file>
+            <file>file:/D:/PRJ301/WebBanHang/src/java/controllers/MainController.java</file>
+            <file>file:/D:/PRJ301/WebBanHang/src/java/filters/AuthenticateFilter.java</file>
         </group>
     </open-files>
 </project-private>
