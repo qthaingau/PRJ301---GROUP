@@ -8,7 +8,7 @@ package models;
  *
  * @author TEST
  */
-public class ProductVariants {
+public class ProductVariantDTO {
     private String variantID;
     private String productID;
     private String size;
@@ -17,10 +17,10 @@ public class ProductVariants {
     private double price;
     private int salesCount;
 
-    public ProductVariants() {
+    public ProductVariantDTO() {
     }
 
-    public ProductVariants(String variantID, String productID, String size, String color, int stock, double price, int salesCount) {
+    public ProductVariantDTO(String variantID, String productID, String size, String color, int stock, double price, int salesCount) {
         this.variantID = variantID;
         this.productID = productID;
         this.size = size;
