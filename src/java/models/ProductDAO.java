@@ -109,7 +109,7 @@ public class ProductDAO {
             PreparedStatement pst = c.prepareStatement(sql);
             pst.setString(1, product.getProductID());
             pst.setString(2, product.getProductName());
-//            pst.
+            pst.setString(3, product.getDescription());
         } catch (Exception e) {
         }
     }
