@@ -48,14 +48,14 @@ public class ProductDAO {
         try {
             // 1 - Tạo kết nối
             Connection conn = DBUtils.getConnection();
-            
+
             // 2 - Tạo câu lệnh
             String sql = "SELECT * FROM Product WHERE productID = ?";
-            
+
             // 3 - Tạo statement de co the run cau lenh
             PreparedStatement pst = conn.prepareStatement(sql);
             pst.setString(1, productID);
-            
+
             // 4 - Thực thi câu lệnh
             ResultSet rs = pst.executeQuery();
 
@@ -100,7 +100,7 @@ public class ProductDAO {
         }
         return listProduct;
     }
-    
+
     public boolean insert(ProductDTO product) {
         try {
             Connection c = DBUtils.getConnection();
@@ -110,8 +110,17 @@ public class ProductDAO {
             pst.setString(1, product.getProductID());
             pst.setString(2, product.getProductName());
             pst.setString(3, product.getDescription());
+            pst.setString(4, product.getCategoryID());
+            pst.setString(5, product.getBrandID());
+            pst.setDate(6, java.sql.Date.valueOf(product.getCreatedAt())); // ✅ convert LocalDate → java.sql.Date
+            pst.setBoolean(7, product.isIsActive()); // ✅ thêm cột isActive nếu có
+
+            int rows = pst.executeUpdate();
+            return rows > 0;
         } catch (Exception e) {
+            e.printStackTrace();
         }
+        return false;
     }
 
     public boolean sortDelete(String productID) {
@@ -150,7 +159,7 @@ public class ProductDAO {
             pst.setDate(5, java.sql.Date.valueOf(productDTO.getCreatedAt()));
             pst.setBoolean(6, productDTO.isIsActive());
             pst.setString(7, productDTO.getProductID());
-            
+
             int i = pst.executeUpdate();
             return i > 0;
         } catch (Exception e) {
