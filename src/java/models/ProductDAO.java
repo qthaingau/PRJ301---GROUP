@@ -82,7 +82,7 @@ public class ProductDAO {
             Connection conn = DBUtils.getConnection();
             String sql = "SELECT * FROM Product WHERE productName LIKE ?";
             PreparedStatement pst = conn.prepareStatement(sql);
-            pst.setString(1, productName);
+            pst.setString(1, "%"+productName+"%");
             ResultSet rs = pst.executeQuery();
 
             while (rs.next()) {
@@ -123,10 +123,10 @@ public class ProductDAO {
         return false;
     }
 
-    public boolean sortDelete(String productID) {
+    public boolean delete(String productID) {
         try {
             Connection c = DBUtils.getConnection();
-            String sql = "UPDATE FROM Product SET isActive = 0"
+            String sql = "UPDATE Product SET isActive = 0"
                     + "WHERE userID = ?";
 
             PreparedStatement pst = c.prepareStatement(sql);
