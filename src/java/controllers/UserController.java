@@ -6,21 +6,21 @@ package controllers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import models.ProductDAO;
-import models.ProductDTO;
+import javax.servlet.http.HttpSession;
+import models.UserDAO;
+import models.UserDTO;
 
 /**
  *
  * @author TEST
  */
-@WebServlet(name = "ProductController", urlPatterns = {"/ProductController"})
-public class ProductController extends HttpServlet {
+@WebServlet(name = "UserController", urlPatterns = {"/UserController"})
+public class UserController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -31,23 +31,28 @@ public class ProductController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processViewProducts(HttpServletRequest request, HttpServletResponse response)
+    private void processLogin(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            try {
-                ProductDAO productDAO = new ProductDAO();
-                List<ProductDTO> listProducts = productDAO.getAllProduct();
-                
-                request.setAttribute("listProducts", listProducts);
-                request.getRequestDispatcher("loginSuccess.jsp").forward(request, response);
-            } catch (Exception e) {
-                e.printStackTrace();
-                request.setAttribute("msg", "Error loading product list!");
-                request.getRequestDispatcher("loginSuccess.jsp");
-            }
+        String txtUsername = request.getParameter("txtUsername");
+        String txtPassword = request.getParameter("txtPassword");
+
+        UserDAO userDAO = new UserDAO();
+
+        boolean checkLogin = userDAO.checkLogin(txtUsername, txtPassword);
+        UserDTO user = null;
+        String msg = "";
+        if (!checkLogin) {
+            msg = "Username or password incorrect!";
+            request.setAttribute("msg", msg);
+            request.setAttribute("username", txtUsername);
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+        } else {
+            user = userDAO.getUserById(txtUsername);
+            HttpSession session = request.getSession();
+            session.setAttribute("user", user);
+            response.sendRedirect("MainController?txtAction=viewProducts");
         }
+
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -55,15 +60,15 @@ public class ProductController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try ( PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            String txtAction = request.getParameter("txtAction");
-
-            if (txtAction == null) {
-                txtAction = "viewProducts";
-            }
-
-            if (txtAction.equals("viewProducts")) {
-                processViewProducts(request, response);
-            }
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet UserController</title>");
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet UserController at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
         }
     }
 
