@@ -24,7 +24,7 @@ import models.UserDTO;
  *
  * @author TEST
  */
-@WebFilter(filterName = "AdminFilter", urlPatterns = {"/adminOnly.jsp", "/listOfUsers.jsp", "/productForm.jsp"})
+@WebFilter(filterName = "AdminFilter", urlPatterns = {"/admin/*"})
 public class AdminFilter implements Filter {
 
     private static final boolean debug = true;
