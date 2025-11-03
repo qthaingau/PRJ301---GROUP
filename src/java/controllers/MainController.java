@@ -39,6 +39,10 @@ public class MainController extends HttpServlet {
         // Nhóm action cho từng controller
         String[] userActions = {"login", "logout", "searchUser", "addUser", "callUpdateUser", "updateUser", "deleteUser"};
         String[] productActions = {"addProduct", "deleteProduct"};
+        String[] brandActions = {"", ""};
+        String[] promotionActions = {"", ""};
+        
+
         String[] categoryActions = {"viewCategory", "updateCategory"};
 
         if (Arrays.asList(userActions).contains(txtAction)) {

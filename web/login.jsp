@@ -1,8 +1,12 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!-- Khai báo đây là một trang JSP với mã hóa UTF-8 để hiển thị tiếng Việt đúng -->
 
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<!-- Kích hoạt thư viện JSTL core (dùng <c:if>, <c:redirect>, ...) -->
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<c:if test="${not empty sessionScope.user}">
+    <c:redirect url="/dashboard.jsp"/>
+</c:if>
+
 
 <!DOCTYPE html>
 <html lang="vi">
