@@ -21,7 +21,7 @@ CREATE TABLE [User] ( -- Tạo bảng Users
     userID NVARCHAR(50) PRIMARY KEY,            -- Khoá chính tự tăng
     username VARCHAR(50) UNIQUE NOT NULL,       -- Tên đăng nhập (unique)
     email VARCHAR(100) UNIQUE NOT NULL,         -- Email (unique)
-    [password] VARCHAR(255) NOT NULL,         -- Mật khẩu đã hash
+    passwordHash VARCHAR(255) NOT NULL,         -- Mật khẩu đã hash
     fullName NVARCHAR(100),                     -- Họ và tên
     phoneNumber VARCHAR(20),                    -- Số điện thoại
     role VARCHAR(20) DEFAULT 'customer',        -- Vai trò: admin/staff/customer
@@ -106,7 +106,7 @@ GO
 CREATE TABLE ProductImage ( -- Tạo bảng ảnh sản phẩm
     imageID NVARCHAR(50) PRIMARY KEY,          -- Khoá chính ảnh
     productID NVARCHAR(50) NOT NULL,           -- FK tới Product (ảnh gắn chung cho product)
-    imageUrl NVARCHAR(255) NOT NULL,           -- URL hoặc đường dẫn file ảnh
+    imageUrl NVARCHAR(MAX) NOT NULL,           -- URL hoặc đường dẫn file ảnh
     isMain BIT DEFAULT 0,                      -- 1 = ảnh chính
     FOREIGN KEY (productID) REFERENCES Product(productID) -- FK Product
 ); -- Ảnh lưu theo product để tiện load gallery
