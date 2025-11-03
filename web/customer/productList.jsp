@@ -13,6 +13,7 @@
         <title>JSP Page</title>
     </head>
     <body>
+        <!<!-- viewProducts -->
         <c:choose>
             <c:when test="${empty listProducts}">
                 <div>
@@ -21,42 +22,54 @@
                 </div>
             </c:when>
         </c:choose>
-        
+
         <c:otherwise>
             <table>
-            <thead>
-                <tr>
-                    <th>Product ID</th>
-                    <th>Product name</th>
-                    <th>Description</th>
-                    <th>Category ID</th>
-                    <th>Brand ID</th>
-                    <th>Created At</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <c:forEach var ="p" items="${listProducts}">
+                <thead>
                     <tr>
-                        <td>${p.productID}</td>
-                        <td>${p.productName}</td>
-                        <td>${p.description}</td>
-                        <td>${p.categoryID}</td>
-                        <td>${p.brandID}</td>
-                        <td>${p.createdAt}</td>
-                        <td>${p.isActive}</td>
+                        <th>Product ID</th>
+                        <th>Product name</th>
+                        <th>Description</th>
+                        <th>Category ID</th>
+                        <th>Brand ID</th>
+                        <th>Created At</th>
+                        <th>Status</th>
                     </tr>
-                    <c:if test="${user.role eq 'Admin'}">
-                    <td>
-                        <div>
-                            <a href="MainController!txtAction=callUpdateProduct&productID=${p.productID}">Update</a>
-                        </div>
-                    </td>
+                </thead>
+                <tbody>
+                    <c:forEach var ="p" items="${listProducts}">
+                        <tr>
+                            <td>${p.productID}</td>
+                            <td>${p.productName}</td>
+                            <td>${p.description}</td>
+                            <td>${p.categoryID}</td>
+                            <td>${p.brandID}</td>
+                            <td>${p.createdAt}</td>
+                            <td>${p.isActive}</td>
+                        </tr>
+                        <c:if test="${user.role eq 'Admin'}">
+                        <td>
+                            <div>
+                                <a href="MainController!txtAction=callUpdateProduct&productID=${p.productID}">Update</a>
+                            </div>
+                        </td>
                     </c:if>
                 </c:forEach>
             </tbody>
-            </table>
-        </c:otherwise>
-        
-    </body>
+        </table>
+    </c:otherwise>
+    <!-- Search + filter -->
+    <form action="MainController" method="post">
+        <input type="hidden" name ="txtAction" value="searchProduct"/>
+        <div>
+            <div class="input-group">
+                <span class="input-group-text bg-white">Search</span>
+                <input type="text" class="form-control" name="keyword" value="${keyword}"/>
+            </div>
+        </div>
+        <div>
+            <button type="submit">Apply</button> 
+        </div>
+    </form>
+</body>
 </html>
