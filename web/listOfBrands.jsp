@@ -1,6 +1,6 @@
 <%-- 
-    Document   : productDetail
-    Created on : Nov 3, 2025, 8:09:57 AM
+    Document   : listOfBrands
+    Created on : Nov 3, 2025, 8:17:57 AM
     Author     : TEST
 --%>
 

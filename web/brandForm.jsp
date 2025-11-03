@@ -1,6 +1,6 @@
 <%-- 
-    Document   : productDetail
-    Created on : Nov 3, 2025, 8:09:57 AM
+    Document   : brandForm
+    Created on : Nov 3, 2025, 8:22:11 AM
     Author     : TEST
 --%>
 

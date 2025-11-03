@@ -1,6 +1,6 @@
 <%-- 
-    Document   : productDetail
-    Created on : Nov 3, 2025, 8:09:57 AM
+    Document   : 500
+    Created on : Nov 3, 2025, 8:34:50 AM
     Author     : TEST
 --%>
 
