@@ -76,13 +76,18 @@ public class ProductDAO {
         return null;
     }
 
-    public List<ProductDTO> getProductByName(String productName) {
+    public List<ProductDTO> filterProduct(String keyword) {
         List<ProductDTO> listProduct = new ArrayList<>();
         try {
             Connection conn = DBUtils.getConnection();
-            String sql = "SELECT * FROM Product WHERE productName LIKE ?";
+            String sql = "SELECT * FROM Product WHERE productName LIKE ? OR productID LIKE ? OR category LIKE ? OR brandID LIKE ? OR categoryID LIKE ?";
             PreparedStatement pst = conn.prepareStatement(sql);
-            pst.setString(1, "%"+productName+"%");
+            pst.setString(1, "%" + keyword + "%");
+            pst.setString(2, "%" + keyword + "%");
+            pst.setString(3, "%" + keyword + "%");
+            pst.setString(4, "%" + keyword + "%");
+            pst.setString(5, "%" + keyword + "%");
+
             ResultSet rs = pst.executeQuery();
 
             while (rs.next()) {
