@@ -21,43 +21,44 @@
                     <p>Please enter another keyword to find products.</p>
                 </div>
             </c:when>
-        </c:choose>
-
-        <c:otherwise>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Product ID</th>
-                        <th>Product name</th>
-                        <th>Description</th>
-                        <th>Category ID</th>
-                        <th>Brand ID</th>
-                        <th>Created At</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <c:forEach var ="p" items="${listProducts}">
+            <c:otherwise>
+                <table>
+                    <thead>
                         <tr>
-                            <td>${p.productID}</td>
-                            <td>${p.productName}</td>
-                            <td>${p.description}</td>
-                            <td>${p.categoryID}</td>
-                            <td>${p.brandID}</td>
-                            <td>${p.createdAt}</td>
-                            <td>${p.isActive}</td>
+                            <th>Product ID</th>
+                            <th>Product name</th>
+                            <th>Description</th>
+                            <th>Category ID</th>
+                            <th>Brand ID</th>
+                            <th>Created At</th>
+                            <th>Status</th>
                         </tr>
-                        <c:if test="${user.role eq 'Admin'}">
-                        <td>
-                            <div>
-                                <a href="MainController!txtAction=callUpdateProduct&productID=${p.productID}">Update</a>
-                            </div>
-                        </td>
-                    </c:if>
-                </c:forEach>
-            </tbody>
-        </table>
-    </c:otherwise>
+                    </thead>
+                    <tbody>
+                        <c:forEach var ="p" items="${listProducts}">
+                            <tr>
+                                <td>${p.productID}</td>
+                                <td>${p.productName}</td>
+                                <td>${p.description}</td>
+                                <td>${p.categoryID}</td>
+                                <td>${p.brandID}</td>
+                                <td>${p.createdAt}</td>
+                                <td>${p.isActive}</td>
+                            </tr>
+                            <c:if test="${user.role eq 'Admin'}">
+                            <td>
+                                <div>
+                                    <a href="MainController!txtAction=callUpdateProduct&productID=${p.productID}">Update</a>
+                                </div>
+                            </td>
+                        </c:if>
+                    </c:forEach>
+                </tbody>
+            </table>
+        </c:otherwise>
+    </c:choose>
+
+
     <!-- Search + filter -->
     <form action="MainController" method="post">
         <input type="hidden" name ="txtAction" value="searchProduct"/>
