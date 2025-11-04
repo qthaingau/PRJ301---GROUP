@@ -58,15 +58,15 @@
                             <thead>
                                 <tr>
                                     <th>Product ID</th>
-                                    <th>Product name</th>
+                                    <th>Product Name</th>
                                     <th>Description</th>
                                     <th>Category ID</th>
                                     <th>Brand ID</th>
                                     <th>Created At</th>
                                     <th>Status</th>
-                                    <c:if test="${user.role eq 'Admin'}">
+                                        <c:if test="${user.role eq 'Admin'}">
                                         <th class="text-center">Action</th>
-                                    </c:if>
+                                        </c:if>
                                 </tr>
                             </thead>
                             <tbody>
@@ -96,8 +96,5 @@
                 </c:otherwise>
             </c:choose>
         </div>
-
-        <!-- nếu dùng Bootstrap JS -->
-        <script src="assets/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

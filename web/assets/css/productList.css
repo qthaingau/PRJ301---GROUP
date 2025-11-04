@@ -1,76 +1,71 @@
 /* ===========================
-   Global layout & typography
+   Product List Layout
    =========================== */
-body {
-    background-color: #f8f9fa;
-    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
-    color: #1f2937;
-}
 
-.container {
-    max-width: 1100px;
-    margin-top: 40px;
-}
-
-/* ===========================
-   Product List Section
-   =========================== */
 .product-list-wrapper {
-    background: #fff;
+    background: #ffffff;
     border-radius: 10px;
     padding: 24px 28px;
+    margin-top: 24px;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
 }
 
 .product-list-title {
     font-weight: 600;
-    font-size: 1.5rem;
-    margin-bottom: 16px;
+    font-size: 1.6rem;
+    margin-bottom: 18px;
     color: #1e293b;
     border-bottom: 2px solid #e5e7eb;
     padding-bottom: 6px;
 }
 
 /* ===========================
-   Search & Filter Form
+   Search Form
    =========================== */
+
 .product-search-form .input-group-text {
     font-weight: 500;
-    background-color: #f1f5f9;
+    background-color: #f9fafb;
+    border-right: none;
 }
 
 .product-search-form .form-control {
-    border: 1px solid #d1d5db;
+    border-left: none;
     box-shadow: none;
+}
+
+.product-search-form .form-control:focus {
+    box-shadow: 0 0 0 1px #2563eb33;
+    border-color: #2563eb;
 }
 
 .product-search-form .btn-primary {
     background-color: #2563eb;
     border-color: #2563eb;
     font-weight: 500;
+    padding-inline: 18px;
 }
 
 .product-search-form .btn-primary:hover {
-    background-color: #1e40af;
+    background-color: #1d4ed8;
+    border-color: #1d4ed8;
 }
 
 /* ===========================
-   Empty Product Alert
+   Empty State
    =========================== */
+
 .product-empty-alert {
-    background-color: #fffbe6;
-    color: #92400e;
-    border: 1px solid #fde68a;
-    border-radius: 8px;
-    padding: 16px;
     margin-top: 16px;
+    border-radius: 8px;
 }
 
 /* ===========================
-   Product Table Styles
+   Product Table
    =========================== */
+
 .product-table-wrapper {
-    margin-top: 20px;
+    margin-top: 12px;
 }
 
 .product-table thead {
@@ -92,45 +87,43 @@ body {
 
 .product-table tbody tr:hover {
     background-color: #eff6ff;
-    transform: translateY(-1px);
-    transition: all 0.15s ease;
+    transition: background-color 0.12s ease;
 }
 
 .product-table td {
     font-size: 0.9rem;
     vertical-align: middle;
-    padding: 8px 10px;
 }
 
+/* Status column */
+.product-table td:nth-child(7) {
+    font-weight: 600;
+}
+
+/* Update button */
 .product-view-btn {
-    padding: 4px 10px;
+    min-width: 80px;
     font-size: 0.8rem;
-    border-radius: 50px;
-    transition: all 0.2s ease-in-out;
-}
-
-.product-view-btn:hover {
-    background-color: #1e3a8a;
-    color: #fff;
+    padding: 4px 10px;
+    border-radius: 999px;
 }
 
 /* ===========================
-   Responsive Adjustments
+   Responsive
    =========================== */
+
 @media (max-width: 768px) {
     .product-list-wrapper {
-        padding: 18px;
+        padding: 18px 16px;
+        margin-top: 16px;
     }
 
     .product-list-title {
-        text-align: center;
         font-size: 1.3rem;
+        text-align: center;
     }
 
-    .product-table thead {
-        font-size: 0.8rem;
-    }
-
+    .product-table thead th,
     .product-table td {
         font-size: 0.8rem;
     }
