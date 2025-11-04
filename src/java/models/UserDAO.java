@@ -29,7 +29,7 @@ public class UserDAO {
 
             if (rs.next()) {
                 UserDTO user = new UserDTO();
-                user.setUsername(rs.getString("userID"));
+                user.setUserID(rs.getString("userID"));
                 user.setEmail(rs.getString("email"));
                 user.setPassword(rs.getString("password"));
                 user.setFullName(rs.getString("fullName"));
