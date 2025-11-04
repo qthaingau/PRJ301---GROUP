@@ -12,6 +12,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import models.ProductDAO;
 import models.ProductDTO;
 
@@ -61,7 +62,8 @@ public class ProductController extends HttpServlet {
             try {
                 ProductDAO productDAO = new ProductDAO();
                 List<ProductDTO> listProducts = productDAO.getAllProduct();
-                request.setAttribute("listProducts", listProducts);
+                HttpSession session = request.getSession();
+                session.setAttribute("listProducts", listProducts);
                 request.getRequestDispatcher("loginSuccess.jsp").forward(request, response);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -84,6 +86,8 @@ public class ProductController extends HttpServlet {
 
             if (txtAction.equals("viewProducts")) {
                 processViewProducts(request, response);
+            } else if (txtAction.equals("filterProduct")) {
+                processFilterProduct(request, response);
             }
         }
     }

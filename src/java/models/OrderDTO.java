@@ -14,7 +14,7 @@ public class OrderDTO {
     private String orderID;           // ID đơn hàng
     private String userName;          // Người đặt hàng
     private LocalDate orderDate;           // Ngày tạo đơn
-    private float totalAmount;   // Tổng tiền
+    private Double totalAmount;   // Tổng tiền
     private String status;            // Trạng thái đơn hàng
     private String shippingAddress;   // Địa chỉ giao hàng
     private String paymentMethod;     // Phương thức thanh toán
@@ -24,7 +24,7 @@ public class OrderDTO {
     }
 
     // --- Constructor đầy đủ ---
-    public OrderDTO(String orderID, String userName, LocalDate orderDate, float totalAmount,
+    public OrderDTO(String orderID, String userName, LocalDate orderDate, Double totalAmount,
                     String status, String shippingAddress, String paymentMethod) {
         this.orderID = orderID;
         this.userName = userName;
@@ -60,11 +60,11 @@ public class OrderDTO {
         this.orderDate = orderDate;
     }
 
-    public float getTotalAmount() {
+    public Double getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(float totalAmount) {
+    public void setTotalAmount(Double totalAmount) {
         this.totalAmount = totalAmount;
     }
 

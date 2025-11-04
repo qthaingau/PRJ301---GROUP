@@ -5,7 +5,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Dashboard</title>
+        <title>HOME</title>
         <!-- bootstrap css -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
     </head>
@@ -25,7 +25,7 @@
         </nav>       
         <!-- main content -->
         <div class="container mt-4">
-            <jsp:include page="productList.jsp"/>
+            <jsp:include page="/customer/productList.jsp"/>
         </div>
 
         <!-- bootstrap js -->
