@@ -31,7 +31,7 @@ public class ProductController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    private void processSearchBook(HttpServletRequest request, HttpServletResponse response)
+    private void processFilterProduct(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String keyword = request.getParameter("keyword");
         ProductDAO productDAO = new ProductDAO();
@@ -41,15 +41,15 @@ public class ProductController extends HttpServlet {
             if (keyword == null || keyword.trim().isEmpty()) {
                 list = productDAO.getAllProduct();
             } else {
-                list = productDAO.getProductByName(keyword.trim());
+                list = productDAO.filterProduct(keyword.trim());
             }
             request.setAttribute("listBooks", list);
             request.setAttribute("keyword", keyword);
-            request.getRequestDispatcher("loginSuccess.jsp").forward(request, response);
+            request.getRequestDispatcher("home.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("msg", "Error searching book!");
-            request.getRequestDispatcher("loginSuccess.jsp").forward(request, response);
+            request.setAttribute("msg", "Error searching product!");
+            request.getRequestDispatcher("home.jsp").forward(request, response);
         }
     }
 
