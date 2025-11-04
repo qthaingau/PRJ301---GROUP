@@ -19,19 +19,19 @@ public class UserDAO {
     public UserDAO() {
     }
 
-    public UserDTO getUserByUsername(String username) {
+    public UserDTO getUserByUserID(String userID) {
         try {
             Connection conn = DBUtils.getConnection();
-            String sql = "SELECT * FROM User WHERE username = ?";
+            String sql = "SELECT * FROM User WHERE userID = ?";
             PreparedStatement pst = conn.prepareStatement(sql);
-            pst.setString(1, username);
+            pst.setString(1, userID);
             ResultSet rs = pst.executeQuery();
 
             if (rs.next()) {
                 UserDTO user = new UserDTO();
                 user.setUsername(rs.getString("username"));
-                user.setPassword(rs.getString("password"));
                 user.setEmail(rs.getString("email"));
+                user.setPassword(rs.getString("password"));
                 user.setFullName(rs.getString("fullName"));
                 user.setPhoneNumber(rs.getString("phoneNumber"));
                 user.setRole(rs.getString("role"));
@@ -46,9 +46,9 @@ public class UserDAO {
 
     }
 
-    public boolean checkLogin(String username, String password) {
+    public boolean checkLogin(String userID, String password) {
         try {
-            UserDTO user = getUserByUsername(username);
+            UserDTO user = getUserByUserID(userID);
             if (user != null) {
                 return user.getPassword().equals(password);
             }
