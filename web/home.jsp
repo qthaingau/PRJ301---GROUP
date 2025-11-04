@@ -1,16 +1,24 @@
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="UTF-8">
         <title>HOME</title>
-        <!-- bootstrap css -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+
+        <!-- External CSS -->
+        <link rel="stylesheet" href="assets/css/style.css" />
     </head>
     <body class="bg-light">
 
+        <!-- CHỈ auto-submit nếu chưa có productList -->
+        <c:if test="${empty listProducts}">
+            <form action="MainController" method="post" id="viewProductsForm">
+                <input type="hidden" name="txtAction" value="viewProducts"/>
+            </form>
+
+            <script src="assets/js/autoRedirect.js"></script>
+        </c:if>
         <!-- navbar -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
@@ -23,12 +31,13 @@
                 </div>
             </div>
         </nav>       
+
         <!-- main content -->
         <div class="container mt-4">
             <jsp:include page="/customer/productList.jsp"/>
         </div>
 
-        <!-- bootstrap js -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- External JS -->
+        <script src="assets/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

@@ -64,11 +64,11 @@ public class ProductController extends HttpServlet {
                 List<ProductDTO> listProducts = productDAO.getAllProduct();
                 HttpSession session = request.getSession();
                 session.setAttribute("listProducts", listProducts);
-                request.getRequestDispatcher("loginSuccess.jsp").forward(request, response);
+                request.getRequestDispatcher("home.jsp").forward(request, response);
             } catch (Exception e) {
                 e.printStackTrace();
                 request.setAttribute("msg", "Error loading product list!");
-                request.getRequestDispatcher("loginSuccess.jsp");
+                request.getRequestDispatcher("home.jsp").forward(request, response);
             }
         }
     }
