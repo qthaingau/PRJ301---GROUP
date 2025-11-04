@@ -74,6 +74,7 @@
             <div>
                 <button type="submit">Login</button>
                 <button type="reset">Reset</button>
+                <p>Bạn chưa có tài khoản? <a href="register.jsp">Đăng ký ngay</a></p>
             </div>
         </form>
     </body>

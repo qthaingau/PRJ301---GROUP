@@ -37,7 +37,7 @@ public class MainController extends HttpServlet {
         String url = "login.jsp";
 
         // Nhóm action cho từng controller
-        String[] userActions = {"login", "logout", "searchUser", "addUser", "callUpdateUser", "updateUser", "deleteUser"};
+        String[] userActions = {"login", "logout", "searchUser", "addUser", "callUpdateUser", "updateUser", "deleteUser", "registerUser"};
         String[] productActions = {"viewProducts","addProduct", "deleteProduct"};
         String[] brandActions = {"", ""};
         String[] promotionActions = {"", ""};

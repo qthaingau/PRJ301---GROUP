@@ -53,29 +53,57 @@ public class UserController extends HttpServlet {
             response.sendRedirect("MainController?txtAction=viewProducts");
         }
     }
-    
-    
+
     private void processLogout(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         session.invalidate(); // Huy tat ca nhung cai dang co trong session
         response.sendRedirect("login.jsp");
     }
-    
-    
-    
-    
+
+    private void processRegister(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String username = request.getParameter("txtNewUsername");
+        String email = request.getParameter("txtEmail");
+        String password = request.getParameter("txtNewPassword");
+        String confirm = request.getParameter("txtConfirmPassword");
+        String fullName = request.getParameter("txtFullName");
+        String phone = request.getParameter("txtPhoneNumber");
+
+        if (!password.equals(confirm)) {
+            request.setAttribute("msg", "Mật khẩu nhập lại không khớp!");
+            request.getRequestDispatcher("register.jsp").forward(request, response);
+            return;
+        }
+
+        UserDAO userDAO = new UserDAO();
+        boolean success = userDAO.registerUser(username, email, password, fullName, phone);
+
+        if (success) {
+            request.setAttribute("msg", "Đăng ký thành công! Mời bạn đăng nhập.");
+            request.getRequestDispatcher("login.jsp").forward(request, response);
+        } else {
+            request.setAttribute("msg", "Tên đăng nhập hoặc email đã tồn tại, hoặc lỗi hệ thống!");
+            request.getRequestDispatcher("register.jsp").forward(request, response);
+        }
+    }
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
         String txtAction = request.getParameter("txtAction");
-        if(txtAction == null){
-            txtAction ="login";
+        if (txtAction == null) {
+            txtAction = "login";
         }
-        if(txtAction.equals("login")){
-            processLogin(request,response);
-        }else if(txtAction.equals("logout")){
-            processLogout(request,response);
+        if (txtAction.equals("login")) {
+            processLogin(request, response);
+        } else if (txtAction.equals("logout")) {
+            processLogout(request, response);
+        } else if (txtAction.equals("registerUser")) {
+            processRegister(request, response);
         }
     }
 

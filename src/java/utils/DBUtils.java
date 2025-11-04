@@ -15,18 +15,32 @@ import java.util.logging.Logger;
  * @author tungi
  */
 public class DBUtils {
+
     private static final String DB_NAME = "PRJ301_SPORTSHOP";
     private static final String DB_USER_NAME = "SA";
     private static final String DB_PASSWORD = "12345";
 
+//    public static Connection getConnection() throws ClassNotFoundException, SQLException {
+//        Connection conn = null;
+//        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+//        String url = "jdbc:sqlserver://localhost:1433;databaseName=" + DB_NAME;
+//        conn = DriverManager.getConnection(url, DB_USER_NAME, DB_PASSWORD);
+//        return conn;
+//    }
     public static Connection getConnection() throws ClassNotFoundException, SQLException {
         Connection conn = null;
         Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        String url = "jdbc:sqlserver://localhost:1433;databaseName=" + DB_NAME;
+
+        String url = "jdbc:sqlserver://localhost:1433;"
+                + "databaseName=" + DB_NAME + ";"
+                + "encrypt=false;"
+                + "useUnicode=true;"
+                + "characterEncoding=UTF-8";
+
         conn = DriverManager.getConnection(url, DB_USER_NAME, DB_PASSWORD);
         return conn;
     }
-    
+
     public static void main(String[] args) {
         try {
             System.out.println(DBUtils.getConnection());

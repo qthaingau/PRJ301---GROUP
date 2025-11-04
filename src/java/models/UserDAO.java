@@ -54,4 +54,60 @@ public class UserDAO {
         return false;
 
     }
+    
+    public boolean registerUser(String username, String email, String password, String fullName, String phoneNumber) {
+        boolean result = false;
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DBUtils.getConnection();
+
+            // Kiểm tra trùng username hoặc email
+            String checkSql = "SELECT username FROM [User] WHERE username = ? OR email = ?";
+            ps = conn.prepareStatement(checkSql);
+            ps.setString(1, username);
+            ps.setString(2, email);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                // Đã tồn tại username hoặc email
+                return false;
+            }
+
+            // Tạo userID tự động (ví dụ: U004, U005,...)
+            String getMaxId = "SELECT TOP 1 userID FROM [User] ORDER BY userID DESC";
+            ps = conn.prepareStatement(getMaxId);
+            rs = ps.executeQuery();
+
+            String newId = "U001";
+            if (rs.next()) {
+                String lastId = rs.getString("userID"); // U003
+                int num = Integer.parseInt(lastId.substring(1)) + 1;
+                newId = String.format("U%03d", num);
+            }
+
+            // Thêm user mới
+            String insertSql = "INSERT INTO [User] (userID, username, email, [password], fullName, phoneNumber, role, createdAt) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, 'customer', GETDATE())";
+            ps = conn.prepareStatement(insertSql);
+            ps.setString(1, newId);
+            ps.setString(2, username);
+            ps.setString(3, email);
+            ps.setString(4, password); // có thể mã hóa mật khẩu sau
+            ps.setString(5, fullName);
+            ps.setString(6, phoneNumber);
+
+            result = ps.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try { if (rs != null) rs.close(); } catch (Exception e) {}
+            try { if (ps != null) ps.close(); } catch (Exception e) {}
+            try { if (conn != null) conn.close(); } catch (Exception e) {}
+        }
+        return result;
+    }
 }
