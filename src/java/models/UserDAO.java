@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package models;
 
 import java.sql.Connection;
@@ -19,19 +15,19 @@ public class UserDAO {
     public UserDAO() {
     }
 
-    public UserDTO getUserByUsername(String userID) {
+    public UserDTO getUserByUsername(String username) {
         try {
             Connection conn = DBUtils.getConnection();
-            String sql = "SELECT * FROM User WHERE username = ?";
+            String sql = "SELECT * FROM [User] WHERE username = ?";
             PreparedStatement pst = conn.prepareStatement(sql);
-            pst.setString(1, userID);
+            pst.setString(1, username);
             ResultSet rs = pst.executeQuery();
 
             if (rs.next()) {
                 UserDTO user = new UserDTO();
-                user.setUsername(rs.getString("userID"));
-                user.setEmail(rs.getString("email"));
+                user.setUsername(rs.getString("username"));
                 user.setPassword(rs.getString("password"));
+                user.setEmail(rs.getString("email"));
                 user.setFullName(rs.getString("fullName"));
                 user.setPhoneNumber(rs.getString("phoneNumber"));
                 user.setRole(rs.getString("role"));
@@ -46,13 +42,14 @@ public class UserDAO {
 
     }
 
-    public boolean checkLogin(String userID, String password) {
+    public boolean checkLogin(String username, String password) {
         try {
-            UserDTO user = getUserByUsername(userID);
+            UserDTO user = getUserByUsername(username);
             if (user != null) {
                 return user.getPassword().equals(password);
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return false;
 
