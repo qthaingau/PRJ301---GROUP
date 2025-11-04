@@ -1,0 +1,40 @@
+/* list.css - dùng cho cả listOfOrder.jsp và listOfPayment.jsp */
+
+/* Toàn trang */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Tiêu đề */
+h2 {
+    text-align: center;
+    color: #343a40;
+    margin: 30px 0 20px;
+}
+
+/* Bảng */
+.table {
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Ô tiêu đề bảng */
+.table thead th {
+    background-color: #0d6efd;
+    color: white;
+    text-align: center;
+}
+
+/* Hiệu ứng hover */
+.table-hover tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+/* Nút */
+.btn-custom {
+    padding: 5px 10px;
+    border-radius: 6px;
+}
