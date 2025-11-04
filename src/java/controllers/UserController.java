@@ -47,28 +47,35 @@ public class UserController extends HttpServlet {
             request.setAttribute("username", txtUsername);
             request.getRequestDispatcher("login.jsp").forward(request, response);
         } else {
-            user = userDAO.getUserById(txtUsername);
+            user = userDAO.getUserByUsername(txtUsername);
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
             response.sendRedirect("MainController?txtAction=viewProducts");
         }
-
     }
-
+    
+    
+    private void processLogout(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        session.invalidate(); // Huy tat ca nhung cai dang co trong session
+        response.sendRedirect("login.jsp");
+    }
+    
+    
+    
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet UserController</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet UserController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+        String txtAction = request.getParameter("txtAction");
+        if(txtAction == null){
+            txtAction ="login";
+        }
+        if(txtAction.equals("login")){
+            processLogin(request,response);
+        }else if(txtAction.equals("logout")){
+            processLogout(request,response);
         }
     }
 
