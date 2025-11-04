@@ -38,7 +38,7 @@ public class MainController extends HttpServlet {
 
         // Nhóm action cho từng controller
         String[] userActions = {"login", "logout", "searchUser", "addUser", "callUpdateUser", "updateUser", "deleteUser"};
-        String[] productActions = {"addProduct", "deleteProduct"};
+        String[] productActions = {"viewProducts","addProduct", "deleteProduct"};
         String[] brandActions = {"", ""};
         String[] promotionActions = {"", ""};
         

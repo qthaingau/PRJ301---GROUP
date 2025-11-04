@@ -22,7 +22,7 @@
 
         <!-- Nếu người dùng đã đăng nhập (user không rỗng) thì chuyển hướng sang loginSuccess.jsp -->
         <c:if test="${not empty user}">
-            <c:redirect url="home.jsp" />
+            <c:redirect url="dashboard.jsp" />
         </c:if>
 
         <!-- Tiêu đề chính của form đăng nhập -->
@@ -42,12 +42,12 @@
 
             <!-- Trường nhập Username -->
             <div>
-                <label for="userID">Username</label><br />
+                <label for="username">Username</label><br />
                 <input
-                    id="userID"
+                    id="username"
                     type="text"
-                    name="txtUserID"
-                    value="${userID}"
+                    name="txtUsername"
+                    value="${username}"
                     placeholder="Nhập tên đăng nhập"
                     required
                     />

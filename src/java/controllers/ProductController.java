@@ -61,7 +61,6 @@ public class ProductController extends HttpServlet {
             try {
                 ProductDAO productDAO = new ProductDAO();
                 List<ProductDTO> listProducts = productDAO.getAllProduct();
-
                 request.setAttribute("listProducts", listProducts);
                 request.getRequestDispatcher("loginSuccess.jsp").forward(request, response);
             } catch (Exception e) {

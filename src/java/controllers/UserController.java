@@ -33,21 +33,21 @@ public class UserController extends HttpServlet {
      */
     private void processLogin(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String txtUserID = request.getParameter("txtUserID");
+        String txtUsername = request.getParameter("txtUsername");
         String txtPassword = request.getParameter("txtPassword");
 
         UserDAO userDAO = new UserDAO();
 
-        boolean checkLogin = userDAO.checkLogin(txtUserID, txtPassword);
+        boolean checkLogin = userDAO.checkLogin(txtUsername, txtPassword);
         UserDTO user = null;
         String msg = "";
         if (!checkLogin) {
             msg = "Username or password incorrect!";
             request.setAttribute("msg", msg);
-            request.setAttribute("username", txtUserID);
+            request.setAttribute("username", txtUsername);
             request.getRequestDispatcher("login.jsp").forward(request, response);
         } else {
-            user = userDAO.getUserByUserID(txtUserID);
+            user = userDAO.getUserByUsername(txtUsername);
             HttpSession session = request.getSession();
             session.setAttribute("user", user);
             response.sendRedirect("MainController?txtAction=viewProducts");
