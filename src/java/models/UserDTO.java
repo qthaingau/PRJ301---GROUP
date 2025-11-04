@@ -34,6 +34,18 @@ public class UserDTO {
         this.createdAt = createdAt;
     }
 
+    public UserDTO(String username, String email, String password, String fullName, String phoneNumber, String role, LocalDate createdAt) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.fullName = fullName;
+        this.phoneNumber = phoneNumber;
+        this.role = role;
+        this.createdAt = createdAt;
+    }
+    
+    
+    
     public String getUserID() {
         return userID;
     }
