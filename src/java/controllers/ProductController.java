@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import models.ProductDAO;
 import models.ProductDTO;
+import models.ProductVariantDAO;
+import models.ProductVariantDTO;
 
 /**
  *
@@ -44,13 +46,35 @@ public class ProductController extends HttpServlet {
             } else {
                 list = productDAO.filterProduct(keyword.trim());
             }
-            request.setAttribute("listBooks", list);
+            request.setAttribute("listProducts", list);
             request.setAttribute("keyword", keyword);
             request.getRequestDispatcher("home.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("msg", "Error searching product!");
             request.getRequestDispatcher("home.jsp").forward(request, response);
+        }
+    }
+
+    private void processViewProductDetail(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String keyword = request.getParameter("productID");
+        String productName = request.getParameter("productName");
+
+        ProductVariantDAO productDAO = new ProductVariantDAO();
+        ProductVariantDTO productDTO = null;
+
+        try {
+            productDTO = productDAO.getVariantByProductID(keyword);
+            request.setAttribute("productDetail", productDTO);
+            request.setAttribute("productID", keyword);
+            HttpSession session = request.getSession();
+            session.setAttribute("productName", productName);
+            request.getRequestDispatcher("/customer/productDetail.jsp").forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("msg", "Error viewing product detail!");
+            request.getRequestDispatcher("error.jsp").forward(request, response);
         }
     }
 
@@ -88,6 +112,8 @@ public class ProductController extends HttpServlet {
                 processViewProducts(request, response);
             } else if (txtAction.equals("filterProduct")) {
                 processFilterProduct(request, response);
+            } else if (txtAction.equals("viewProductDetail")) {
+                processViewProductDetail(request, response);
             }
         }
     }

@@ -80,7 +80,13 @@ public class ProductDAO {
         List<ProductDTO> listProduct = new ArrayList<>();
         try {
             Connection conn = DBUtils.getConnection();
-            String sql = "SELECT * FROM Product WHERE productName LIKE ? OR productID LIKE ? OR category LIKE ? OR brandID LIKE ? OR categoryID LIKE ?";
+            String sql = "SELECT * FROM Product " +
+             "WHERE productName LIKE ? " +
+             "   OR productID LIKE ? " +
+             "   OR categoryID LIKE ? " +
+             "   OR brandID LIKE ? " +
+             "   OR createdAt LIKE ?";
+
             PreparedStatement pst = conn.prepareStatement(sql);
             pst.setString(1, "%" + keyword + "%");
             pst.setString(2, "%" + keyword + "%");
@@ -95,7 +101,7 @@ public class ProductDAO {
                 product.setProductID(rs.getString("productID"));
                 product.setProductName(rs.getString("productName"));
                 product.setDescription(rs.getString("description"));
-                product.setCategoryID("categoryID");
+                product.setCategoryID(rs.getString("categoryID"));  // ✅ lấy từ ResultSet
                 product.setBrandID(rs.getString("brandID"));
                 product.setCreatedAt(rs.getDate("createdAT").toLocalDate());
                 product.setIsActive(rs.getBoolean("isActive"));

@@ -4,6 +4,7 @@
     Author     : TEST
 --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -12,6 +13,8 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <c:if test="${not empty msg}">
+            <p>${msg}</p>
+        </c:if>
     </body>
 </html>

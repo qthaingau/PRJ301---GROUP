@@ -69,13 +69,42 @@ public class ProductVariantDAO {
         }
         return null; // Không tìm thấy => trả null
     }
+    
+        // ---------------------- LẤY VARIANT THEO ID ----------------------
+    public ProductVariantDTO getVariantByProductID(String productID) {
+        try {
+            Connection conn = DBUtils.getConnection(); // Kết nối DB
+            String sql = "SELECT * FROM ProductVariant WHERE productID = ?"; // Câu SQL với điều kiện theo ID
+            PreparedStatement pst = conn.prepareStatement(sql); // Chuẩn bị câu lệnh
+            pst.setString(1, productID); // Gán giá trị cho dấu hỏi đầu tiên
+
+            
+            ResultSet rs = pst.executeQuery(); // Thực thi truy vấn
+
+            // Nếu có kết quả trả về
+            if (rs.next()) {
+                ProductVariantDTO variant = new ProductVariantDTO(); // Tạo đối tượng DTO
+                variant.setVariantID(rs.getString("variantID"));
+                variant.setProductID(rs.getString("productID"));
+                variant.setSize(rs.getString("size"));
+                variant.setColor(rs.getString("color"));
+                variant.setStock(rs.getInt("stock"));
+                variant.setPrice(rs.getDouble("price"));
+                variant.setSalesCount(rs.getInt("salesCount"));
+                return variant; // Trả về đối tượng tìm được
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // Bắt và in lỗi
+        }
+        return null; // Không tìm thấy => trả null
+    }
 
     // ---------------------- LẤY DANH SÁCH VARIANT THEO PRODUCT ID ----------------------
     public List<ProductVariantDTO> getVariantsByProductID(String productID) {
         List<ProductVariantDTO> listVariant = new ArrayList<>(); // Danh sách kết quả
         try {
             Connection conn = DBUtils.getConnection(); // Kết nối DB
-            String sql = "SELECT * FROM ProductVariant WHERE productID = ?"; // Câu SQL có điều kiện productID
+            String sql = "SELECT * FROM ProductVariant WHERE productID LIKE ?"; // Câu SQL có điều kiện productID
             PreparedStatement pst = conn.prepareStatement(sql); // Chuẩn bị câu lệnh
             pst.setString(1, productID); // Gán giá trị cho tham số
             ResultSet rs = pst.executeQuery(); // Thực thi truy vấn

@@ -1,0 +1,385 @@
+/* ================== THEME MÀU ĐỎ - ĐEN ================== */
+:root {
+    --primary-red: #e02424;
+    --primary-red-dark: #b51313;
+    --dark-bg: #111111;
+    --dark-card: #181818;
+    --light-bg: #f5f5f7;
+    --text-main: #222222;
+    --text-muted: #888888;
+    --border-soft: rgba(255, 255, 255, 0.08);
+}
+
+/* ================== PAGE LAYOUT ================== */
+.product-detail-body {
+    font-family: 'Poppins', Arial, sans-serif;
+    background: radial-gradient(circle at top, #2b2b2b 0, #000 55%, #000 100%);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;              /* full chiều cao màn hình */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    color: #ffffff;
+    overflow-x: hidden;             /* tránh tràn ngang */
+}
+
+.product-page {
+    width: 95%;                     /* co theo màn hình */
+    max-width: 1280px;              /* giới hạn trên màn to */
+    margin: 0 auto;
+    padding: 40px 16px 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+/* ================== BACK BUTTON ================== */
+.back-btn-wrapper {
+    margin-bottom: 20px;
+    text-align: center;
+    animation: fadeSlideDown 0.6s ease-out;
+}
+
+.back-btn {
+    display: inline-block;
+    text-decoration: none;
+    font-weight: 600;
+    color: var(--primary-red);
+    border: 2px solid var(--primary-red);
+    border-radius: 999px;
+    padding: 10px 28px;
+    background-color: transparent;
+    font-size: 15px;
+    letter-spacing: 0.3px;
+    transition: all 0.25s ease;
+}
+
+.back-btn::before {
+    content: "← ";
+}
+
+.back-btn:hover {
+    background-color: var(--primary-red);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(224, 36, 36, 0.4);
+    transform: translateY(-2px);
+}
+
+/* ================== PAGE TITLE ================== */
+.page-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 12px 0 28px;
+    color: #ffffff;
+    text-align: center;
+    position: relative;
+    animation: fadeSlideDown 0.7s ease-out;
+}
+
+.page-title::after {
+    content: "";
+    display: block;
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-red), #ff6b6b);
+    margin: 8px auto 0;
+    border-radius: 999px;
+}
+
+/* ================== MAIN LAYOUT (2 CỘT) ================== */
+.product-layout {
+    display: flex;
+    flex-wrap: wrap;                /* tự xuống hàng khi hẹp */
+    justify-content: center;
+    align-items: stretch;
+    gap: 28px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Tỷ lệ tự động fit màn hình */
+.product-detail-card {
+    flex: 1 1 380px;                /* min 380px */
+    max-width: 500px;
+}
+
+.product-list-section {
+    flex: 1 1 600px;                /* min 600px */
+    max-width: 740px;
+}
+
+/* ================== PRODUCT DETAIL CARD ================== */
+.product-detail-card {
+    background: linear-gradient(145deg, #1b1b1b, #101010);
+    border-radius: 16px;
+    padding: 24px 26px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.65);
+    border: 1px solid var(--border-soft);
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    animation: fadeScaleIn 0.6s ease-out;
+}
+
+.product-detail-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 20px;
+    right: 20px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-red), #ff6b6b);
+    border-radius: 999px;
+}
+
+/* Tên sản phẩm */
+.product-name {
+    font-size: 26px;
+    font-weight: 800;
+    margin: 8px 0 18px;
+    color: #ffffff;
+}
+
+/* Lưới thông tin chi tiết */
+.product-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 10px;
+    margin-top: 8px;
+}
+
+.detail-item {
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 14px;
+    color: #f0f0f0;
+    padding: 6px 0;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.06);
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-item .label {
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin-right: 8px;
+}
+
+.detail-item .value {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* Làm nổi bật dòng Price */
+.product-price .label {
+    color: var(--primary-red);
+}
+
+.product-price .value {
+    font-size: 20px;
+    color: #ff5757;
+}
+
+/* Khi không tìm thấy */
+.product-not-found {
+    margin: 0;
+    color: #ff7070;
+    font-weight: 600;
+}
+
+/* ================== OTHER PRODUCTS LIST ================== */
+.product-list-section {
+    background: linear-gradient(180deg, #ffffff 0%, #f9f9f9 100%);
+    border-radius: 16px;
+    padding: 28px 32px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+    border: 2px solid var(--primary-red);
+    position: relative;
+    overflow: hidden;
+    animation: fadeSlideUp 0.7s ease-out;
+}
+
+/* Viền đỏ sáng */
+.product-list-section::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    padding: 2px;
+    background: linear-gradient(120deg, #e02424, #ff4444, #e02424);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+}
+
+/* Tiêu đề OTHER PRODUCTS */
+.section-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 24px;
+    color: #111;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-left: 5px solid var(--primary-red);
+    padding-left: 12px;
+}
+
+/* ==== TABLE ==== */
+.product-table-wrapper {
+    border-radius: 12px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    overflow: hidden;               /* table không tràn ra ngoài */
+}
+
+.product-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    background-color: #fff;
+    margin-bottom: 0;
+}
+
+.product-table thead th {
+    background: #111;
+    color: #fff;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 13px;
+    border-bottom: 3px solid var(--primary-red);
+    padding: 12px 16px;
+    text-align: center;
+}
+
+.product-table tbody td {
+    padding: 10px 14px;
+    color: #222;
+    text-align: center;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.product-table tbody tr:nth-child(even) {
+    background-color: #fdf3f3;
+}
+
+.product-table tbody tr:hover {
+    background-color: rgba(224, 36, 36, 0.12);
+    transform: scale(1.002);
+    transition: all 0.15s ease;
+}
+
+/* Nút View Detail trong bảng */
+.product-table a {
+    color: var(--primary-red);
+    text-decoration: none;
+    font-weight: 600;
+    border: 1.5px solid var(--primary-red);
+    padding: 4px 10px;
+    border-radius: 20px;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+.product-table a:hover {
+    background-color: var(--primary-red);
+    color: #fff;
+    box-shadow: 0 4px 10px rgba(224, 36, 36, 0.4);
+}
+
+/* ================== RESPONSIVE ================== */
+@media (max-width: 992px) {
+    .product-layout {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .product-detail-card,
+    .product-list-section {
+        width: 95%;
+        max-width: 700px;
+    }
+
+    .page-title {
+        font-size: 26px;
+    }
+
+    .product-name {
+        font-size: 20px;
+    }
+
+    .detail-item {
+        font-size: 13px;
+    }
+
+    .section-title {
+        font-size: 18px;
+    }
+
+    .product-table thead th,
+    .product-table tbody td {
+        font-size: 12.5px;
+        padding: 8px 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .product-page {
+        padding: 24px 10px 40px;
+    }
+
+    .back-btn {
+        font-size: 13px;
+        padding: 6px 18px;
+    }
+
+    .product-detail-card,
+    .product-list-section {
+        padding: 16px;
+    }
+}
+
+/* ================== ANIMATIONS ================== */
+@keyframes fadeSlideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeScaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

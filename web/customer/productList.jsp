@@ -23,7 +23,7 @@
 
             <!-- Search + filter -->
             <form action="MainController" method="post" class="product-search-form mb-3">
-                <input type="hidden" name="txtAction" value="searchProduct"/>
+                <input type="hidden" name="txtAction" value="filterProduct"/>
 
                 <div class="row g-2 align-items-center">
                     <div class="col-md-6">
@@ -79,8 +79,15 @@
                                         <td>${p.brandID}</td>
                                         <td>${p.createdAt}</td>
                                         <td>${p.isActive}</td>
+                                        <td>
+                                            <form action="MainController" method="post" class="product-search-form mb-3">
+                                                <a href="MainController?txtAction=viewProductDetail&productID=${p.productID}&productName=${p.productName}">
+                                                    viewDetail</a>
+                                            </form>
+                                            
+                                        </td>
 
-                                        <c:if test="${user.role eq 'Admin'}">
+                                        <c:if test="${user.role eq 'admin'}">
                                             <td class="text-center">
                                                 <a href="MainController?txtAction=callUpdateProduct&productID=${p.productID}"
                                                    class="btn btn-outline-primary btn-sm product-view-btn">
