@@ -25,6 +25,7 @@
             </a>
         </div>
 
+
         <div class="product-page container">
             <h1 class="page-title">Product Detail</h1>
 
@@ -127,6 +128,7 @@
                                                             View Detail
                                                         </a>
                                                     </td>
+                                                    
                                                 </tr>
                                             </c:if>
                                         </c:forEach>

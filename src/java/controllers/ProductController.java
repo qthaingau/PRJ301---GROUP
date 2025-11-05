@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import models.BrandDAO;
+import models.CategoryDAO;
 import models.ProductDAO;
 import models.ProductDTO;
 import models.ProductVariantDAO;
@@ -37,18 +39,36 @@ public class ProductController extends HttpServlet {
     private void processCallSaveProduct(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String updateParam = request.getParameter("update");
+        ProductDAO productDAO = new ProductDAO();
+        ProductVariantDAO variantDAO = new ProductVariantDAO();
 
 // Chuyển đổi chuỗi "true" hoặc "false" thành boolean
         boolean isUpdate = Boolean.parseBoolean(updateParam);
-
-        request.setAttribute("update", isUpdate);
+        String productID = request.getParameter("productID");
+        
+        ProductDTO productDTO = productDAO.getProductByID(productID);
+        ProductVariantDTO variantDTO = variantDAO.getVariantByProductID(productID);
+        
+        if (productID == null) {
+            request.setAttribute("update", isUpdate);
+            request.getRequestDispatcher("/admin/productForm.jsp")
+                    .forward(request, response);
+        } else {
+            request.setAttribute("p", productDTO);
+            request.setAttribute("v", variantDTO);
+            request.setAttribute("update", isUpdate);
+            
+        }
         request.getRequestDispatcher("/admin/productForm.jsp")
                 .forward(request, response);
     }
 
-    private void processAddProductWithVariant(HttpServletRequest request, HttpServletResponse response)
+    private void processAddProductWithVariant(HttpServletRequest request, HttpServletResponse response, boolean update)
             throws ServletException, IOException {
 
+        if (update == true) {
+            request.setAttribute("update", true);
+        }
         // Regex for IDs: P******, C******, B******, V******
         String regexP = "^P\\d{3}$";
         String regexC = "^C\\d{3}$";
@@ -71,6 +91,8 @@ public class ProductController extends HttpServlet {
         // --- Prepare DAOs ---
         ProductDAO productDAO = new ProductDAO();
         ProductVariantDAO variantDAO = new ProductVariantDAO();
+        CategoryDAO categoryDAO = new CategoryDAO();
+        BrandDAO brandDAO = new BrandDAO();
 
         // --- Error messages ---
         String error_productID = "";
@@ -118,7 +140,11 @@ public class ProductController extends HttpServlet {
             error_categoryID = "Category ID cannot be empty!";
             hasError = true;
         } else if (!categoryID.trim().matches(regexC)) {
-            error_categoryID = "Category ID must follow format C****** (e.g., C000001).";
+            error_categoryID = "Category ID must follow format C*** (e.g., C001).";
+            hasError = true;
+        } else if (categoryDAO.getCategoryByID(categoryID.trim()) == null) {
+            // KHÔNG tìm thấy category trong DB -> lỗi khóa ngoại
+            error_categoryID = "Category ID does not exist!";
             hasError = true;
         }
 
@@ -127,7 +153,11 @@ public class ProductController extends HttpServlet {
             error_brandID = "Brand ID cannot be empty!";
             hasError = true;
         } else if (!brandID.trim().matches(regexB)) {
-            error_brandID = "Brand ID must follow format B****** (e.g., B000001).";
+            error_brandID = "Brand ID must follow format B*** (e.g., B001).";
+            hasError = true;
+        } else if (brandDAO.getBrandByID(brandID.trim()) == null) {
+            // KHÔNG tìm thấy brand trong DB -> lỗi khóa ngoại
+            error_brandID = "Brand ID does not exist!";
             hasError = true;
         }
 
@@ -202,11 +232,23 @@ public class ProductController extends HttpServlet {
         // --- If no validation error, try to insert into DB ---
         if (!hasError) {
             try {
-                boolean ok1 = productDAO.insert(product);
-                boolean ok2 = variantDAO.insert(variant);
+                boolean ok1;
+                boolean ok2;
+
+                if (update) {
+                    // UPDATE
+                    ok1 = productDAO.update(product);
+                    ok2 = variantDAO.update(variant);
+                } else {
+                    // ADD
+                    ok1 = productDAO.insert(product);
+                    ok2 = variantDAO.insert(variant);
+                }
 
                 if (!ok1 || !ok2) {
-                    error = "Failed to add product or variant!";
+                    error = update
+                            ? "Failed to update product or variant!"
+                            : "Failed to add product or variant!";
                     hasError = true;
                 }
             } catch (Exception e) {
@@ -221,7 +263,6 @@ public class ProductController extends HttpServlet {
             // Keep entered data so user doesn't have to retype everything
             request.setAttribute("p", product);
             request.setAttribute("v", variant);
-
             request.setAttribute("error_productID", error_productID);
             request.setAttribute("error_productName", error_productName);
             request.setAttribute("error_description", error_description);
@@ -324,11 +365,11 @@ public class ProductController extends HttpServlet {
             } else if (txtAction.equals("viewProductDetail")) {
                 processViewProductDetail(request, response);
             } else if (txtAction.equals("addProduct")) {
-                processAddProductWithVariant(request, response);
+                processAddProductWithVariant(request, response, false);
             } else if (txtAction.equals("callSaveProduct")) {
                 processCallSaveProduct(request, response);
             } else if (txtAction.equals("addProductWithVariant")) {
-                processAddProductWithVariant(request, response);
+                processAddProductWithVariant(request, response, true);
             }
         }
     }

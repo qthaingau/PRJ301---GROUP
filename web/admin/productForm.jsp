@@ -4,12 +4,12 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>${update ? "Update Product" : "Add New Product"}</title>
+        <title>${update ? "Update Product ${p.productName}" : "Add New Product"}</title>
     </head>
     <body>
 
         <div>
-            <h2>${update ? "Update Product" : "Add New Product"}</h2>
+            <h2>${update ? "Update Product ${p.productName}": "Add New Product"}</h2>
 
             <!-- General error message -->
             <c:if test="${not empty error}">
@@ -17,22 +17,25 @@
             </c:if>
 
             <form action="MainController" method="post">
-                <!-- Hiện tại chỉ dùng cho thêm mới -->
+                <!-- Action tuỳ theo add/update -->
                 <input type="hidden" name="txtAction"
                        value="${update ? 'updateProductWithVariant' : 'addProductWithVariant'}"/>
 
+                <!-- Gửi lại cờ update cho servlet -->
+                <input type="hidden" name="update" value="${update}" />
 
                 <!-- ================= PRODUCT ================= -->
                 <h3>Product</h3>
 
                 <!-- Product ID -->
-                Product ID (P******):
+                Product ID (P***):
                 <input type="text"
                        name="txtProductID"
-                       value="${p.productID}"
+                       value="${p.productID}" ${update ? "readonly" : "required"}
                        required
                        pattern="P[0-9]{3}"
-                       title="Product ID must follow the format P******, e.g., P000001"/><br/>
+                       title="Product ID must follow the format P***, e.g., P001"
+                       ${update ? 'readonly="readonly"' : ''} /><br/>
                 <c:if test="${not empty error_productID}">
                     <span style="color:red">${error_productID}</span><br/>
                 </c:if>
@@ -58,26 +61,26 @@
                 <br/>
 
                 <!-- Category ID -->
-                Category ID (C******):
+                Category ID (C***):
                 <input type="text"
                        name="txtCategoryID"
                        value="${p.categoryID}"
                        required
                        pattern="C[0-9]{3}"
-                       title="Category ID must follow the format C******, e.g., C000001"/><br/>
+                       title="Category ID must follow the format C***, e.g., C001"/><br/>
                 <c:if test="${not empty error_categoryID}">
                     <span style="color:red">${error_categoryID}</span><br/>
                 </c:if>
                 <br/>
 
                 <!-- Brand ID -->
-                Brand ID (B******):
+                Brand ID (B***):
                 <input type="text"
                        name="txtBrandID"
                        value="${p.brandID}"
                        required
                        pattern="B[0-9]{3}"
-                       title="Brand ID must follow the format B******, e.g., B000001"/><br/>
+                       title="Brand ID must follow the format B***, e.g., B001"/><br/>
                 <c:if test="${not empty error_brandID}">
                     <span style="color:red">${error_brandID}</span><br/>
                 </c:if>
@@ -87,13 +90,14 @@
                 <h3>Variant</h3>
 
                 <!-- Variant ID -->
-                Variant ID (V******):
+                Variant ID (V***):
                 <input type="text"
                        name="txtVariantID"
                        value="${v.variantID}"
                        required
                        pattern="V[0-9]{3}"
-                       title="Variant ID must follow the format V******, e.g., V000001"/><br/>
+                       title="Variant ID must follow the format V***, e.g., V001"
+                       ${update ? 'readonly="readonly"' : ''} /><br/>
                 <c:if test="${not empty error_variantID}">
                     <span style="color:red">${error_variantID}</span><br/>
                 </c:if>
