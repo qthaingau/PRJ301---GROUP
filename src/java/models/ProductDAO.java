@@ -198,15 +198,13 @@ public class ProductDAO {
     }
 
     public boolean update(ProductDTO productDTO) {
-        try {
-            Connection c = DBUtils.getConnection();
+        try ( Connection c = DBUtils.getConnection()) {
             String sql = "UPDATE Product "
-                    + "SET productName = ?"
-                    + ", description = ?"
-                    + ", categoryID = ?"
-                    + ", brandID = ?"
-                    + ", createdAT = ?"
-                    + ", isActive = ?"
+                    + "SET productName = ?, "
+                    + "    description = ?, "
+                    + "    categoryID = ?, "
+                    + "    brandID = ?, "
+                    + "    isActive = ? "
                     + "WHERE productID = ?";
 
             PreparedStatement pst = c.prepareStatement(sql);
@@ -214,14 +212,15 @@ public class ProductDAO {
             pst.setString(2, productDTO.getDescription());
             pst.setString(3, productDTO.getCategoryID());
             pst.setString(4, productDTO.getBrandID());
-            pst.setDate(5, java.sql.Date.valueOf(productDTO.getCreatedAt()));
-            pst.setBoolean(6, productDTO.isIsActive());
-            pst.setString(7, productDTO.getProductID());
+            pst.setBoolean(5, productDTO.isIsActive());
+            pst.setString(6, productDTO.getProductID());
 
             int i = pst.executeUpdate();
             return i > 0;
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return false;
     }
+
 }

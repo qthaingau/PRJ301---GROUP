@@ -12,7 +12,7 @@
     <body>
         <!-- Nếu đã đăng nhập, tự động chuyển về dashboard -->
         <c:if test="${not empty user}">
-            <c:redirect url="dashboard.jsp" />
+            <c:redirect url="home.jsp" />
         </c:if>
 
         <h1>REGISTER FORM</h1>

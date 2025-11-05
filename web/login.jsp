@@ -22,7 +22,7 @@
 
         <!-- Nếu người dùng đã đăng nhập (user không rỗng) thì chuyển hướng sang loginSuccess.jsp -->
         <c:if test="${not empty user}">
-            <c:redirect url="dashboard.jsp" />
+            <c:redirect url="home.jsp" />
         </c:if>
 
         <!-- Tiêu đề chính của form đăng nhập -->
