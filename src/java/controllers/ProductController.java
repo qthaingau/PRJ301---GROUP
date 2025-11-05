@@ -45,17 +45,18 @@ public class ProductController extends HttpServlet {
 // Chuyển đổi chuỗi "true" hoặc "false" thành boolean
         boolean isUpdate = Boolean.parseBoolean(updateParam);
         String productID = request.getParameter("productID");
+        String variantID = request.getParameter("variantID");
 
         ProductDTO productDTO = productDAO.getProductByID(productID);
-//        ProductVariantDTO variantDTO = variantDAO.getVariantByProductID(productID);
+        ProductVariantDTO variantDTO = variantDAO.getVariantByID(variantID);
 
         if (productID == null) {
             request.setAttribute("update", isUpdate);
-            request.getRequestDispatcher("/admin/productForm.jsp")
-                    .forward(request, response);
+//            request.getRequestDispatcher("/admin/productForm.jsp")
+//                    .forward(request, response);
         } else {
             request.setAttribute("p", productDTO);
-//            request.setAttribute("v", variantDTO);
+            request.setAttribute("v", variantDTO);
             request.setAttribute("update", isUpdate);
 
         }
@@ -66,7 +67,10 @@ public class ProductController extends HttpServlet {
     private void processAddProductWithVariant(HttpServletRequest request, HttpServletResponse response, boolean update)
             throws ServletException, IOException {
 
-        request.setAttribute("update", update);
+        if (update == true) {
+            request.setAttribute("update", true);
+        }
+
 
         // Regex for IDs: P***, C***, B***, V***
         String regexP = "^P\\d{3}$";
@@ -399,11 +403,11 @@ public class ProductController extends HttpServlet {
                 processFilterProduct(request, response);
             } else if (txtAction.equals("viewProductDetail")) {
                 processViewProductDetail(request, response);
-            } else if (txtAction.equals("addProduct")) {
+            } else if (txtAction.equals("addProductWithVariant")) {
                 processAddProductWithVariant(request, response, false);
             } else if (txtAction.equals("callSaveProduct")) {
                 processCallSaveProduct(request, response);
-            } else if (txtAction.equals("addProductWithVariant")) {
+            } else if (txtAction.equals("ProductWithVariant")) {
                 processAddProductWithVariant(request, response, true);
             }
         }

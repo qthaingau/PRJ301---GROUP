@@ -75,7 +75,7 @@
                             </div>
 
                             <!-- NÚT UPDATE: update đúng variant đang xem -->
-                            <c:if test="${user.role eq 'Admin'}">
+                            <c:if test="${user.role eq 'admin'}">
                                 <div class="mt-3">
                                     <a href="MainController?txtAction=callSaveProduct
                                              &productID=${productDetail.productID}
