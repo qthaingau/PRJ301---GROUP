@@ -4,12 +4,12 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>${update ? "Update Product ${p.productName}" : "Add New Product"}</title>
+        <title>${update ? "Update Product" : "Add New Product"}</title>
     </head>
     <body>
 
         <div>
-            <h2>${update ? "Update Product ${p.productName}": "Add New Product"}</h2>
+            <h2>${update ? "Update Product": "Add New Product"}</h2>
 
             <!-- General error message -->
             <c:if test="${not empty error}">
@@ -87,6 +87,7 @@
                 <br/>
 
                 <!-- ================= VARIANT ================= -->
+
                 <h3>Variant</h3>
 
                 <!-- Variant ID -->

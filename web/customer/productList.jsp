@@ -86,15 +86,6 @@
                                             </form>
 
                                         </td>
-
-                                        <c:if test="${user.role eq 'admin'}">
-                                            <td class="text-center">
-                                                <a href="MainController?txtAction=callSaveProduct&productID=${p.productID}&update=true"
-                                                   class="btn btn-outline-primary btn-sm product-view-btn">
-                                                    Update
-                                                </a>
-                                            </td>
-                                        </c:if>
                                     </tr>
                                 </c:forEach>
                             </tbody>

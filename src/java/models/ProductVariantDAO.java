@@ -43,6 +43,7 @@ public class ProductVariantDAO {
 
     // ---------------------- GET VARIANT BY VARIANT ID ----------------------
     public ProductVariantDTO getVariantByID(String variantID) {
+        
         String sql = "SELECT * FROM ProductVariant WHERE variantID = ?";
 
         try (Connection conn = DBUtils.getConnection();

@@ -12,7 +12,7 @@
         <meta charset="UTF-8">
         <title>PRODUCT ${productDetail.productID} DETAIL</title>
 
-        <%-- nếu đã link bootstrap + css chung ở layout khác thì bỏ 3 dòng dưới --%>
+        <%-- nếu đã link bootstrap + css chung ở layout khác thì bỏ 2 dòng dưới --%>
         <link rel="stylesheet" href="assets/css/bootstrap.min.css">
         <link rel="stylesheet" href="assets/css/productDetail.css">
     </head>
@@ -25,12 +25,11 @@
             </a>
         </div>
 
-
         <div class="product-page container">
             <h1 class="page-title">Product Detail</h1>
 
             <div class="product-layout">
-                <!-- ==== LEFT: PRODUCT DETAIL CARD ==== -->
+                <!-- ==== LEFT: PRODUCT + VARIANT DETAIL CARD ==== -->
                 <section class="product-detail-card">
                     <c:choose>
                         <c:when test="${not empty productDetail}">
@@ -74,6 +73,19 @@
                                     <span class="value">${productDetail.salesCount}</span>
                                 </p>
                             </div>
+
+                            <!-- NÚT UPDATE: update đúng variant đang xem -->
+                            <c:if test="${user.role eq 'Admin'}">
+                                <div class="mt-3">
+                                    <a href="MainController?txtAction=callSaveProduct
+                                             &productID=${productDetail.productID}
+                                             &variantID=${productDetail.variantID}
+                                             &update=true"
+                                       class="btn btn-primary">
+                                        Update This Variant
+                                    </a>
+                                </div>
+                            </c:if>
                         </c:when>
 
                         <c:otherwise>
@@ -106,9 +118,7 @@
                                             <th>Brand ID</th>
                                             <th>Created At</th>
                                             <th>Status</th>
-                                                <c:if test="${user.role eq 'Admin'}">
-                                                <th class="text-center">Action</th>
-                                                </c:if>
+                                            <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -123,12 +133,13 @@
                                                     <td>${p.createdAt}</td>
                                                     <td>${p.isActive}</td>
 
-                                                    <td>
-                                                        <a href="MainController?txtAction=viewProductDetail&productID=${p.productID}&productName=${p.productName}">
+                                                    <td class="text-center">
+                                                        <a href="MainController?txtAction=viewProductDetail
+                                                                 &productID=${p.productID}
+                                                                 &productName=${p.productName}">
                                                             View Detail
                                                         </a>
                                                     </td>
-                                                    
                                                 </tr>
                                             </c:if>
                                         </c:forEach>

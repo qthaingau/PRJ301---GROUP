@@ -45,19 +45,19 @@ public class ProductController extends HttpServlet {
 // Chuyển đổi chuỗi "true" hoặc "false" thành boolean
         boolean isUpdate = Boolean.parseBoolean(updateParam);
         String productID = request.getParameter("productID");
-        
+
         ProductDTO productDTO = productDAO.getProductByID(productID);
-        ProductVariantDTO variantDTO = variantDAO.getVariantByProductID(productID);
-        
+//        ProductVariantDTO variantDTO = variantDAO.getVariantByProductID(productID);
+
         if (productID == null) {
             request.setAttribute("update", isUpdate);
             request.getRequestDispatcher("/admin/productForm.jsp")
                     .forward(request, response);
         } else {
             request.setAttribute("p", productDTO);
-            request.setAttribute("v", variantDTO);
+//            request.setAttribute("v", variantDTO);
             request.setAttribute("update", isUpdate);
-            
+
         }
         request.getRequestDispatcher("/admin/productForm.jsp")
                 .forward(request, response);
@@ -66,10 +66,9 @@ public class ProductController extends HttpServlet {
     private void processAddProductWithVariant(HttpServletRequest request, HttpServletResponse response, boolean update)
             throws ServletException, IOException {
 
-        if (update == true) {
-            request.setAttribute("update", true);
-        }
-        // Regex for IDs: P******, C******, B******, V******
+        request.setAttribute("update", update);
+
+        // Regex for IDs: P***, C***, B***, V***
         String regexP = "^P\\d{3}$";
         String regexC = "^C\\d{3}$";
         String regexB = "^B\\d{3}$";
@@ -108,18 +107,30 @@ public class ProductController extends HttpServlet {
 
         boolean hasError = false;
 
+        // Lấy sẵn variant cũ khi update (dùng để giữ size/color/stock/price)
+        ProductVariantDTO oldVariant = null;
+        if (update && variantID != null && !variantID.trim().isEmpty()) {
+            oldVariant = variantDAO.getVariantByID(variantID.trim());
+        }
+
         // --- Validate ProductID ---
         if (productID == null || productID.trim().isEmpty()) {
             error_productID = "Product ID cannot be empty!";
             hasError = true;
         } else if (!productID.trim().matches(regexP)) {
-            error_productID = "Product ID must follow format P****** (e.g., P000001).";
+            error_productID = "Product ID must follow format P*** (e.g., P001).";
             hasError = true;
         } else {
-            // Check duplicate productID ONLY when adding new product
-            if (productDAO.getProductByID(productID.trim()) != null) {
-                error_productID = "Product ID is duplicated!";
-                hasError = true;
+            if (!update) { // ADD: không được trùng
+                if (productDAO.getProductByID(productID.trim()) != null) {
+                    error_productID = "Product ID is duplicated!";
+                    hasError = true;
+                }
+            } else {       // UPDATE: phải tồn tại
+                if (productDAO.getProductByID(productID.trim()) == null) {
+                    error_productID = "Product ID does not exist!";
+                    hasError = true;
+                }
             }
         }
 
@@ -143,7 +154,6 @@ public class ProductController extends HttpServlet {
             error_categoryID = "Category ID must follow format C*** (e.g., C001).";
             hasError = true;
         } else if (categoryDAO.getCategoryByID(categoryID.trim()) == null) {
-            // KHÔNG tìm thấy category trong DB -> lỗi khóa ngoại
             error_categoryID = "Category ID does not exist!";
             hasError = true;
         }
@@ -156,7 +166,6 @@ public class ProductController extends HttpServlet {
             error_brandID = "Brand ID must follow format B*** (e.g., B001).";
             hasError = true;
         } else if (brandDAO.getBrandByID(brandID.trim()) == null) {
-            // KHÔNG tìm thấy brand trong DB -> lỗi khóa ngoại
             error_brandID = "Brand ID does not exist!";
             hasError = true;
         }
@@ -166,81 +175,108 @@ public class ProductController extends HttpServlet {
             error_variantID = "Variant ID cannot be empty!";
             hasError = true;
         } else if (!variantID.trim().matches(regexV)) {
-            error_variantID = "Variant ID must follow format V****** (e.g., V000001).";
+            error_variantID = "Variant ID must follow format V*** (e.g., V001).";
             hasError = true;
-        } else if (variantDAO.getVariantByID(variantID.trim()) != null) {
-            error_variantID = "Variant ID already exists!";
-            hasError = true;
+        } else {
+            if (!update) { // ADD: không được trùng
+                if (variantDAO.getVariantByID(variantID.trim()) != null) {
+                    error_variantID = "Variant ID already exists!";
+                    hasError = true;
+                }
+            } else {       // UPDATE: bắt buộc phải tồn tại
+                if (oldVariant == null) {
+                    error_variantID = "Variant ID does not exist in database!";
+                    hasError = true;
+                }
+            }
         }
 
-        // --- Validate Size ---
-        if (size == null || size.trim().isEmpty()) {
-            error_size = "Size cannot be empty!";
-            hasError = true;
-        }
-
-        // --- Validate Color ---
-        if (color == null || color.trim().isEmpty()) {
-            error_color = "Color cannot be empty!";
-            hasError = true;
-        }
-
-        // --- Validate Stock & Price ---
         int stock = 0;
         double price = 0;
 
-        if (stockStr == null || stockStr.trim().isEmpty()) {
-            error_stock = "Stock cannot be empty!";
-            hasError = true;
-        } else {
-            try {
-                stock = Integer.parseInt(stockStr.trim());
-                if (stock < 0) {
-                    error_stock = "Stock cannot be negative!";
+        // --- Validate Size/Color/Stock/Price CHỈ KHI ADD ---
+        if (!update) {
+            // Size
+            if (size == null || size.trim().isEmpty()) {
+                error_size = "Size cannot be empty!";
+                hasError = true;
+            }
+
+            // Color
+            if (color == null || color.trim().isEmpty()) {
+                error_color = "Color cannot be empty!";
+                hasError = true;
+            }
+
+            // Stock
+            if (stockStr == null || stockStr.trim().isEmpty()) {
+                error_stock = "Stock cannot be empty!";
+                hasError = true;
+            } else {
+                try {
+                    stock = Integer.parseInt(stockStr.trim());
+                    if (stock < 0) {
+                        error_stock = "Stock cannot be negative!";
+                        hasError = true;
+                    }
+                } catch (NumberFormatException e) {
+                    error_stock = "Stock must be a valid integer!";
                     hasError = true;
                 }
-            } catch (NumberFormatException e) {
-                error_stock = "Stock must be a valid integer!";
+            }
+
+            // Price
+            if (priceStr == null || priceStr.trim().isEmpty()) {
+                error_price = "Price cannot be empty!";
                 hasError = true;
+            } else {
+                try {
+                    price = Double.parseDouble(priceStr.trim());
+                    if (price < 0) {
+                        error_price = "Price cannot be negative!";
+                        hasError = true;
+                    }
+                } catch (NumberFormatException e) {
+                    error_price = "Price must be a valid number!";
+                    hasError = true;
+                }
+            }
+        } else {
+            // UPDATE: dùng lại dữ liệu cũ của variant để không bị null/0
+            if (oldVariant != null) {
+                size = oldVariant.getSize();
+                color = oldVariant.getColor();
+                stock = oldVariant.getStock();
+                price = oldVariant.getPrice();
             }
         }
 
-        if (priceStr == null || priceStr.trim().isEmpty()) {
-            error_price = "Price cannot be empty!";
-            hasError = true;
-        } else {
-            try {
-                price = Double.parseDouble(priceStr.trim());
-                if (price < 0) {
-                    error_price = "Price cannot be negative!";
-                    hasError = true;
-                }
-            } catch (NumberFormatException e) {
-                error_price = "Price must be a valid number!";
-                hasError = true;
-            }
-        }
-
-        // --- Create DTOs (even if there are errors, to keep user input) ---
+        // --- Create DTOs ---
         ProductDTO product = new ProductDTO(productID, productName, description,
                 categoryID, brandID, null, true);
-        ProductVariantDTO variant = new ProductVariantDTO(variantID, productID, size,
-                color, stock, price, 0);
+
+        ProductVariantDTO variant = new ProductVariantDTO(
+                variantID,
+                productID,
+                size,
+                color,
+                stock,
+                price,
+                (oldVariant != null ? oldVariant.getSalesCount() : 0)
+        );
 
         String error = "";
 
-        // --- If no validation error, try to insert into DB ---
+        // --- If no validation error, try to insert/update DB ---
         if (!hasError) {
             try {
                 boolean ok1;
                 boolean ok2;
 
                 if (update) {
-                    // UPDATE
                     ok1 = productDAO.update(product);
                     ok2 = variantDAO.update(variant);
                 } else {
-                    // ADD
                     ok1 = productDAO.insert(product);
                     ok2 = variantDAO.insert(variant);
                 }
@@ -260,7 +296,6 @@ public class ProductController extends HttpServlet {
 
         // --- If there is any error -> forward back to form with messages ---
         if (hasError) {
-            // Keep entered data so user doesn't have to retype everything
             request.setAttribute("p", product);
             request.setAttribute("v", variant);
             request.setAttribute("error_productID", error_productID);
@@ -279,7 +314,7 @@ public class ProductController extends HttpServlet {
             return;
         }
 
-        // --- If everything OK -> go back to product list (similar to processSearchUser) ---
+        // --- If everything OK -> go back to product list ---
         response.sendRedirect("MainController?txtAction=viewProducts");
     }
 
