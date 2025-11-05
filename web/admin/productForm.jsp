@@ -31,7 +31,7 @@
                        name="txtProductID"
                        value="${p.productID}"
                        required
-                       pattern="P[0-9]{6}"
+                       pattern="P[0-9]{3}"
                        title="Product ID must follow the format P******, e.g., P000001"/><br/>
                 <c:if test="${not empty error_productID}">
                     <span style="color:red">${error_productID}</span><br/>
@@ -63,7 +63,7 @@
                        name="txtCategoryID"
                        value="${p.categoryID}"
                        required
-                       pattern="C[0-9]{6}"
+                       pattern="C[0-9]{3}"
                        title="Category ID must follow the format C******, e.g., C000001"/><br/>
                 <c:if test="${not empty error_categoryID}">
                     <span style="color:red">${error_categoryID}</span><br/>
@@ -76,7 +76,7 @@
                        name="txtBrandID"
                        value="${p.brandID}"
                        required
-                       pattern="B[0-9]{6}"
+                       pattern="B[0-9]{3}"
                        title="Brand ID must follow the format B******, e.g., B000001"/><br/>
                 <c:if test="${not empty error_brandID}">
                     <span style="color:red">${error_brandID}</span><br/>
@@ -92,7 +92,7 @@
                        name="txtVariantID"
                        value="${v.variantID}"
                        required
-                       pattern="V[0-9]{6}"
+                       pattern="V[0-9]{3}"
                        title="Variant ID must follow the format V******, e.g., V000001"/><br/>
                 <c:if test="${not empty error_variantID}">
                     <span style="color:red">${error_variantID}</span><br/>

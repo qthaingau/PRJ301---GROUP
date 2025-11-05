@@ -50,10 +50,10 @@ public class ProductController extends HttpServlet {
             throws ServletException, IOException {
 
         // Regex for IDs: P******, C******, B******, V******
-        String regexP = "^P\\d{6}$";
-        String regexC = "^C\\d{6}$";
-        String regexB = "^B\\d{6}$";
-        String regexV = "^V\\d{6}$";
+        String regexP = "^P\\d{3}$";
+        String regexC = "^C\\d{3}$";
+        String regexB = "^B\\d{3}$";
+        String regexV = "^V\\d{3}$";
 
         // --- Read form parameters ---
         String productID = request.getParameter("txtProductID");
@@ -234,7 +234,7 @@ public class ProductController extends HttpServlet {
             request.setAttribute("error_price", error_price);
             request.setAttribute("error", error);
 
-            request.getRequestDispatcher("productForm.jsp").forward(request, response);
+            request.getRequestDispatcher("/admin/productForm.jsp").forward(request, response);
             return;
         }
 
@@ -311,6 +311,7 @@ public class ProductController extends HttpServlet {
         try ( PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             String txtAction = request.getParameter("txtAction");
+            System.out.println("Nè " + txtAction);
 
             if (txtAction == null) {
                 txtAction = "viewProducts";
@@ -326,6 +327,8 @@ public class ProductController extends HttpServlet {
                 processAddProductWithVariant(request, response);
             } else if (txtAction.equals("callSaveProduct")) {
                 processCallSaveProduct(request, response);
+            } else if (txtAction.equals("addProductWithVariant")) {
+                processAddProductWithVariant(request, response);
             }
         }
     }
