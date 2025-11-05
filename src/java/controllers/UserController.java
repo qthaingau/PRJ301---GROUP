@@ -63,7 +63,8 @@ public class UserController extends HttpServlet {
 
     private void processRegister(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         String username = request.getParameter("txtNewUsername");
         String email = request.getParameter("txtEmail");
         String password = request.getParameter("txtNewPassword");

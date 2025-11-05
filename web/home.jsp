@@ -17,7 +17,7 @@
                 <input type="hidden" name="txtAction" value="viewProducts"/>
             </form>
 
-            <script src="assets/js/autoRedirect.js"></script>
+<!--            <script src="assets/js/autoRedirect.js"></script>-->
         </c:if>
         <!-- navbar -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -47,6 +47,6 @@
         </div>
 
         <!-- External JS -->
-        <script src="assets/js/bootstrap.bundle.min.js"></script>
+<!--        <script src="assets/js/bootstrap.bundle.min.js"></script>-->
     </body>
 </html>
