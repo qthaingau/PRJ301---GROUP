@@ -1,200 +1,260 @@
-package models; // Khai báo package chứa class này
+package models;
 
-// Import các thư viện cần thiết để thao tác với cơ sở dữ liệu và danh sách
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import utils.DBUtils; // Class tiện ích để lấy kết nối tới DB
+import utils.DBUtils;
 
-// Lớp DAO (Data Access Object) để thao tác dữ liệu bảng ProductVariant
+/**
+ * DAO for ProductVariant table.
+ */
 public class ProductVariantDAO {
 
-    // Constructor mặc định
     public ProductVariantDAO() {
     }
 
-    // ---------------------- LẤY TẤT CẢ PRODUCT VARIANT ----------------------
+    // ---------------------- GET ALL VARIANTS ----------------------
     public ArrayList<ProductVariantDTO> getAllVariants() {
-        ArrayList<ProductVariantDTO> listVariant = new ArrayList<>(); // Tạo danh sách rỗng để chứa kết quả
-        try {
-            Connection conn = DBUtils.getConnection(); // Kết nối database
-            String sql = "SELECT * FROM ProductVariant"; // Câu truy vấn lấy tất cả dữ liệu
-            PreparedStatement pst = conn.prepareStatement(sql); // Chuẩn bị câu lệnh SQL
-            ResultSet rs = pst.executeQuery(); // Thực thi và trả về kết quả
+        ArrayList<ProductVariantDTO> listVariant = new ArrayList<>();
+        String sql = "SELECT * FROM ProductVariant";
 
-            // Duyệt qua từng dòng dữ liệu trong ResultSet
+        try (Connection conn = DBUtils.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql);
+             ResultSet rs = pst.executeQuery()) {
+
             while (rs.next()) {
-                ProductVariantDTO variant = new ProductVariantDTO(); // Tạo đối tượng ProductVariantDTO
-                variant.setVariantID(rs.getString("variantID")); // Lấy giá trị cột variantID
-                variant.setProductID(rs.getString("productID")); // Lấy giá trị cột productID
-                variant.setSize(rs.getString("size")); // Lấy giá trị cột size
-                variant.setColor(rs.getString("color")); // Lấy giá trị cột color
-                variant.setStock(rs.getInt("stock")); // Lấy giá trị cột stock
-                variant.setPrice(rs.getDouble("price")); // Lấy giá trị cột price
-                variant.setSalesCount(rs.getInt("salesCount")); // Lấy giá trị cột salesCount
-                listVariant.add(variant); // Thêm vào danh sách
+                ProductVariantDTO variant = new ProductVariantDTO();
+                variant.setVariantID(rs.getString("variantID"));
+                variant.setProductID(rs.getString("productID"));
+                variant.setSize(rs.getString("size"));
+                variant.setColor(rs.getString("color"));
+                variant.setStock(rs.getInt("stock"));
+                variant.setPrice(rs.getDouble("price"));
+                variant.setSalesCount(rs.getInt("salesCount"));
+                listVariant.add(variant);
             }
         } catch (Exception e) {
-            e.printStackTrace(); // In lỗi ra console nếu có
+            e.printStackTrace();
         }
-        return listVariant; // Trả về danh sách variants
+        return listVariant;
     }
 
-    // ---------------------- LẤY VARIANT THEO ID ----------------------
+    // ---------------------- GET VARIANT BY VARIANT ID ----------------------
     public ProductVariantDTO getVariantByID(String variantID) {
-        try {
-            Connection conn = DBUtils.getConnection(); // Kết nối DB
-            String sql = "SELECT * FROM ProductVariant WHERE variantID = ?"; // Câu SQL với điều kiện theo ID
-            PreparedStatement pst = conn.prepareStatement(sql); // Chuẩn bị câu lệnh
-            pst.setString(1, variantID); // Gán giá trị cho dấu hỏi đầu tiên
+        String sql = "SELECT * FROM ProductVariant WHERE variantID = ?";
 
-            ResultSet rs = pst.executeQuery(); // Thực thi truy vấn
+        try (Connection conn = DBUtils.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
 
-            // Nếu có kết quả trả về
-            if (rs.next()) {
-                ProductVariantDTO variant = new ProductVariantDTO(); // Tạo đối tượng DTO
-                variant.setVariantID(rs.getString("variantID"));
-                variant.setProductID(rs.getString("productID"));
-                variant.setSize(rs.getString("size"));
-                variant.setColor(rs.getString("color"));
-                variant.setStock(rs.getInt("stock"));
-                variant.setPrice(rs.getDouble("price"));
-                variant.setSalesCount(rs.getInt("salesCount"));
-                return variant; // Trả về đối tượng tìm được
+            pst.setString(1, variantID);
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    ProductVariantDTO variant = new ProductVariantDTO();
+                    variant.setVariantID(rs.getString("variantID"));
+                    variant.setProductID(rs.getString("productID"));
+                    variant.setSize(rs.getString("size"));
+                    variant.setColor(rs.getString("color"));
+                    variant.setStock(rs.getInt("stock"));
+                    variant.setPrice(rs.getDouble("price"));
+                    variant.setSalesCount(rs.getInt("salesCount"));
+                    return variant;
+                }
             }
         } catch (Exception e) {
-            e.printStackTrace(); // Bắt và in lỗi
+            e.printStackTrace();
         }
-        return null; // Không tìm thấy => trả null
+        return null;
     }
-    
-        // ---------------------- LẤY VARIANT THEO ID ----------------------
+
+    // ---------------------- GET FIRST VARIANT BY PRODUCT ID ----------------------
     public ProductVariantDTO getVariantByProductID(String productID) {
-        try {
-            Connection conn = DBUtils.getConnection(); // Kết nối DB
-            String sql = "SELECT * FROM ProductVariant WHERE productID = ?"; // Câu SQL với điều kiện theo ID
-            PreparedStatement pst = conn.prepareStatement(sql); // Chuẩn bị câu lệnh
-            pst.setString(1, productID); // Gán giá trị cho dấu hỏi đầu tiên
+        String sql = "SELECT TOP 1 * FROM ProductVariant WHERE productID = ?";
 
-            
-            ResultSet rs = pst.executeQuery(); // Thực thi truy vấn
+        try (Connection conn = DBUtils.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
 
-            // Nếu có kết quả trả về
-            if (rs.next()) {
-                ProductVariantDTO variant = new ProductVariantDTO(); // Tạo đối tượng DTO
-                variant.setVariantID(rs.getString("variantID"));
-                variant.setProductID(rs.getString("productID"));
-                variant.setSize(rs.getString("size"));
-                variant.setColor(rs.getString("color"));
-                variant.setStock(rs.getInt("stock"));
-                variant.setPrice(rs.getDouble("price"));
-                variant.setSalesCount(rs.getInt("salesCount"));
-                return variant; // Trả về đối tượng tìm được
+            pst.setString(1, productID);
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    ProductVariantDTO variant = new ProductVariantDTO();
+                    variant.setVariantID(rs.getString("variantID"));
+                    variant.setProductID(rs.getString("productID"));
+                    variant.setSize(rs.getString("size"));
+                    variant.setColor(rs.getString("color"));
+                    variant.setStock(rs.getInt("stock"));
+                    variant.setPrice(rs.getDouble("price"));
+                    variant.setSalesCount(rs.getInt("salesCount"));
+                    return variant;
+                }
             }
         } catch (Exception e) {
-            e.printStackTrace(); // Bắt và in lỗi
+            e.printStackTrace();
         }
-        return null; // Không tìm thấy => trả null
+        return null;
     }
 
-    // ---------------------- LẤY DANH SÁCH VARIANT THEO PRODUCT ID ----------------------
+    // ---------------------- UPDATE PRODUCT.ISACTIVE BY TOTAL STOCK ----------------------
+    public void updateIsActiveByStock(String productID) {
+        String sql =
+                "UPDATE Product " +
+                "SET isActive = CASE " +
+                "    WHEN COALESCE((SELECT SUM(stock) FROM ProductVariant WHERE productID = ?), 0) > 0 " +
+                "         THEN 1 " +
+                "    ELSE 0 " +
+                "END " +
+                "WHERE productID = ?";
+
+        try (Connection conn = DBUtils.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
+
+            pst.setString(1, productID);
+            pst.setString(2, productID);
+            pst.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // ---------------------- GET VARIANTS BY PRODUCT ID ----------------------
     public List<ProductVariantDTO> getVariantsByProductID(String productID) {
-        List<ProductVariantDTO> listVariant = new ArrayList<>(); // Danh sách kết quả
-        try {
-            Connection conn = DBUtils.getConnection(); // Kết nối DB
-            String sql = "SELECT * FROM ProductVariant WHERE productID LIKE ?"; // Câu SQL có điều kiện productID
-            PreparedStatement pst = conn.prepareStatement(sql); // Chuẩn bị câu lệnh
-            pst.setString(1, productID); // Gán giá trị cho tham số
-            ResultSet rs = pst.executeQuery(); // Thực thi truy vấn
+        List<ProductVariantDTO> listVariant = new ArrayList<>();
+        String sql = "SELECT * FROM ProductVariant WHERE productID = ?";
 
-            // Duyệt qua các dòng kết quả
-            while (rs.next()) {
-                ProductVariantDTO variant = new ProductVariantDTO(); // Tạo đối tượng DTO mới
-                variant.setVariantID(rs.getString("variantID"));
-                variant.setProductID(rs.getString("productID"));
-                variant.setSize(rs.getString("size"));
-                variant.setColor(rs.getString("color"));
-                variant.setStock(rs.getInt("stock"));
-                variant.setPrice(rs.getDouble("price"));
-                variant.setSalesCount(rs.getInt("salesCount"));
-                listVariant.add(variant); // Thêm vào danh sách kết quả
+        try (Connection conn = DBUtils.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
+
+            pst.setString(1, productID);
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    ProductVariantDTO variant = new ProductVariantDTO();
+                    variant.setVariantID(rs.getString("variantID"));
+                    variant.setProductID(rs.getString("productID"));
+                    variant.setSize(rs.getString("size"));
+                    variant.setColor(rs.getString("color"));
+                    variant.setStock(rs.getInt("stock"));
+                    variant.setPrice(rs.getDouble("price"));
+                    variant.setSalesCount(rs.getInt("salesCount"));
+                    listVariant.add(variant);
+                }
             }
         } catch (Exception e) {
-            e.printStackTrace(); // In lỗi nếu có
+            e.printStackTrace();
         }
-        return listVariant; // Trả về danh sách variant
+        return listVariant;
     }
 
-    // ---------------------- THÊM MỚI VARIANT ----------------------
-    public boolean insert(ProductVariantDTO variant) {
-        try {
-            Connection c = DBUtils.getConnection(); // Kết nối DB
-            String sql = "INSERT INTO ProductVariant(variantID, productID, size, color, stock, price, salesCount) "
-                       + "VALUES(?, ?, ?, ?, ?, ?, ?)"; // Câu SQL thêm dữ liệu mới
+    // ---------------------- INSERT NEW VARIANT ----------------------
+    public boolean insert(ProductVariantDTO v) {
+        String sql = "INSERT INTO ProductVariant(variantID, productID, size, color, stock, price, salesCount) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-            PreparedStatement pst = c.prepareStatement(sql); // Chuẩn bị câu lệnh
-            pst.setString(1, variant.getVariantID()); // Gán giá trị cho variantID
-            pst.setString(2, variant.getProductID()); // Gán giá trị cho productID
-            pst.setString(3, variant.getSize()); // Gán giá trị cho size
-            pst.setString(4, variant.getColor()); // Gán giá trị cho color
-            pst.setInt(5, variant.getStock()); // Gán giá trị cho stock
-            pst.setDouble(6, variant.getPrice()); // Gán giá trị cho price
-            pst.setInt(7, variant.getSalesCount()); // Gán giá trị cho salesCount
+        try (Connection conn = DBUtils.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
 
-            int rows = pst.executeUpdate(); // Thực thi câu lệnh INSERT
-            return rows > 0; // Trả về true nếu có ít nhất 1 dòng bị ảnh hưởng
+            pst.setString(1, v.getVariantID());
+            pst.setString(2, v.getProductID());
+            pst.setString(3, v.getSize());
+            pst.setString(4, v.getColor());
+            pst.setInt(5, v.getStock());
+            pst.setDouble(6, v.getPrice());
+            pst.setInt(7, v.getSalesCount());
+
+            int rows = pst.executeUpdate();
+
+            if (rows > 0) {
+                // sync Product.isActive based on total stock
+                updateIsActiveByStock(v.getProductID());
+                return true;
+            }
         } catch (Exception e) {
-            e.printStackTrace(); // In lỗi nếu có
+            // check for unique constraint violation on (productID, size, color) if needed
+            e.printStackTrace();
         }
-        return false; // Nếu lỗi => trả false
+        return false;
     }
 
-    // ---------------------- CẬP NHẬT VARIANT ----------------------
-    public boolean update(ProductVariantDTO variant) {
-        try {
-            Connection c = DBUtils.getConnection(); // Kết nối DB
-            String sql = "UPDATE ProductVariant "
-                       + "SET productID = ?, " // Cập nhật productID
-                       + "size = ?, " // Cập nhật size
-                       + "color = ?, " // Cập nhật color
-                       + "stock = ?, " // Cập nhật stock
-                       + "price = ?, " // Cập nhật price
-                       + "salesCount = ? " // Cập nhật salesCount
-                       + "WHERE variantID = ?"; // Điều kiện WHERE theo variantID
+    // ---------------------- UPDATE VARIANT ----------------------
+    public boolean update(ProductVariantDTO v) {
+        String sql = "UPDATE ProductVariant "
+                   + "SET size = ?, color = ?, stock = ?, price = ?, salesCount = ? "
+                   + "WHERE variantID = ?";
 
-            PreparedStatement pst = c.prepareStatement(sql); // Chuẩn bị câu lệnh
-            pst.setString(1, variant.getProductID());
-            pst.setString(2, variant.getSize());
-            pst.setString(3, variant.getColor());
-            pst.setInt(4, variant.getStock());
-            pst.setDouble(5, variant.getPrice());
-            pst.setInt(6, variant.getSalesCount());
-            pst.setString(7, variant.getVariantID());
+        try (Connection conn = DBUtils.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
 
-            int i = pst.executeUpdate(); // Thực thi câu lệnh UPDATE
-            return i > 0; // Trả về true nếu cập nhật thành công
+            pst.setString(1, v.getSize());
+            pst.setString(2, v.getColor());
+            pst.setInt(3, v.getStock());
+            pst.setDouble(4, v.getPrice());
+            pst.setInt(5, v.getSalesCount());
+            pst.setString(6, v.getVariantID());
+
+            int rows = pst.executeUpdate();
+
+            if (rows > 0) {
+                updateIsActiveByStock(v.getProductID());
+                return true;
+            }
         } catch (Exception e) {
-            e.printStackTrace(); // In lỗi
+            e.printStackTrace();
         }
-        return false; // Nếu có lỗi => false
+        return false;
     }
 
-    // ---------------------- XÓA VARIANT ----------------------
-    public boolean delete(String variantID) {
-        try {
-            Connection c = DBUtils.getConnection(); // Kết nối DB
-            String sql = "DELETE FROM ProductVariant WHERE variantID = ?"; // Câu SQL xóa dữ liệu theo variantID
+    // ---------------------- DELETE VARIANT ----------------------
+    public boolean delete(String variantID, String productID) {
+        String sql = "DELETE FROM ProductVariant WHERE variantID = ?";
 
-            PreparedStatement pst = c.prepareStatement(sql); // Chuẩn bị câu lệnh
-            pst.setString(1, variantID); // Gán giá trị variantID
+        try (Connection conn = DBUtils.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
 
-            int i = pst.executeUpdate(); // Thực thi câu lệnh DELETE
-            return i > 0; // Nếu xóa thành công => true
+            pst.setString(1, variantID);
+            int rows = pst.executeUpdate();
+
+            if (rows > 0) {
+                updateIsActiveByStock(productID);
+                return true;
+            }
         } catch (Exception e) {
-            e.printStackTrace(); // In lỗi
+            e.printStackTrace();
         }
-        return false; // Nếu lỗi => false
+        return false;
+    }
+
+    // ---------------------- UPDATE STOCK & SALES WHEN ORDERING ----------------------
+    /**
+     * Decrease stock and increase salesCount when an order is placed.
+     * Ensures stock is not negative.
+     */
+    public boolean updateStockAndSales(String variantID, int quantity) {
+        String sql =
+                "UPDATE ProductVariant " +
+                "SET stock = stock - ?, salesCount = salesCount + ? " +
+                "WHERE variantID = ? AND stock >= ?";
+
+        try (Connection conn = DBUtils.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
+
+            pst.setInt(1, quantity);
+            pst.setInt(2, quantity);
+            pst.setString(3, variantID);
+            pst.setInt(4, quantity);
+
+            int rows = pst.executeUpdate();
+
+            if (rows > 0) {
+                // get productID to sync isActive
+                ProductVariantDTO v = getVariantByID(variantID);
+                if (v != null) {
+                    updateIsActiveByStock(v.getProductID());
+                }
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false; // not enough stock or error
     }
 }

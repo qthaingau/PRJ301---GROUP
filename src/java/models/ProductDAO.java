@@ -33,7 +33,7 @@ public class ProductDAO {
                 product.setProductID(rs.getString("productID"));
                 product.setProductName(rs.getString("productName"));
                 product.setDescription(rs.getString("description"));
-                product.setCategoryID("categoryID");
+                product.setCategoryID(rs.getString("categoryID"));  // ✅ lấy từ ResultSet
                 product.setBrandID(rs.getString("brandID"));
                 product.setCreatedAt(rs.getDate("createdAT").toLocalDate());
                 product.setIsActive(rs.getBoolean("isActive"));
@@ -65,7 +65,7 @@ public class ProductDAO {
                 product.setProductID(rs.getString("productID"));
                 product.setProductName(rs.getString("productName"));
                 product.setDescription(rs.getString("description"));
-                product.setCategoryID("categoryID");
+                product.setCategoryID(rs.getString("categoryID"));  // ✅ lấy từ ResultSet
                 product.setBrandID(rs.getString("brandID"));
                 product.setCreatedAt(rs.getDate("createdAT").toLocalDate());
                 product.setIsActive(rs.getBoolean("isActive"));
@@ -80,12 +80,12 @@ public class ProductDAO {
         List<ProductDTO> listProduct = new ArrayList<>();
         try {
             Connection conn = DBUtils.getConnection();
-            String sql = "SELECT * FROM Product " +
-             "WHERE productName LIKE ? " +
-             "   OR productID LIKE ? " +
-             "   OR categoryID LIKE ? " +
-             "   OR brandID LIKE ? " +
-             "   OR createdAt LIKE ?";
+            String sql = "SELECT * FROM Product "
+                    + "WHERE productName LIKE ? "
+                    + "   OR productID LIKE ? "
+                    + "   OR categoryID LIKE ? "
+                    + "   OR brandID LIKE ? "
+                    + "   OR createdAt LIKE ?";
 
             PreparedStatement pst = conn.prepareStatement(sql);
             pst.setString(1, "%" + keyword + "%");
@@ -113,25 +113,72 @@ public class ProductDAO {
     }
 
     public boolean insert(ProductDTO product) {
-        try {
-            Connection c = DBUtils.getConnection();
-            String sql = "INSERT INTO Product(productID, productName, description, categoryID, brandID, createdAT, isActive)"
-                    + "VALUES(?, ?, ?, ?, ?, ?, ?)";
-            PreparedStatement pst = c.prepareStatement(sql);
+        String sql = "INSERT INTO Product(productID, productName, description, categoryID, brandID, createdAT, isActive) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try ( Connection c = DBUtils.getConnection();  PreparedStatement pst = c.prepareStatement(sql)) {
+
             pst.setString(1, product.getProductID());
             pst.setString(2, product.getProductName());
             pst.setString(3, product.getDescription());
             pst.setString(4, product.getCategoryID());
             pst.setString(5, product.getBrandID());
-            pst.setDate(6, java.sql.Date.valueOf(product.getCreatedAt())); // ✅ convert LocalDate → java.sql.Date
-            pst.setBoolean(7, product.isIsActive()); // ✅ thêm cột isActive nếu có
 
-            int rows = pst.executeUpdate();
-            return rows > 0;
+            // Nếu ngày tạo chưa có thì lấy ngày hiện tại
+            java.time.LocalDate createdAt = product.getCreatedAt() != null
+                    ? product.getCreatedAt()
+                    : java.time.LocalDate.now();
+            pst.setDate(6, java.sql.Date.valueOf(createdAt));
+
+            // ✅ Kiểm tra tổng stock của productID trong ProductVariant
+            boolean isActive = checkStockStatus(product.getProductID());
+            pst.setBoolean(7, isActive);
+
+            return pst.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * ✅ Kiểm tra tổng stock của ProductVariant, nếu > 0 thì còn hàng.
+     */
+    private boolean checkStockStatus(String productID) {
+        String sql = "SELECT COALESCE(SUM(stock), 0) AS totalStock "
+                + "FROM ProductVariant WHERE productID = ?";
+        try ( Connection conn = DBUtils.getConnection();  PreparedStatement pst = conn.prepareStatement(sql)) {
+            pst.setString(1, productID);
+            ResultSet rs = pst.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("totalStock") > 0;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
+    }
+
+    // Cập nhật Product.isActive dựa vào tổng stock trong ProductVariant
+    public void updateIsActiveByStock(String productID) {
+        String sql
+                = "UPDATE Product "
+                + "SET isActive = CASE "
+                + "    WHEN COALESCE((SELECT SUM(stock) FROM ProductVariant WHERE productID = ?), 0) > 0 "
+                + "         THEN 1 "
+                + "    ELSE 0 "
+                + "END "
+                + "WHERE productID = ?";
+
+        try ( Connection conn = DBUtils.getConnection();  PreparedStatement pst = conn.prepareStatement(sql)) {
+
+            pst.setString(1, productID);
+            pst.setString(2, productID);
+            pst.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean delete(String productID) {

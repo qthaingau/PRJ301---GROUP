@@ -5,11 +5,11 @@
 --%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
-<html>
+<html lang="vi">
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="UTF-8">
         <title>Product List</title>
 
         <!-- nếu bạn đã link ở layout chung thì có thể bỏ 2 dòng này -->
@@ -84,7 +84,7 @@
                                                 <a href="MainController?txtAction=viewProductDetail&productID=${p.productID}&productName=${p.productName}">
                                                     viewDetail</a>
                                             </form>
-                                            
+
                                         </td>
 
                                         <c:if test="${user.role eq 'admin'}">

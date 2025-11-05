@@ -27,7 +27,16 @@
                     <span class="navbar-text me-3">
                         Welcome, <span class="fw-bold text-warning">${user.fullName}</span>
                     </span>
+
                     <a class="btn btn-outline-light btn-sm" href="MainController?txtAction=logout">Logout</a>
+                    <c:if test="${user.role eq 'admin'}">
+                        <td class="text-center">
+                            <a href="MainController?txtAction=callSaveProduct&update=false"
+                               class="btn btn-outline-primary btn-sm product-view-btn">
+                                Add new product
+                            </a>
+                        </td>
+                    </c:if>
                 </div>
             </div>
         </nav>       

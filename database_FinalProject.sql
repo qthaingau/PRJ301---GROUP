@@ -169,6 +169,127 @@ CREATE TABLE ProductVariant ( -- Tạo bảng biến thể sản phẩm
     FOREIGN KEY (productID) REFERENCES Product(productID) -- FK Product
 ); -- Mỗi variant là 1 combo product+size+color
 GO
+/* =======================================
+    INSERT DỮ LIỆU VÀO BẢNG PRODUCTVARIANT (54 Biến thể)
+    ======================================= */
+INSERT INTO ProductVariant (variantID, productID, size, color, stock, price, salesCount)
+VALUES
+    -- P001: Nike Football Shoes
+    ('PV001', 'P001', '40', 'Black', 50, 150.00, 12),
+    ('PV002', 'P001', '41', 'Black', 30, 150.00, 8),
+    ('PV003', 'P001', '42', 'Red', 45, 155.00, 5),
+
+    -- P002: Adidas Running Shoes
+    ('PV004', 'P002', '38', 'White', 60, 120.50, 15),
+    ('PV005', 'P002', '39', 'Blue', 40, 125.99, 10),
+    ('PV006', 'P002', '40', 'Black', 55, 120.50, 7),
+
+    -- P003: Puma Training Shoes
+    ('PV007', 'P003', '41', 'Grey', 70, 95.00, 11),
+    ('PV008', 'P003', '42', 'Grey', 60, 95.00, 6),
+
+    -- P004: Reebok Football Boots
+    ('PV009', 'P004', '43', 'Green', 25, 189.99, 4),
+    ('PV010', 'P004', '44', 'Green', 15, 189.99, 2),
+
+    -- P005: Under Armour Running Shoes
+    ('PV011', 'P005', '37', 'Pink', 80, 110.00, 14),
+    ('PV012', 'P005', '38', 'Pink', 75, 110.00, 9),
+
+    -- P006: New Balance Training Shoes
+    ('PV013', 'P006', '40', 'White/Blue', 50, 105.00, 5),
+    ('PV014', 'P006', '41', 'White/Blue', 45, 105.00, 3),
+
+    -- P007: Nike Basketball Shoes
+    ('PV015', 'P007', '43', 'Black/White', 35, 180.00, 7),
+    ('PV016', 'P007', '44', 'Black/White', 25, 180.00, 4),
+
+    -- P008: Adidas Gym Shoes
+    ('PV017', 'P008', '39', 'Red', 90, 75.00, 13),
+    ('PV018', 'P008', '40', 'Red', 85, 75.00, 10),
+
+    -- P009: Asics Running Shoes
+    ('PV019', 'P009', '38', 'Yellow', 100, 130.00, 16),
+
+    -- P010: Nike Crossfit Shoes
+    ('PV020', 'P010', '42', 'Camo', 40, 160.00, 3),
+
+    -- P011: Adidas Football Boots
+    ('PV021', 'P011', '41', 'Yellow', 30, 170.00, 6),
+    ('PV022', 'P011', '42', 'Yellow', 20, 170.00, 4),
+
+    -- P016: Nike Running Shoes
+    ('PV023', 'P016', '37', 'White', 70, 99.99, 14),
+    ('PV024', 'P016', '38', 'White', 65, 99.99, 12),
+    ('PV025', 'P016', '39', 'Black', 50, 102.00, 9),
+
+    -- P022: Nike Gym Shoes
+    ('PV026', 'P022', '41', 'Grey', 80, 85.00, 11),
+    ('PV027', 'P022', '42', 'Black', 75, 85.00, 8),
+
+    -- P027: Under Armour Football Shoes
+    ('PV028', 'P027', '40', 'Green', 40, 145.00, 5),
+    ('PV029', 'P027', '41', 'Green', 30, 145.00, 3),
+    ('PV030', 'P027', '42', 'Blue', 25, 148.00, 1),
+    
+    -- P012: Puma Running Shoes
+    ('PV031', 'P012', '37', 'Red/Black', 60, 115.00, 15),
+    ('PV032', 'P012', '38', 'Red/Black', 55, 115.00, 10),
+
+    -- P013: Reebok Crossfit Shoes
+    ('PV033', 'P013', '42', 'Black', 40, 140.00, 7),
+    ('PV034', 'P013', '43', 'White', 35, 145.00, 5),
+
+    -- P014: Under Armour Basketball Shoes
+    ('PV035', 'P014', '44', 'Blue', 30, 175.00, 4),
+    ('PV036', 'P014', '45', 'Blue', 20, 175.00, 2),
+
+    -- P015: New Balance Football Shoes
+    ('PV037', 'P015', '41', 'Navy', 50, 130.00, 10),
+    ('PV038', 'P015', '42', 'Navy', 40, 130.00, 8),
+
+    -- P017: Asics Training Shoes
+    ('PV039', 'P017', '39', 'Grey/Yellow', 65, 90.00, 12),
+
+    -- P018: Adidas Training Boots
+    ('PV040', 'P018', '43', 'Black/Red', 30, 155.00, 6),
+
+    -- P019: Puma Basketball Shoes
+    ('PV041', 'P019', '42', 'White/Orange', 40, 165.00, 9),
+
+    -- P020: Reebok Running Shoes
+    ('PV042', 'P020', '37', 'Black', 70, 105.00, 14),
+    ('PV043', 'P020', '38', 'Black', 60, 105.00, 11),
+
+    -- P021: Under Armour Crossfit Shoes
+    ('PV044', 'P021', '41', 'Red', 45, 135.00, 8),
+
+    -- P023: Adidas Crossfit Shoes
+    ('PV045', 'P023', '42', 'Green', 50, 140.00, 10),
+    ('PV046', 'P023', '43', 'Green', 40, 140.00, 7),
+
+    -- P024: Puma Basketball Boots
+    ('PV047', 'P024', '44', 'Black', 25, 185.00, 3),
+
+    -- P025: New Balance Running Shoes
+    ('PV048', 'P025', '39', 'Grey', 80, 99.00, 18),
+    ('PV049', 'P025', '40', 'Grey', 75, 99.00, 16),
+
+    -- P026: Reebok Basketball Shoes
+    ('PV050', 'P026', '43', 'White/Blue', 35, 170.00, 5),
+
+    -- P028: Asics Basketball Shoes
+    ('PV051', 'P028', '42', 'Orange', 40, 160.00, 9),
+
+    -- P029: Nike Training Shoes
+    ('PV052', 'P029', '41', 'Black/Grey', 60, 110.00, 12),
+    ('PV053', 'P029', '42', 'Black/Grey', 55, 110.00, 10),
+
+    -- P030: Adidas Gym Boots
+    ('PV054', 'P030', '40', 'Olive', 50, 80.00, 8);
+GO
+-- Kiểm tra dữ liệu
+SELECT * FROM ProductVariant;
 
 /* ===========================
    6. PRODUCTIMAGE

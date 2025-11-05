@@ -30,27 +30,30 @@ public class MainController extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html; charset=UTF-8");
         // request.getParameter
         String txtAction = request.getParameter("txtAction");
+        String url = "/login.jsp";       // chú ý dấu / và đúng path file login
 
-        String url = "login.jsp";
+        String[] userActions = {"login", "logout", "searchUser", "addUser",
+            "callUpdateUser", "updateUser", "deleteUser", "registerUser"};
 
-        // Nhóm action cho từng controller
-        String[] userActions = {"login", "logout", "searchUser", "addUser", "callUpdateUser", "updateUser", "deleteUser", "registerUser"};
-        String[] productActions = {"viewProducts","addProduct", "deleteProduct", "viewProductDetail", "filterProduct"};
-        String[] brandActions = {"", ""};
-        String[] promotionActions = {"", ""};
-        
+        String[] productActions = {"viewProducts", "addProduct", "deleteProduct",
+            "viewProductDetail", "filterProduct",
+            "callSaveProduct", "addProductWithVariant"};
 
         String[] categoryActions = {"viewCategory", "updateCategory"};
 
-        if (Arrays.asList(userActions).contains(txtAction)) {
-            url = "UserController";
-        } else if (Arrays.asList(productActions).contains(txtAction)) {
-            url = "ProductController";
-        } else if (Arrays.asList(categoryActions).contains(txtAction)) {
-            url = "CategoryController";
+        if (txtAction != null) {
+            if (Arrays.asList(userActions).contains(txtAction)) {
+                url = "UserController";
+            } else if (Arrays.asList(productActions).contains(txtAction)) {
+                url = "ProductController";
+            } else if (Arrays.asList(categoryActions).contains(txtAction)) {
+                url = "CategoryController";
+            }
         }
         request.getRequestDispatcher(url).forward(request, response);
     }
