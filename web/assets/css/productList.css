@@ -1,130 +1,225 @@
 /* ===========================
-   Product List Layout
+   BODY THEME CHO PRODUCT LIST
    =========================== */
-
-.product-list-wrapper {
-    background: #ffffff;
-    border-radius: 10px;
-    padding: 24px 28px;
-    margin-top: 24px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+.product-list-body {
+    background: radial-gradient(circle at top, #2b2b2b 0, #000 55%, #000 100%);
+    color: #f5f5f5;
+    font-family: 'Poppins', sans-serif;
 }
 
+/* ===========================
+   Product List Layout
+   =========================== */
+.product-list-wrapper {
+    background: #111111;
+    border-radius: 18px;
+    padding: 24px 28px 32px;
+    margin-top: 40px;
+    box-shadow: 0 22px 40px rgba(0, 0, 0, 0.9);
+    border: 2px solid #ff3b30;
+}
+
+/* Title */
 .product-list-title {
-    font-weight: 600;
-    font-size: 1.6rem;
-    margin-bottom: 18px;
-    color: #1e293b;
-    border-bottom: 2px solid #e5e7eb;
-    padding-bottom: 6px;
+    font-weight: 800;
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #ffffff;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+}
+
+.product-list-title::after {
+    content: "";
+    display: block;
+    width: 70px;
+    height: 3px;
+    background: #ff3b30;
+    margin: 8px auto 0;
+    border-radius: 999px;
 }
 
 /* ===========================
    Search Form
    =========================== */
-
 .product-search-form .input-group-text {
     font-weight: 500;
-    background-color: #f9fafb;
+    background-color: #1b1b1b;
     border-right: none;
+    border-color: #ff3b30;
+    color: #f5f5f5;
 }
 
 .product-search-form .form-control {
     border-left: none;
     box-shadow: none;
+    background-color: #050505;
+    border-color: #ff3b30;
+    color: #f5f5f5;
+}
+
+.product-search-form .form-control::placeholder {
+    color: #9ca3af;
 }
 
 .product-search-form .form-control:focus {
-    box-shadow: 0 0 0 1px #2563eb33;
-    border-color: #2563eb;
+    box-shadow: 0 0 0 1px rgba(255, 59, 48, 0.6);
+    border-color: #ff3b30;
 }
 
-.product-search-form .btn-primary {
-    background-color: #2563eb;
-    border-color: #2563eb;
-    font-weight: 500;
-    padding-inline: 18px;
+/* Nút Apply */
+.btn-apply {
+    background-color: #ff3b30;
+    border-color: #ff3b30;
+    font-weight: 600;
+    padding-inline: 20px;
+    color: #fff;
 }
 
-.product-search-form .btn-primary:hover {
-    background-color: #1d4ed8;
-    border-color: #1d4ed8;
+.btn-apply:hover {
+    background-color: #ff5b4c;
+    border-color: #ff5b4c;
 }
 
 /* ===========================
    Empty State
    =========================== */
-
 .product-empty-alert {
     margin-top: 16px;
-    border-radius: 8px;
+    border-radius: 10px;
 }
 
 /* ===========================
    Product Table
    =========================== */
-
 .product-table-wrapper {
-    margin-top: 12px;
+    margin-top: 16px;
+    background: #fff;
+    border-radius: 16px;
+    border: 2px solid #ff3b30;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 0 18px 35px rgba(0, 0, 0, 0.7);
 }
 
+.product-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0;
+}
+
+/* Header */
 .product-table thead {
-    background-color: #111827;
+    background-color: #000;
     color: #f9fafb;
 }
 
 .product-table thead th {
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
-    border-bottom: none;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #ff3b30;
+    padding: 10px 12px;
+    text-align: center;
 }
 
+/* Body */
 .product-table tbody tr:nth-child(even) {
-    background-color: #f9fafb;
+    background-color: #fdf5f4;
+}
+
+.product-table tbody tr:nth-child(odd) {
+    background-color: #ffffff;
 }
 
 .product-table tbody tr:hover {
-    background-color: #eff6ff;
-    transition: background-color 0.12s ease;
+    background-color: #ffecec;
+    transition: background-color 0.18s ease;
 }
 
 .product-table td {
     font-size: 0.9rem;
     vertical-align: middle;
+    color: #111827;
+    padding: 9px 12px;
+    text-align: center;
 }
 
-/* Status column */
+/* Status column (khi có) */
 .product-table td:nth-child(7) {
     font-weight: 600;
 }
 
-/* Update button */
-.product-view-btn {
-    min-width: 80px;
-    font-size: 0.8rem;
-    padding: 4px 10px;
+/* ===========================
+   Product Link (ID / Name / Description)
+   =========================== */
+a.product-link,
+a.product-link:link,
+a.product-link:visited {
+    display: block;
+    width: 100%;
+    height: 100%;
+    color: #111827 !important;       /* không còn xanh */
+    text-decoration: none !important;
+    padding: 2px 0;
+    transition: all 0.15s ease;
+}
+
+a.product-link:hover {
+    text-decoration: underline !important;
+    color: #b91c1c !important;       /* hơi đỏ khi hover */
+    cursor: pointer;
+}
+
+a.product-link:active {
+    transform: scale(0.98);
+    opacity: 0.85;
+}
+
+/* ===========================
+   Nút View Detail (Action)
+   =========================== */
+.view-detail-btn {
+    display: inline-block;
+    color: #ff3b30;
+    border: 2px solid #ff3b30;
     border-radius: 999px;
+    padding: 3px 12px;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.8rem;
+    transition: 0.22s ease;
+}
+
+.view-detail-btn:hover {
+    background-color: #ff3b30;
+    color: #ffffff;
 }
 
 /* ===========================
    Responsive
    =========================== */
-
 @media (max-width: 768px) {
     .product-list-wrapper {
-        padding: 18px 16px;
-        margin-top: 16px;
+        padding: 20px 18px 24px;
+        margin-top: 24px;
     }
 
     .product-list-title {
-        font-size: 1.3rem;
-        text-align: center;
+        font-size: 1.4rem;
     }
 
     .product-table thead th,
     .product-table td {
-        font-size: 0.8rem;
+        font-size: 0.78rem;
+        padding: 6px 4px;
+    }
+
+    .view-detail-btn {
+        padding: 2px 10px;
+        font-size: 0.75rem;
     }
 }

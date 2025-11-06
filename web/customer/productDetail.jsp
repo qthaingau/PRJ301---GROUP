@@ -39,34 +39,38 @@
                                 <p class="text-muted">This product is currently out of stock.</p>
                             </c:if>
 
-                            <!-- DANH SÁCH CÁC VARIANT -->
+                            <!-- DANH SÁCH VARIANT -->
                             <c:forEach var="v" items="${variants}">
-                                <div class="product-detail-card mb-3 p-3 border rounded">
-                                    <p><span class="label">Variant ID:</span> <span class="value">${v.variantID}</span></p>
-                                    <p><span class="label">Size:</span> <span class="value">${v.size}</span></p>
-                                    <p><span class="label">Color:</span> <span class="value">${v.color}</span></p>
-                                    <p><span class="label">Price:</span> <span class="value">${v.price}</span></p>
+                                <!-- Hiển thị nếu là admin hoặc variant có stock > 0 -->
+                                <c:if test="${isAdmin or v.stock > 0}">
+                                    <div class="product-detail-card mb-3 p-3 border rounded">
+                                        <p><span class="label">Variant ID:</span> <span class="value">${v.variantID}</span></p>
+                                        <p><span class="label">Size:</span> <span class="value">${v.size}</span></p>
+                                        <p><span class="label">Color:</span> <span class="value">${v.color}</span></p>
+                                        <p><span class="label">Price:</span> <span class="value">${v.price}</span></p>
 
-                                    <c:if test="${isAdmin}">
-                                        <p><span class="label">Stock:</span> <span class="value">${v.stock}</span></p>
-                                        <p><span class="label">Sales Count:</span> <span class="value">${v.salesCount}</span></p>
+                                        <!-- Chỉ Admin mới thấy stock, sales count và các nút -->
+                                        <c:if test="${isAdmin}">
+                                            <p><span class="label">Stock:</span> <span class="value">${v.stock}</span></p>
+                                            <p><span class="label">Sales Count:</span> <span class="value">${v.salesCount}</span></p>
 
-                                        <div class="mt-2 d-flex gap-2">
-                                            <!-- UPDATE VARIANT -->
-                                            <a href="/MainController?txtAction=callSaveProduct&productID=${v.productID}&variantID=${v.variantID}&update=true"
-                                               class="btn btn-primary btn-sm">
-                                                Update Variant
-                                            </a>
+                                            <div class="mt-2 d-flex gap-2">
+                                                <!-- UPDATE VARIANT -->
+                                                <a href="MainController?txtAction=callSaveProduct&productID=${v.productID}&variantID=${v.variantID}&update=true"
+                                                   class="btn btn-primary btn-sm">
+                                                    Update Variant
+                                                </a>
 
-                                            <!-- DELETE VARIANT -->
-                                            <a href="/MainController?txtAction=deleteProductWithVariant&productID=${v.productID}&variantID=${v.variantID}"
-                                               class="btn btn-danger btn-sm"
-                                               onclick="return confirm('Are you sure you want to delete this variant?');">
-                                                Delete Variant
-                                            </a>
-                                        </div>
-                                    </c:if>
-                                </div>
+                                                <!-- DELETE VARIANT -->
+                                                <a href="MainController?txtAction=deleteProductWithVariant&productID=${v.productID}&variantID=${v.variantID}"
+                                                   class="btn btn-danger btn-sm"
+                                                   onclick="return confirm('Are you sure you want to delete this variant?');">
+                                                    Delete Variant
+                                                </a>
+                                            </div>
+                                        </c:if>
+                                    </div>
+                                </c:if>
                             </c:forEach>
                         </c:when>
 
@@ -102,7 +106,7 @@
                                             <!-- Chỉ hiện cột Status cho Admin -->
                                             <c:if test="${isAdmin}">
                                                 <th>Status</th>
-                                            </c:if>
+                                                </c:if>
                                             <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
@@ -122,9 +126,7 @@
                                                         <td>${p.createdAt}</td>
                                                         <td>${p.isActive}</td>
                                                         <td class="text-center">
-                                                            <a href="MainController?txtAction=viewProductDetail
-                                                               &productID=${p.productID}
-                                                               &productName=${p.productName}">
+                                                            <a href="MainController?txtAction=viewProductDetail&productID=${p.productID}&productName=${p.productName}">
                                                                 View Detail
                                                             </a>
                                                         </td>
@@ -141,9 +143,7 @@
                                                         <td>${p.brandID}</td>
                                                         <td>${p.createdAt}</td>
                                                         <td class="text-center">
-                                                            <a href="MainController?txtAction=viewProductDetail
-                                                               &productID=${p.productID}
-                                                               &productName=${p.productName}">
+                                                            <a href="MainController?txtAction=viewProductDetail&productID=${p.productID}&productName=${p.productName}">
                                                                 View Detail
                                                             </a>
                                                         </td>

@@ -334,11 +334,16 @@ public class ProductController extends HttpServlet {
             throws ServletException, IOException {
         String pID = request.getParameter("productID");
         String vID = request.getParameter("variantID");
-        ProductDAO productDAO = new ProductDAO();
+
         ProductVariantDAO variantDAO = new ProductVariantDAO();
-        productDAO.delete(pID);
-        variantDAO.delete(vID, pID);
-        request.getRequestDispatcher("home.jsp").forward(request, response);
+        boolean deleted = variantDAO.delete(vID, pID);
+
+        if (deleted) {
+            request.getRequestDispatcher("home.jsp").forward(request, response);
+        } else {
+            request.setAttribute("msg", "Xoá thất bại!");
+            request.getRequestDispatcher("error.jsp").forward(request, response);
+        }
     }
 
     private void processFilterProduct(HttpServletRequest request, HttpServletResponse response)
@@ -455,7 +460,7 @@ public class ProductController extends HttpServlet {
             } else if (txtAction.equals("updateProductWithVariant")) {
                 processAddProductWithVariant(request, response, true);
             } else if (txtAction.equals("deleteProductWithVariant")) {
-
+                processDeleteWithVariant(request, response);
             }
         }
     }

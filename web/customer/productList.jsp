@@ -12,11 +12,13 @@
         <meta charset="UTF-8">
         <title>Product List</title>
 
-        <!-- nếu bạn đã link ở layout chung thì có thể bỏ 2 dòng này -->
-        <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-        <link rel="stylesheet" href="assets/css/product.css">
+        <!-- Bootstrap có thể đã được load ở layout ngoài -->
+        <!-- <link rel="stylesheet" href="assets/css/bootstrap.min.css"> -->
+
+        <!-- CSS theme đen – đỏ – trắng -->
+        <link rel="stylesheet" href="assets/css/productList.css">
     </head>
-    <body>
+    <body class="product-list-body">
 
         <div class="container product-list-wrapper">
             <h3 class="product-list-title">Product List</h3>
@@ -28,7 +30,7 @@
                 <div class="row g-2 align-items-center">
                     <div class="col-md-6">
                         <div class="input-group">
-                            <span class="input-group-text bg-white">Search</span>
+                            <span class="input-group-text bg-dark text-light">Search</span>
                             <input type="text"
                                    class="form-control"
                                    name="keyword"
@@ -36,7 +38,7 @@
                         </div>
                     </div>
                     <div class="col-auto">
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-apply">
                             Apply
                         </button>
                     </div>
@@ -62,37 +64,82 @@
                                     <th>Description</th>
                                     <th>Category ID</th>
                                     <th>Brand ID</th>
-                                    <th>Created At</th>
-                                    <th>Status</th>
-                                        <c:if test="${user.role eq 'Admin'}">
+
+                                    <!-- Status + Action chỉ cho ADMIN -->
+                                    <c:if test="${user.role eq 'admin'}">
+                                        <th>Status</th>
                                         <th class="text-center">Action</th>
-                                        </c:if>
+                                    </c:if>
                                 </tr>
                             </thead>
+
                             <tbody>
                                 <c:forEach var="p" items="${listProducts}">
-                                    <tr>
-                                        <td>${p.productID}</td>
-                                        <td>${p.productName}</td>
-                                        <td>${p.description}</td>
-                                        <td>${p.categoryID}</td>
-                                        <td>${p.brandID}</td>
-                                        <td>${p.createdAt}</td>
-                                        <td>${p.isActive}</td>
-                                        <td>
-                                            <form action="MainController" method="post" class="product-search-form mb-3">
-                                                <a href="MainController?txtAction=viewProductDetail&productID=${p.productID}&productName=${p.productName}">
-                                                    viewDetail</a>
-                                            </form>
+                                    <c:url var="detailUrl" value="MainController">
+                                        <c:param name="txtAction" value="viewProductDetail"/>
+                                        <c:param name="productID" value="${p.productID}"/>
+                                        <c:param name="productName" value="${p.productName}"/>
+                                    </c:url>
 
-                                        </td>
-                                    </tr>
+                                    <!-- ADMIN: thấy tất cả -->
+                                    <c:if test="${user.role eq 'admin'}">
+                                        <tr>
+                                            <td>
+                                                <a href="${detailUrl}" class="product-link">
+                                                    ${p.productID}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="${detailUrl}" class="product-link">
+                                                    ${p.productName}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="${detailUrl}" class="product-link">
+                                                    ${p.description}
+                                                </a>
+                                            </td>
+                                            <td>${p.categoryID}</td>
+                                            <td>${p.brandID}</td>
+                                            <td>${p.isActive}</td>
+                                            <td class="text-center">
+                                                <a href="${detailUrl}" class="view-detail-btn">
+                                                    View Detail
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </c:if>
+
+                                    <!-- USER: chỉ hiện isActive = true, không có Status/Action -->
+                                    <c:if test="${user.role ne 'admin' and p.isActive}">
+                                        <tr>
+                                            <td>
+                                                <a href="${detailUrl}" class="product-link">
+                                                    ${p.productID}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="${detailUrl}" class="product-link">
+                                                    ${p.productName}
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <a href="${detailUrl}" class="product-link">
+                                                    ${p.description}
+                                                </a>
+                                            </td>
+                                            <td>${p.categoryID}</td>
+                                            <td>${p.brandID}</td>
+                                        </tr>
+                                    </c:if>
                                 </c:forEach>
                             </tbody>
+
                         </table>
                     </div>
                 </c:otherwise>
             </c:choose>
         </div>
+
     </body>
 </html>
