@@ -40,7 +40,7 @@ public class MainController extends HttpServlet {
         String url = "/home.jsp";       // chú ý dấu / và đúng path file login
 
         String[] userActions = {"login", "logout", "searchUser", "addUser",
-            "callUpdateUser", "updateUser", "deleteUser", "registerUser"};
+            "callUpdateUser", "updateUser", "deleteUser", "registerUser", "showRegister"};
 
         String[] productActions = {"viewProducts", "addProduct", "deleteProduct",
             "viewProductDetail", "filterProduct",

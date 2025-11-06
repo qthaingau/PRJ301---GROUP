@@ -29,7 +29,7 @@
                         Welcome, <span class="fw-bold text-warning">${user.fullName}</span>
                     </span>
 
-                    <a class="btn btn-outline-light btn-sm" href="MainController?txtAction=logout">Logout</a>
+                    <a class="btn btn-outline-light btn-sm" href="MainController?txtAction=showRegister">SIGN UP</a>
                     <c:if test="${user.role eq 'admin'}">
                         <td class="text-center">
                             <a href="MainController?txtAction=callSaveProduct&update=false"
