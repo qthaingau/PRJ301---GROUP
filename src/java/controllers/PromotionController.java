@@ -57,6 +57,7 @@ public class PromotionController extends HttpServlet {
 		processRequest(request, response);
 	}
 
+	// xác định hành động cần thực hiện rồi chuyển tiếp tới trang phù hợp
 	private void processRequest(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
@@ -102,12 +103,14 @@ public class PromotionController extends HttpServlet {
 		request.getRequestDispatcher(destination).forward(request, response);
 	}
 
+	//tải toàn bộ danh sách khuyến mãi và đẩy sang trang quản lý
 	private String viewPromotions(HttpServletRequest request) throws Exception {
 		PromotionDAO dao = new PromotionDAO();
 	request.setAttribute(ATTR_PROMOTION_LIST, dao.getAllPromotions());
 		return LIST_PAGE;
 	}
 
+	//dựng DTO, kiểm tra hợp lệ rồi ghi DB
 	private String addPromotion(HttpServletRequest request) throws Exception {
 		PromotionDTO dto = buildPromotionFromRequest(request);
 		List<String> errors = validatePromotion(dto, true);
@@ -128,6 +131,7 @@ public class PromotionController extends HttpServlet {
 		return viewPromotions(request);
 	}
 
+	//lấy dữ liệu khuyến mãi hiện tại để hiển thị lên form cập nhật
 	private String prepareUpdatePromotion(HttpServletRequest request) throws Exception {
 		String discountID = request.getParameter(PARAM_DISCOUNT_ID);
 		if (isBlank(discountID)) {
@@ -145,6 +149,7 @@ public class PromotionController extends HttpServlet {
 		return showPromotionForm(request, dto, ACTION_UPDATE, TITLE_UPDATE);
 	}
 
+	//xử lý submit cập nhật: dựng DTO, validate và gọi DAO update.
 	private String updatePromotion(HttpServletRequest request) throws Exception {
 		PromotionDTO dto = buildPromotionFromRequest(request);
 		List<String> errors = validatePromotion(dto, false);
@@ -165,6 +170,7 @@ public class PromotionController extends HttpServlet {
 		return viewPromotions(request);
 	}
 
+	//xóa một khuyến mãi theo discountID, sau đó tải lại danh sách
 	private String deletePromotion(HttpServletRequest request) throws Exception {
 		String discountID = request.getParameter(PARAM_DISCOUNT_ID);
 		if (isBlank(discountID)) {
@@ -183,6 +189,7 @@ public class PromotionController extends HttpServlet {
 		return viewPromotions(request);
 	}
 
+	//chuẩn bị dữ liệu hiển thị form (thêm/sửa) với DTO và thông tin tiêu đề/hành động
 	private String showPromotionForm(HttpServletRequest request, PromotionDTO dto, String action, String title) {
 	request.setAttribute(ATTR_PROMOTION, dto);
 	request.setAttribute(ATTR_FORM_ACTION, action);
@@ -190,6 +197,7 @@ public class PromotionController extends HttpServlet {
 		return FORM_PAGE;
 	}
 
+	//chuyển các tham số request thành PromotionDTO, parse kiểu dữ liệu phức tạp
 	private PromotionDTO buildPromotionFromRequest(HttpServletRequest request) {
 	String discountID = trimOrNull(request.getParameter(PARAM_DISCOUNT_ID));
 	String name = trimOrNull(request.getParameter(PARAM_DISCOUNT_NAME));
@@ -222,6 +230,7 @@ public class PromotionController extends HttpServlet {
 		return dto;
 	}
 
+	//kiểm tra Promotion; trả về danh sách lỗi nếu có
 	private List<String> validatePromotion(PromotionDTO dto, boolean isCreate) {
 		List<String> errors = new ArrayList<>();
 		if (isCreate && isBlank(dto.getDiscountID())) {
