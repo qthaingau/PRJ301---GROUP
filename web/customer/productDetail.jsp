@@ -99,7 +99,10 @@
                                             <th>Category ID</th>
                                             <th>Brand ID</th>
                                             <th>Created At</th>
-                                            <th>Status</th>
+                                            <!-- Chỉ hiện cột Status cho Admin -->
+                                            <c:if test="${isAdmin}">
+                                                <th>Status</th>
+                                            </c:if>
                                             <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
