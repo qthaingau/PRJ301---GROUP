@@ -82,6 +82,12 @@
                                         Update This Variant
                                     </a>
                                 </div>
+                                <div class="mt-3">
+                                    <a href="${pageContext.request.contextPath}/MainController?txtAction=deleteProductWithVariant&productID=${productDetail.productID}&variantID=${productDetail.variantID}"
+                                       class="btn btn-primary">
+                                        Delete
+                                    </a>
+                                </div>
                             </c:if>
                         </c:when>
 

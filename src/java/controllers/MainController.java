@@ -44,7 +44,7 @@ public class MainController extends HttpServlet {
 
         String[] productActions = {"viewProducts", "addProduct", "deleteProduct",
             "viewProductDetail", "filterProduct",
-            "callSaveProduct", "addProductWithVariant", "updateProductWithVariant"};
+            "callSaveProduct", "addProductWithVariant", "updateProductWithVariant", "deleteProductWithVariant"};
 
         String[] categoryActions = {"viewCategory", "updateCategory"};
 

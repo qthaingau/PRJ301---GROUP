@@ -4,6 +4,7 @@
  */
 package controllers;
 
+import com.sun.org.apache.bcel.internal.generic.AALOAD;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -329,6 +330,17 @@ public class ProductController extends HttpServlet {
         response.sendRedirect("MainController?txtAction=viewProducts");
     }
 
+        private void processDeleteWithVariant(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String pID = request.getParameter("productID");
+        String vID = request.getParameter("variantID");
+        ProductDAO productDAO = new ProductDAO();
+        ProductVariantDAO variantDAO = new ProductVariantDAO();
+        productDAO.delete(pID);
+        variantDAO.delete(vID, pID);
+        request.getRequestDispatcher("home.jsp").forward(request, response);
+    }
+        
     private void processFilterProduct(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String keyword = request.getParameter("keyword");
@@ -416,6 +428,8 @@ public class ProductController extends HttpServlet {
                 processCallSaveProduct(request, response);
             } else if (txtAction.equals("updateProductWithVariant")) {
                 processAddProductWithVariant(request, response, true);
+            } else if (txtAction.equals("deleteProductWithVariant")) {
+                
             }
         }
     }
