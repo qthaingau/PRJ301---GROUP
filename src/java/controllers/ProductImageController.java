@@ -43,6 +43,7 @@ public class ProductImageController extends HttpServlet {
 		processRequest(request, response);
 	}
 
+	// Xác định action CRUD ảnh sản phẩm và điều phối tới xử lý tương ứng.
 	private void processRequest(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
@@ -88,6 +89,7 @@ public class ProductImageController extends HttpServlet {
 		request.getRequestDispatcher(destination).forward(request, response);
 	}
 
+	//tải danh sách ảnh của sản phẩm và hiển thị trang quản lý
 	private String viewImages(HttpServletRequest request) {
 		String productID = request.getParameter(PARAM_PRODUCT_ID);
 		if (isBlank(productID)) {
@@ -99,6 +101,7 @@ public class ProductImageController extends HttpServlet {
 		return PRODUCT_IMAGE_PAGE;
 	}
 
+	//thêm ảnh mới cho sản phẩm, đảm bảo thiết lập ảnh chính nếu cần
 	private String addImage(HttpServletRequest request) {
 		String productID = request.getParameter(PARAM_PRODUCT_ID);
 		String imageUrl = request.getParameter(PARAM_IMAGE_URL);
@@ -133,6 +136,7 @@ public class ProductImageController extends HttpServlet {
 		return PRODUCT_IMAGE_PAGE;
 	}
 
+	//xóa một ảnh cụ thể của sản phẩm rồi tải lại danh sách
 	private String deleteImage(HttpServletRequest request) {
 		String imageID = request.getParameter(PARAM_IMAGE_ID);
 		String productID = request.getParameter(PARAM_PRODUCT_ID);
@@ -154,6 +158,7 @@ public class ProductImageController extends HttpServlet {
 		return PRODUCT_IMAGE_PAGE;
 	}
 
+	//đặt một ảnh làm ảnh chính cho sản phẩm, hủy trạng thái chính các ảnh còn lại
 	private String setMainImage(HttpServletRequest request) {
 		String imageID = request.getParameter(PARAM_IMAGE_ID);
 		String productID = request.getParameter(PARAM_PRODUCT_ID);
@@ -177,6 +182,7 @@ public class ProductImageController extends HttpServlet {
 		return PRODUCT_IMAGE_PAGE;
 	}
 
+	//cập nhật URL ảnh hiện có, trả form về với phản hồi phù hợp.
 	private String updateImageUrl(HttpServletRequest request) {
 		String imageID = request.getParameter(PARAM_IMAGE_ID);
 		String productID = request.getParameter(PARAM_PRODUCT_ID);
@@ -203,6 +209,7 @@ public class ProductImageController extends HttpServlet {
 		return PRODUCT_IMAGE_PAGE;
 	}
 
+	//xóa toàn bộ ảnh của sản phẩm rồi trả về trang quản lý với thông báo
 	private String deleteAllImages(HttpServletRequest request) {
 		String productID = request.getParameter(PARAM_PRODUCT_ID);
 		if (isBlank(productID)) {
@@ -222,14 +229,15 @@ public class ProductImageController extends HttpServlet {
 		return PRODUCT_IMAGE_PAGE;
 	}
 
+	//lấy danh sách ảnh và ảnh chính từ DAO, gắn vào request để JSP hiển thị
 	private void populateProductImages(HttpServletRequest request, String productID) {
 		ProductImageDAO dao = new ProductImageDAO();
 		List<ProductImageDTO> images = dao.getImagesByProductID(productID);
 		ProductImageDTO mainImage = dao.getMainImageByProductID(productID);
 
-	request.setAttribute(ATTR_PRODUCT_ID, productID);
-	request.setAttribute(ATTR_IMAGES_LIST, images);
-	request.setAttribute(ATTR_MAIN_IMAGE, mainImage);
+		request.setAttribute(ATTR_PRODUCT_ID, productID);
+		request.setAttribute(ATTR_IMAGES_LIST, images);
+		request.setAttribute(ATTR_MAIN_IMAGE, mainImage);
 	}
 
 	private boolean isBlank(String value) {

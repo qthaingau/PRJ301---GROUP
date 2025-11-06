@@ -46,20 +46,20 @@ public class ProductDAO {
 
     public ProductDTO getProductByID(String productID) {
         try {
-            // 1 - Tạo kết nối
+            //Tạo kết nối
             Connection conn = DBUtils.getConnection();
 
-            // 2 - Tạo câu lệnh
+            //Tạo truy vấn
             String sql = "SELECT * FROM Product WHERE productID = ?";
 
-            // 3 - Tạo statement de co the run cau lenh
+            //Tạo statement de co the run cau lenh
             PreparedStatement pst = conn.prepareStatement(sql);
             pst.setString(1, productID);
 
-            // 4 - Thực thi câu lệnh
+            //Thực thi truy vấn
             ResultSet rs = pst.executeQuery();
 
-            // 5 - Kiểm tra
+            //Kiểm tra
             while (rs.next()) {
                 ProductDTO product = new ProductDTO();
                 product.setProductID(rs.getString("productID"));
@@ -129,7 +129,7 @@ public class ProductDAO {
                     : java.time.LocalDate.now();
             pst.setDate(6, java.sql.Date.valueOf(createdAt));
 
-            // ✅ Kiểm tra tổng stock của productID trong ProductVariant
+            // Kiểm tra stock của productID trong ProductVariant
             boolean isActive = checkStockStatus(product.getProductID());
             pst.setBoolean(7, isActive);
 
@@ -142,7 +142,7 @@ public class ProductDAO {
     }
 
     /**
-     * ✅ Kiểm tra tổng stock của ProductVariant, nếu > 0 thì còn hàng.
+     *Kiểm tra tổng stock của ProductVariant, nếu > 0 thì còn hàng.
      */
     private boolean checkStockStatus(String productID) {
         String sql = "SELECT COALESCE(SUM(stock), 0) AS totalStock "
