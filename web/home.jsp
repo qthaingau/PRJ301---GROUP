@@ -19,29 +19,7 @@
             </form>
 
             <script src="assets/js/autoRedirect.js"></script>
-        </c:if>
-        <!-- navbar -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#">User Dashboard</a>
-                <div class="d-flex">
-                    <span class="navbar-text me-3">
-                        Welcome, <span class="fw-bold text-warning">${user.fullName}</span>
-                    </span>
-
-                    <a class="btn btn-outline-light btn-sm" href="MainController?txtAction=showRegister">SIGN UP</a>
-                    <c:if test="${user.role eq 'admin'}">
-                        <td class="text-center">
-                            <a href="MainController?txtAction=callSaveProduct&update=false"
-                               class="btn btn-outline-primary btn-sm product-view-btn">
-                                Add new product
-                            </a>
-                        </td>
-                    </c:if>
-                </div>
-            </div>
-        </nav>       
-
+        </c:if>     
         <!-- main content -->
         <div class="container mt-4">
             <jsp:include page="/customer/productList.jsp"/>
