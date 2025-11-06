@@ -1,3 +1,107 @@
 <%-- any content can be specified here e.g.: --%>
 <%@ page pageEncoding="UTF-8" %>
-<h2>Hello World!</h2>
+<link rel="stylesheet" href="assets/css/header.css">
+<script src="assets/js/header.js"></script>
+<!-- Header Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
+    <div class="container-fluid">
+
+        <!-- Logo -->
+        <a class="navbar-brand d-flex align-items-center" href="home">
+            <img src="img/logo.png" alt="Logo" width="45" height="45" class="me-2">
+            <span class="fw-bold text-warning">HTV Sport</span>
+        </a>
+
+        <!-- Thanh tìm kiếm -->
+        <form class="d-flex ms-auto me-3 search-bar" action="search" method="get" style="width: 350px;">
+            <input class="form-control me-2" type="search" placeholder="Tìm kiếm sản phẩm..." name="keyword">
+            <button class="btn btn-outline-warning" type="submit">
+                <i class="bi bi-search">🔍</i>
+            </button>
+        </form>
+
+        <!-- Icon login + giỏ hàng -->
+        <ul class="navbar-nav mb-2 mb-lg-0 d-flex align-items-center">
+            <!-- Nếu chưa đăng nhập -->
+            <c:if test="${empty sessionScope.user}">
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="login.jsp">
+                        <i class="bi bi-person"></i> Đăng nhập
+                    </a>
+                </li>
+            </c:if>
+
+            <!-- Nếu đã đăng nhập -->
+            <c:if test="${not empty sessionScope.user}">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="userMenu" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-circle"></i>
+                        Welcome, <strong>${sessionScope.user.fullName}</strong>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="profile.jsp">Trang cá nhân</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="logout">Đăng xuất</a></li>
+                    </ul>
+                </li>
+            </c:if>
+
+            <!-- Giỏ hàng -->
+            <li class="nav-item ms-3">
+                <a class="nav-link text-white" href="cart.jsp">
+                    <i class="bi bi-cart"></i> Giỏ hàng
+                    <c:if test="${not empty sessionScope.cart}">
+                        <span class="badge bg-warning text-dark">${sessionScope.cart.size()}</span>
+                    </c:if>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Menu chính -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark border-top border-secondary">
+    <div class="container-fluid justify-content-center">
+        <ul class="navbar-nav">
+
+            <!-- Trang chủ -->
+            <li class="nav-item">
+                <a class="nav-link text-white px-3" href="home.jsp">Trang chủ</a>
+            </li>
+
+            <!-- Thương hiệu -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-white px-3" href="#" data-bs-toggle="dropdown">Thương hiệu</a>
+                <ul class="dropdown-menu bg-dark">
+                    <li><a class="dropdown-item text-white" href="brand?name=Nike">Giày hãng Nike</a></li>
+                    <li><a class="dropdown-item text-white" href="brand?name=Adidas">Giày hãng Adidas</a></li>
+                    <li><a class="dropdown-item text-white" href="brand?name=Puma">Giày hãng Puma</a></li>
+                    <li><a class="dropdown-item text-white" href="brand?name=Mizuno">Giày hãng Mizuno</a></li>
+                </ul>
+            </li>
+
+            <!-- Các loại giày -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle text-white px-3" href="#" data-bs-toggle="dropdown">Các loại giày</a>
+                <ul class="dropdown-menu bg-dark">
+                    <li><a class="dropdown-item text-white" href="category?type=running">Giày chạy bộ</a></li>
+                    <li><a class="dropdown-item text-white" href="category?type=soccer">Giày bóng đá</a></li>
+                </ul>
+            </li>
+
+            <!-- Phụ kiện -->
+            <li class="nav-item">
+                <a class="nav-link text-white px-3" href="accessory.jsp">Phụ kiện</a>
+            </li>
+
+            <!-- Profile (nếu đã login) -->
+            <c:if test="${not empty sessionScope.user}">
+                <li class="nav-item">
+                    <a class="nav-link text-white px-3" href="profile.jsp">Profile</a>
+                </li>
+            </c:if>
+
+        </ul>
+    </div>
+</nav>
+
