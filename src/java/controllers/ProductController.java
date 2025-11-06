@@ -4,7 +4,6 @@
  */
 package controllers;
 
-import com.sun.org.apache.bcel.internal.generic.AALOAD;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -20,6 +19,7 @@ import models.ProductDAO;
 import models.ProductDTO;
 import models.ProductVariantDAO;
 import models.ProductVariantDTO;
+import models.UserDTO;
 
 /**
  *
@@ -330,7 +330,7 @@ public class ProductController extends HttpServlet {
         response.sendRedirect("MainController?txtAction=viewProducts");
     }
 
-        private void processDeleteWithVariant(HttpServletRequest request, HttpServletResponse response)
+    private void processDeleteWithVariant(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String pID = request.getParameter("productID");
         String vID = request.getParameter("variantID");
@@ -340,7 +340,7 @@ public class ProductController extends HttpServlet {
         variantDAO.delete(vID, pID);
         request.getRequestDispatcher("home.jsp").forward(request, response);
     }
-        
+
     private void processFilterProduct(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String keyword = request.getParameter("keyword");
@@ -365,19 +365,45 @@ public class ProductController extends HttpServlet {
 
     private void processViewProductDetail(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String keyword = request.getParameter("productID");
+
+        // Get params
+        String productID = request.getParameter("productID");
         String productName = request.getParameter("productName");
 
-        ProductVariantDAO productDAO = new ProductVariantDAO();
-        ProductVariantDTO productDTO = null;
+        ProductVariantDAO variantDAO = new ProductVariantDAO();
+
+        // Get role from session
+        HttpSession session = request.getSession();
+        UserDTO user = (UserDTO) session.getAttribute("user");
+        String role = null;
+        if (user != null) {
+            role = user.getRole();
+        }
+        boolean isAdmin = "admin".equalsIgnoreCase(role);
 
         try {
-            productDTO = productDAO.getVariantByProductID(keyword);
-            request.setAttribute("productDetail", productDTO);
-            request.setAttribute("productID", keyword);
-            HttpSession session = request.getSession();
-            session.setAttribute("productName", productName);
-            request.getRequestDispatcher("/customer/productDetail.jsp").forward(request, response);
+            // Choose correct DAO method
+            List<ProductVariantDTO> variants;
+            if (isAdmin) {
+                variants = variantDAO.getAllVariantsByProductID(productID); // include stock = 0
+            } else {
+                variants = variantDAO.getActiveVariantsByProductID(productID); // only stock > 0
+            }
+
+            // Set attributes
+            request.setAttribute("productID", productID);
+            request.setAttribute("productName", productName);
+            request.setAttribute("variants", variants);
+            request.setAttribute("isAdmin", isAdmin);
+
+            if (!variants.isEmpty()) {
+                request.setAttribute("productDetail", variants.get(0));
+            }
+
+            // Forward
+            request.getRequestDispatcher("/customer/productDetail.jsp")
+                    .forward(request, response);
+
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("msg", "Error viewing product detail!");
@@ -429,7 +455,7 @@ public class ProductController extends HttpServlet {
             } else if (txtAction.equals("updateProductWithVariant")) {
                 processAddProductWithVariant(request, response, true);
             } else if (txtAction.equals("deleteProductWithVariant")) {
-                
+
             }
         }
     }
