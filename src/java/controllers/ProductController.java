@@ -4,6 +4,7 @@
  */
 package controllers;
 
+import com.sun.org.apache.bcel.internal.generic.AALOAD;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -67,16 +68,14 @@ public class ProductController extends HttpServlet {
     private void processAddProductWithVariant(HttpServletRequest request, HttpServletResponse response, boolean update)
             throws ServletException, IOException {
 
-        if (update == true) {
-            request.setAttribute("update", true);
-        }
+        // *** CHANGED: dùng 1 dòng set luôn, không if (update == true) nữa
+        request.setAttribute("update", update);
 
-
-        // Regex for IDs: P***, C***, B***, V***
+        // Regex for IDs: P***, C***, B***, PV***
         String regexP = "^P\\d{3}$";
         String regexC = "^C\\d{3}$";
         String regexB = "^B\\d{3}$";
-        String regexV = "^V\\d{3}$";
+        String regexV = "^PV\\d{3}$";   // (giữ nguyên như bản gần nhất của bạn)
 
         // --- Read form parameters ---
         String productID = request.getParameter("txtProductID");
@@ -111,7 +110,7 @@ public class ProductController extends HttpServlet {
 
         boolean hasError = false;
 
-        // Lấy sẵn variant cũ khi update (dùng để giữ size/color/stock/price)
+        // Lấy sẵn variant cũ khi update (để lấy salesCount)
         ProductVariantDTO oldVariant = null;
         if (update && variantID != null && !variantID.trim().isEmpty()) {
             oldVariant = variantDAO.getVariantByID(variantID.trim());
@@ -179,7 +178,8 @@ public class ProductController extends HttpServlet {
             error_variantID = "Variant ID cannot be empty!";
             hasError = true;
         } else if (!variantID.trim().matches(regexV)) {
-            error_variantID = "Variant ID must follow format V*** (e.g., V001).";
+            // *** CHANGED: message cho khớp pattern mới PV***
+            error_variantID = "Variant ID must follow format PV*** (e.g., PV001).";
             hasError = true;
         } else {
             if (!update) { // ADD: không được trùng
@@ -198,66 +198,73 @@ public class ProductController extends HttpServlet {
         int stock = 0;
         double price = 0;
 
-        // --- Validate Size/Color/Stock/Price CHỈ KHI ADD ---
-        if (!update) {
-            // Size
-            if (size == null || size.trim().isEmpty()) {
-                error_size = "Size cannot be empty!";
-                hasError = true;
-            }
+        // *** CHANGED TOÀN BỘ KHỐI NÀY ***
+        // Trước đây: chỉ validate size/color/stock/price khi !update,
+        // còn update thì lấy lại từ oldVariant -> không bao giờ đổi được dữ liệu.
+        // Bây giờ: validate cho CẢ add & update, luôn dùng giá trị user nhập.
+        // --- Validate Size ---
+        if (size == null || size.trim().isEmpty()) {
+            error_size = "Size cannot be empty!";
+            hasError = true;
+        }
 
-            // Color
-            if (color == null || color.trim().isEmpty()) {
-                error_color = "Color cannot be empty!";
-                hasError = true;
-            }
+        // --- Validate Color ---
+        if (color == null || color.trim().isEmpty()) {
+            error_color = "Color cannot be empty!";
+            hasError = true;
+        }
 
-            // Stock
-            if (stockStr == null || stockStr.trim().isEmpty()) {
-                error_stock = "Stock cannot be empty!";
-                hasError = true;
-            } else {
-                try {
-                    stock = Integer.parseInt(stockStr.trim());
-                    if (stock < 0) {
-                        error_stock = "Stock cannot be negative!";
-                        hasError = true;
-                    }
-                } catch (NumberFormatException e) {
-                    error_stock = "Stock must be a valid integer!";
-                    hasError = true;
-                }
-            }
-
-            // Price
-            if (priceStr == null || priceStr.trim().isEmpty()) {
-                error_price = "Price cannot be empty!";
-                hasError = true;
-            } else {
-                try {
-                    price = Double.parseDouble(priceStr.trim());
-                    if (price < 0) {
-                        error_price = "Price cannot be negative!";
-                        hasError = true;
-                    }
-                } catch (NumberFormatException e) {
-                    error_price = "Price must be a valid number!";
-                    hasError = true;
-                }
-            }
+        // --- Validate Stock ---
+        if (stockStr == null || stockStr.trim().isEmpty()) {
+            error_stock = "Stock cannot be empty!";
+            hasError = true;
         } else {
-            // UPDATE: dùng lại dữ liệu cũ của variant để không bị null/0
-            if (oldVariant != null) {
-                size = oldVariant.getSize();
-                color = oldVariant.getColor();
-                stock = oldVariant.getStock();
-                price = oldVariant.getPrice();
+            try {
+                stock = Integer.parseInt(stockStr.trim());
+                if (stock < 0) {
+                    error_stock = "Stock cannot be negative!";
+                    hasError = true;
+                }
+            } catch (NumberFormatException e) {
+                error_stock = "Stock must be a valid integer!";
+                hasError = true;
+            }
+        }
+
+        // --- Validate Price ---
+        if (priceStr == null || priceStr.trim().isEmpty()) {
+            error_price = "Price cannot be empty!";
+            hasError = true;
+        } else {
+            try {
+                price = Double.parseDouble(priceStr.trim());
+                if (price < 0) {
+                    error_price = "Price cannot be negative!";
+                    hasError = true;
+                }
+            } catch (NumberFormatException e) {
+                error_price = "Price must be a valid number!";
+                hasError = true;
             }
         }
 
         // --- Create DTOs ---
-        ProductDTO product = new ProductDTO(productID, productName, description,
-                categoryID, brandID, null, true);
+        ProductDTO product = new ProductDTO(
+                productID,
+                productName,
+                description,
+                categoryID,
+                brandID,
+                null,
+                true
+        );
+
+        // *** CHANGED: chỉ giữ lại salesCount cũ khi update,
+        // không override size/color/stock/price bằng oldVariant nữa
+        int salesCount = 0;
+        if (update && oldVariant != null) {
+            salesCount = oldVariant.getSalesCount();
+        }
 
         ProductVariantDTO variant = new ProductVariantDTO(
                 variantID,
@@ -266,17 +273,18 @@ public class ProductController extends HttpServlet {
                 color,
                 stock,
                 price,
-                (oldVariant != null ? oldVariant.getSalesCount() : 0)
+                salesCount
         );
 
         String error = "";
 
         // --- If no validation error, try to insert/update DB ---
         if (!hasError) {
-            try {
-                boolean ok1;
-                boolean ok2;
+            // *** CHANGED: khởi tạo giá trị mặc định cho ok1, ok2
+            boolean ok1 = false;
+            boolean ok2 = false;
 
+            try {
                 if (update) {
                     ok1 = productDAO.update(product);
                     ok2 = variantDAO.update(variant);
@@ -284,16 +292,16 @@ public class ProductController extends HttpServlet {
                     ok1 = productDAO.insert(product);
                     ok2 = variantDAO.insert(variant);
                 }
-
-                if (!ok1 || !ok2) {
-                    error = update
-                            ? "Failed to update product or variant!"
-                            : "Failed to add product or variant!";
-                    hasError = true;
-                }
             } catch (Exception e) {
                 e.printStackTrace();
                 error = "System error: " + e.getMessage();
+                hasError = true;
+            }
+
+            if (!ok1 || !ok2) {
+                error = update
+                        ? "Failed to update product or variant!"
+                        : "Failed to add product or variant!";
                 hasError = true;
             }
         }
@@ -322,6 +330,17 @@ public class ProductController extends HttpServlet {
         response.sendRedirect("MainController?txtAction=viewProducts");
     }
 
+        private void processDeleteWithVariant(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String pID = request.getParameter("productID");
+        String vID = request.getParameter("variantID");
+        ProductDAO productDAO = new ProductDAO();
+        ProductVariantDAO variantDAO = new ProductVariantDAO();
+        productDAO.delete(pID);
+        variantDAO.delete(vID, pID);
+        request.getRequestDispatcher("home.jsp").forward(request, response);
+    }
+        
     private void processFilterProduct(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String keyword = request.getParameter("keyword");
@@ -407,8 +426,10 @@ public class ProductController extends HttpServlet {
                 processAddProductWithVariant(request, response, false);
             } else if (txtAction.equals("callSaveProduct")) {
                 processCallSaveProduct(request, response);
-            } else if (txtAction.equals("ProductWithVariant")) {
+            } else if (txtAction.equals("updateProductWithVariant")) {
                 processAddProductWithVariant(request, response, true);
+            } else if (txtAction.equals("deleteProductWithVariant")) {
+                
             }
         }
     }

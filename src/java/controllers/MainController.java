@@ -37,14 +37,14 @@ public class MainController extends HttpServlet {
         String txtAction = request.getParameter("txtAction");
         
 
-        String url = "/login.jsp";       // chú ý dấu / và đúng path file login
+        String url = "/home.jsp";       // chú ý dấu / và đúng path file login
 
         String[] userActions = {"login", "logout", "searchUser", "addUser",
-            "callUpdateUser", "updateUser", "deleteUser", "registerUser"};
+            "callUpdateUser", "updateUser", "deleteUser", "registerUser", "showRegister"};
 
         String[] productActions = {"viewProducts", "addProduct", "deleteProduct",
             "viewProductDetail", "filterProduct",
-            "callSaveProduct", "addProductWithVariant", "updateProductWithVariant"};
+            "callSaveProduct", "addProductWithVariant", "updateProductWithVariant", "deleteProductWithVariant"};
 
         String[] categoryActions = {"viewCategory", "updateCategory"};
 

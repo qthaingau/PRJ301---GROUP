@@ -77,12 +77,15 @@
                             <!-- NÚT UPDATE: update đúng variant đang xem -->
                             <c:if test="${user.role eq 'admin'}">
                                 <div class="mt-3">
-                                    <a href="MainController?txtAction=callSaveProduct
-                                             &productID=${productDetail.productID}
-                                             &variantID=${productDetail.variantID}
-                                             &update=true"
+                                    <a href="${pageContext.request.contextPath}/MainController?txtAction=callSaveProduct&productID=${productDetail.productID}&variantID=${productDetail.variantID}&update=true"
                                        class="btn btn-primary">
                                         Update This Variant
+                                    </a>
+                                </div>
+                                <div class="mt-3">
+                                    <a href="${pageContext.request.contextPath}/MainController?txtAction=deleteProductWithVariant&productID=${productDetail.productID}&variantID=${productDetail.variantID}"
+                                       class="btn btn-primary">
+                                        Delete
                                     </a>
                                 </div>
                             </c:if>
@@ -135,8 +138,8 @@
 
                                                     <td class="text-center">
                                                         <a href="MainController?txtAction=viewProductDetail
-                                                                 &productID=${p.productID}
-                                                                 &productName=${p.productName}">
+                                                           &productID=${p.productID}
+                                                           &productName=${p.productName}">
                                                             View Detail
                                                         </a>
                                                     </td>

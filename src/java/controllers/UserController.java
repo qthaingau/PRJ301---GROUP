@@ -105,6 +105,8 @@ public class UserController extends HttpServlet {
             processLogout(request, response);
         } else if (txtAction.equals("registerUser")) {
             processRegister(request, response);
+        }else if(txtAction.equals("showRegister")) {
+            request.getRequestDispatcher("register.jsp").forward(request, response);
         }
     }
 
