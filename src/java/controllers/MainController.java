@@ -22,11 +22,11 @@ public class MainController extends HttpServlet {
         String url = "home.jsp"; // default
 
         String[] userActions = {"login", "logout", "searchUser", "addUser",
-                "callUpdateUser", "updateUser", "deleteUser", "registerUser", "showRegister", "changePassword", "uploadAvatar"};
+            "callUpdateUser", "updateUser", "deleteUser", "registerUser", "showRegister", "changePassword", "uploadAvatar"};
 
         String[] productActions = {"viewProducts", "addProduct", "deleteProduct",
-                "viewProductDetail", "filterProduct",
-                "callSaveProduct", "addProductWithVariant", "updateProductWithVariant", "deleteProductWithVariant", "toggleProductStatus"};
+            "viewProductDetail", "filterProduct",
+            "callSaveProduct", "addProductWithVariant", "updateProductWithVariant", "deleteProductWithVariant", "toggleProductStatus"};
 
         String[] brandActions = {"viewBrandList", "updateBrand", "addBrand", "filterBrand", "callBrandForm"};
         String[] categoryActions = {"viewCategoryList", "updateCategory", "addCategory", "callCategoryForm", "filterCategory", "deleteCategory"};
@@ -45,8 +45,10 @@ public class MainController extends HttpServlet {
                     url = "BrandController"; // route qua BrandController để load menu + home
                 }
             } else {
-                // Nếu txtAction = null → mặc định home
-                url = "BrandController";
+                if (txtAction == null || "home".equals(txtAction)) {
+                    request.getRequestDispatcher("home.jsp").forward(request, response);
+                    return;
+                }
             }
 
             request.getRequestDispatcher(url).forward(request, response);

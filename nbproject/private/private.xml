@@ -5,7 +5,6 @@
         <group>
             <file>file:/D:/PRJ301/WebBanHang/src/java/models/BrandDAO.java</file>
             <file>file:/D:/PRJ301/WebBanHang/web/admin/categoryForm.jsp</file>
-            <file>file:/D:/PRJ301/WebBanHang/src/java/utils/DBUtils.java</file>
             <file>file:/D:/PRJ301/WebBanHang/src/java/models/ProductDAO.java</file>
             <file>file:/D:/PRJ301/WebBanHang/web/customer/categoryList.jsp</file>
             <file>file:/D:/PRJ301/WebBanHang/web/customer/productList.jsp</file>
@@ -13,6 +12,7 @@
             <file>file:/D:/PRJ301/WebBanHang/src/java/controllers/BrandController.java</file>
             <file>file:/D:/PRJ301/WebBanHang/src/java/models/ProductVariantDAO.java</file>
             <file>file:/D:/PRJ301/WebBanHang/src/java/controllers/MainController.java</file>
+            <file>file:/D:/PRJ301/WebBanHang/src/java/models/UserDTO.java</file>
             <file>file:/D:/PRJ301/WebBanHang/web/customer/brandList.jsp</file>
             <file>file:/D:/PRJ301/WebBanHang/src/java/controllers/UserController.java</file>
             <file>file:/D:/PRJ301/WebBanHang/web/login.jsp</file>

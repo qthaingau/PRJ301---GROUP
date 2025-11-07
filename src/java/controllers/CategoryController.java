@@ -36,6 +36,8 @@ public class CategoryController extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     // ---------------------- ADD CATEGORY ----------------------
+    
+    
     private void processAddCategory(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 

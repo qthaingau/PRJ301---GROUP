@@ -13,13 +13,6 @@ import models.BrandDTO;
 @WebServlet(name = "BrandController", urlPatterns = {"/BrandController"})
 public class BrandController extends HttpServlet {
 
-    // Lấy danh sách brand active để menu header
-    protected void loadActiveBrands(HttpServletRequest request) throws Exception {
-        BrandDAO dao = new BrandDAO();
-        List<BrandDTO> listBrand = dao.getActiveBrands(); // chỉ active = 1
-        request.setAttribute("listBrand", listBrand);
-    }
-
     // Hiển thị tất cả brand (quản lý)
     protected void viewBrandList(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -66,8 +59,6 @@ public class BrandController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
 
         try {
-            // Luôn load brand active cho menu header
-            loadActiveBrands(request);
 
             String action = request.getParameter("txtAction");
             if ("viewBrandList".equals(action)) {
