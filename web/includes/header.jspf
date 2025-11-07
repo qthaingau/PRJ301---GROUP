@@ -110,16 +110,22 @@
 
             <!-- Các loại giày -->
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle text-white px-3" href="#" data-bs-toggle="dropdown">Các loại giày</a>
+                <a class="nav-link dropdown-toggle text-white px-3" href="#" data-bs-toggle="dropdown">
+                    Các loại giày
+                </a>
                 <ul class="dropdown-menu bg-dark">
-                    <li><a class="dropdown-item text-white" href="category?type=running">Giày chạy bộ</a></li>
-                    <li><a class="dropdown-item text-white" href="category?type=soccer">Giày bóng đá</a></li>
+                    <c:forEach var="cat" items="${listCategory}">
+                        <li>
+                            <a class="dropdown-item text-white"
+                               href="MainController?txtAction=viewProducts&categoryID=${cat.categoryID}">
+                                ${cat.categoryName}
+                            </a>
+                        </li>
+                    </c:forEach>
+                    <c:if test="${empty listCategory}">
+                        <li><span class="dropdown-item text-muted">Không có loại giày</span></li>
+                    </c:if>
                 </ul>
-            </li>
-
-            <!-- Phụ kiện -->
-            <li class="nav-item">
-                <a class="nav-link text-white px-3" href="accessory.jsp">Phụ kiện</a>
             </li>
 
             <!-- Profile (nếu đã login) -->
