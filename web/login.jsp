@@ -38,7 +38,7 @@
                     placeholder="Enter your username"
                     required
                 />
-
+                <br>
                 <label for="password">Password</label>
                 <input
                     id="password"

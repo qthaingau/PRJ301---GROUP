@@ -1,108 +1,148 @@
-/*
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
-*/
-/* 
-    Created on : Nov 6, 2025, 5:47:05 PM
-    Author     : Admin
-*/
+/* Reset mặc định */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
 
-/* General Page Style */
+/* Nền toàn trang (đen pha đỏ gradient) */
 body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: linear-gradient(135deg, #74ABE2, #5563DE);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    margin: 0;
+  height: 100vh;
+  background: linear-gradient(135deg, #000, #1a0000);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* Centered Container */
+/* Khung chính */
 .container {
-    background-color: #fff;
-    padding: 40px 45px;
-    border-radius: 15px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-    width: 350px;
-    text-align: center;
-    animation: fadeIn 0.6s ease-in-out;
+  background-color: #111;
+  padding: 50px 45px;
+  border-radius: 18px;
+  box-shadow: 0 0 25px rgba(255, 0, 0, 0.25);
+  width: 420px;
+  text-align: center;
+  animation: fadeIn 0.6s ease-in-out;
+  border: 1px solid rgba(255, 0, 0, 0.4);
 }
 
-/* Title */
-h1 {
-    margin-bottom: 20px;
-    color: #333;
-    letter-spacing: 1px;
+/* Tiêu đề chính */
+.container h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #ff3333;
+  margin-bottom: 25px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
 }
 
-/* Inputs */
-input {
-    width: 100%;
-    padding: 10px 12px;
-    margin: 8px 0;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-sizing: border-box;
-    font-size: 14px;
+/* Label */
+label {
+  font-weight: 600;
+  color: #ccc;
+  display: block;
+  text-align: left;
+  margin: 10px 0 6px;
 }
 
-/* Buttons */
+/* Input */
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  font-size: 15px;
+  background-color: #1b1b1b;
+  color: #eee;
+  transition: 0.3s;
+}
+
+input:focus {
+  border-color: #ff3333;
+  box-shadow: 0 0 6px rgba(255, 51, 51, 0.6);
+  outline: none;
+}
+
+/* Vùng nút */
 .buttons {
-    margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
 }
 
 button {
-    width: 45%;
-    padding: 10px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    color: white;
-    font-weight: bold;
-    transition: 0.3s;
+  width: 48%;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 15px;
+  transition: all 0.3s ease;
 }
 
+/* Nút Register */
 button[type="submit"] {
-    background-color: #4CAF50;
+  background-color: #ff3333;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
 }
-
 button[type="submit"]:hover {
-    background-color: #43a047;
+  background-color: #cc0000;
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.7);
 }
 
+/* Nút Reset */
 button[type="reset"] {
-    background-color: #f44336;
+  background-color: #2a2a2a;
+  color: #ccc;
 }
-
 button[type="reset"]:hover {
-    background-color: #d32f2f;
+  background-color: #444;
 }
 
-/* Message */
-.message {
-    margin-bottom: 10px;
-    color: red;
-    font-weight: 500;
+/* Thông báo (msg) */
+.message span {
+  color: #ff3333;
+  display: block;
+  text-align: center;
+  margin-bottom: 15px;
+  font-weight: bold;
+  text-shadow: 0 0 5px rgba(255, 0, 0, 0.6);
 }
 
-/* Bottom text */
+/* Dòng chữ cuối */
 .bottom-text {
-    margin-top: 15px;
-    font-size: 14px;
+  text-align: center;
+  margin-top: 25px;
+  font-size: 14px;
+  color: #bbb;
 }
 
-.bottom-text a {
-    color: #5563DE;
-    text-decoration: none;
+a {
+  color: #ff3333;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s;
+}
+a:hover {
+  color: #ff6666;
+  text-decoration: underline;
 }
 
-.bottom-text a:hover {
-    text-decoration: underline;
-}
-
-/* Fade animation */
+/* Hiệu ứng vào màn hình */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

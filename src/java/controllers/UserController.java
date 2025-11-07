@@ -90,6 +90,48 @@ public class UserController extends HttpServlet {
         }
     }
 
+    private void processChangePassword(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        UserDTO user = (UserDTO) session.getAttribute("user");
+
+        if (user == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
+        String current = request.getParameter("currentPassword");
+        String newPass = request.getParameter("newPassword");
+        String confirm = request.getParameter("confirmPassword");
+
+        if (!newPass.equals(confirm)) {
+            request.setAttribute("msg", "New passwords do not match!");
+            request.getRequestDispatcher("customer/changePassword.jsp").forward(request, response);
+            return;
+        }
+
+        UserDAO dao = new UserDAO();
+        UserDTO dbUser = dao.getUserByUsername(user.getUsername());
+
+        if (!dbUser.getPassword().equals(current)) {
+            request.setAttribute("msg", "Current password is incorrect!");
+            request.getRequestDispatcher("customer/changePassword.jsp").forward(request, response);
+            return;
+        }
+
+        boolean updated = dao.updatePassword(user.getUsername(), newPass);
+
+        if (updated) {
+            user.setPassword(newPass);
+            session.setAttribute("user", user);
+            request.setAttribute("msg", "Password changed successfully!");
+        } else {
+            request.setAttribute("msg", "Failed to change password!");
+        }
+
+        request.getRequestDispatcher("customer/changePassword.jsp").forward(request, response);
+    }
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
@@ -105,9 +147,12 @@ public class UserController extends HttpServlet {
             processLogout(request, response);
         } else if (txtAction.equals("registerUser")) {
             processRegister(request, response);
-        }else if(txtAction.equals("showRegister")) {
+        } else if (txtAction.equals("showRegister")) {
             request.getRequestDispatcher("register.jsp").forward(request, response);
+        } else if (txtAction.equals("changePassword")) {
+            processChangePassword(request, response);
         }
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

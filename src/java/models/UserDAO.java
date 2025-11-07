@@ -25,6 +25,8 @@ public class UserDAO {
 
             if (rs.next()) {
                 UserDTO user = new UserDTO();
+                user.setUserID(rs.getString("userID"));
+
                 user.setUsername(rs.getString("username"));
                 user.setPassword(rs.getString("password"));
                 user.setEmail(rs.getString("email"));
@@ -110,4 +112,19 @@ public class UserDAO {
         }
         return result;
     }
+    
+    public boolean updatePassword(String username, String newPassword) {
+    boolean result = false;
+    try (Connection conn = DBUtils.getConnection()) {
+        String sql = "UPDATE [User] SET password = ? WHERE username = ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, newPassword);
+        ps.setString(2, username);
+        result = ps.executeUpdate() > 0;
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return result;
+}
+
 }
