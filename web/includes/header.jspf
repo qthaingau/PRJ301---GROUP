@@ -92,22 +92,18 @@
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle text-white px-3" href="#" data-bs-toggle="dropdown">Thương hiệu</a>
                 <ul class="dropdown-menu bg-dark">
-
-                    <!-- Lặp qua danh sách thương hiệu từ request attribute -->
                     <c:forEach var="brand" items="${listBrand}">
                         <li>
-                            <a class="dropdown-item text-white" 
+                            <a class="dropdown-item text-white"
                                href="MainController?txtAction=viewProducts&brandID=${brand.brandID}">
                                 ${brand.brandName}
                             </a>
                         </li>
                     </c:forEach>
 
-                    <!-- Nếu không có thương hiệu nào -->
                     <c:if test="${empty listBrand}">
                         <li><span class="dropdown-item text-muted">Không có thương hiệu nào</span></li>
                     </c:if>
-
                 </ul>
             </li>
 
