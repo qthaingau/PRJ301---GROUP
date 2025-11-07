@@ -39,28 +39,37 @@ public class ProductController extends HttpServlet {
      */
     private void processCallSaveProduct(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String updateParam = request.getParameter("update");
-        ProductDAO productDAO = new ProductDAO();
-        ProductVariantDAO variantDAO = new ProductVariantDAO();
 
-// Chuyển đổi chuỗi "true" hoặc "false" thành boolean
+        // Lấy cờ update từ request (true/false)
+        String updateParam = request.getParameter("update");
         boolean isUpdate = Boolean.parseBoolean(updateParam);
+
+        // Lấy id từ request (nếu có)
         String productID = request.getParameter("productID");
         String variantID = request.getParameter("variantID");
 
-        ProductDTO productDTO = productDAO.getProductByID(productID);
-        ProductVariantDTO variantDTO = variantDAO.getVariantByID(variantID);
+        ProductDAO productDAO = new ProductDAO();
+        ProductVariantDAO variantDAO = new ProductVariantDAO();
+        BrandDAO brandDAO = new BrandDAO(); // NEW
 
-        if (productID == null) {
-            request.setAttribute("update", isUpdate);
-//            request.getRequestDispatcher("/admin/productForm.jsp")
-//                    .forward(request, response);
-        } else {
+        // Nếu là update và có productID, variantID thì load dữ liệu lên form
+        if (isUpdate && productID != null && !productID.isEmpty()
+                && variantID != null && !variantID.isEmpty()) {
+
+            ProductDTO productDTO = productDAO.getProductByID(productID);
+            ProductVariantDTO variantDTO = variantDAO.getVariantByID(variantID);
+
             request.setAttribute("p", productDTO);
             request.setAttribute("v", variantDTO);
-            request.setAttribute("update", isUpdate);
-
         }
+
+        // Luôn set cờ update cho JSP
+        request.setAttribute("update", isUpdate);
+
+        // NEW: luôn load danh sách brand đang active cho dropdown
+        request.setAttribute("brandList", brandDAO.getActiveBrands());
+
+        // Forward sang form
         request.getRequestDispatcher("/admin/productForm.jsp")
                 .forward(request, response);
     }
@@ -435,6 +444,22 @@ public class ProductController extends HttpServlet {
         }
     }
 
+    private void processToggleProductStatus(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String productID = request.getParameter("productID");
+        System.out.println("processToggleProductStatus: productID = " + productID);
+
+        if (productID != null && !productID.isEmpty()) {
+            ProductDAO productDAO = new ProductDAO();
+            boolean ok = productDAO.toggleStatus(productID);
+            System.out.println("toggleStatus() result = " + ok);
+        }
+
+        // quay lại list qua MainController (để dùng lại group router)
+        response.sendRedirect("MainController?txtAction=viewProducts");
+    }
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -461,6 +486,8 @@ public class ProductController extends HttpServlet {
                 processAddProductWithVariant(request, response, true);
             } else if (txtAction.equals("deleteProductWithVariant")) {
                 processDeleteWithVariant(request, response);
+            } else if (txtAction.equals("toggleProductStatus")) {
+                processToggleProductStatus(request, response);
             }
         }
     }

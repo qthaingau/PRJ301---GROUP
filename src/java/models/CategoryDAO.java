@@ -12,22 +12,22 @@ public class CategoryDAO {
     public CategoryDAO() {
     }
 
-    // Lấy tất cả category
+    // ---------------------- LẤY TẤT CẢ CATEGORY (kể cả inactive) ----------------------
+    // Dùng cho ADMIN
     public ArrayList<CategoryDTO> getAllCategory() {
         ArrayList<CategoryDTO> listCategory = new ArrayList<>();
-        try {
-            Connection conn = DBUtils.getConnection();
-            String sql = "SELECT * FROM Category";
-            PreparedStatement pst = conn.prepareStatement(sql);
-            ResultSet rs = pst.executeQuery();
+        String sql = "SELECT * FROM Category";
+
+        try (Connection conn = DBUtils.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql);
+             ResultSet rs = pst.executeQuery()) {
 
             while (rs.next()) {
                 CategoryDTO category = new CategoryDTO();
                 category.setCategoryID(rs.getString("categoryID"));
                 category.setCategoryName(rs.getString("categoryName"));
                 category.setSportType(rs.getString("sportType"));
-                category.setParentCategoryID(rs.getString("parentCategoryID"));
-
+                category.setIsActive(rs.getBoolean("isActive"));
                 listCategory.add(category);
             }
         } catch (Exception e) {
@@ -36,23 +36,48 @@ public class CategoryDAO {
         return listCategory;
     }
 
-    // Lấy category theo ID (PK)
-    public CategoryDTO getCategoryByID(String categoryID) {
-        try {
-            Connection conn = DBUtils.getConnection();
-            String sql = "SELECT * FROM Category WHERE categoryID = ?";
-            PreparedStatement pst = conn.prepareStatement(sql);
-            pst.setString(1, categoryID);
+    // ---------------------- LẤY CATEGORY ACTIVE (isActive = 1) ----------------------
+    // Dùng cho dropdown chọn category khi thêm / sửa product
+    public List<CategoryDTO> getActiveCategories() {
+        List<CategoryDTO> listCategory = new ArrayList<>();
+        String sql = "SELECT * FROM Category WHERE isActive = 1";
 
-            ResultSet rs = pst.executeQuery();
+        try (Connection conn = DBUtils.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql);
+             ResultSet rs = pst.executeQuery()) {
 
-            if (rs.next()) {
+            while (rs.next()) {
                 CategoryDTO category = new CategoryDTO();
                 category.setCategoryID(rs.getString("categoryID"));
                 category.setCategoryName(rs.getString("categoryName"));
                 category.setSportType(rs.getString("sportType"));
-                category.setParentCategoryID(rs.getString("parentCategoryID"));
-                return category;
+                category.setIsActive(rs.getBoolean("isActive"));
+                listCategory.add(category);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listCategory;
+    }
+
+    // ---------------------- LẤY CATEGORY THEO ID ----------------------
+    public CategoryDTO getCategoryByID(String categoryID) {
+        String sql = "SELECT * FROM Category WHERE categoryID = ?";
+
+        try (Connection conn = DBUtils.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
+
+            pst.setString(1, categoryID);
+
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    CategoryDTO category = new CategoryDTO();
+                    category.setCategoryID(rs.getString("categoryID"));
+                    category.setCategoryName(rs.getString("categoryName"));
+                    category.setSportType(rs.getString("sportType"));
+                    category.setIsActive(rs.getBoolean("isActive"));
+                    return category;
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -60,25 +85,25 @@ public class CategoryDAO {
         return null;
     }
 
-    // Tìm category theo tên (LIKE)
+    // ---------------------- TÌM CATEGORY THEO TÊN (chỉ active) ----------------------
     public List<CategoryDTO> getCategoryByName(String categoryName) {
         List<CategoryDTO> listCategory = new ArrayList<>();
-        try {
-            Connection conn = DBUtils.getConnection();
-            String sql = "SELECT * FROM Category WHERE categoryName LIKE ?";
-            PreparedStatement pst = conn.prepareStatement(sql);
-            pst.setString(1, "%" + categoryName + "%"); // dùng wildcard để search gần đúng
+        String sql = "SELECT * FROM Category WHERE categoryName LIKE ? AND isActive = 1";
 
-            ResultSet rs = pst.executeQuery();
+        try (Connection conn = DBUtils.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
 
-            while (rs.next()) {
-                CategoryDTO category = new CategoryDTO();
-                category.setCategoryID(rs.getString("categoryID"));
-                category.setCategoryName(rs.getString("categoryName"));
-                category.setSportType(rs.getString("sportType"));
-                category.setParentCategoryID(rs.getString("parentCategoryID"));
+            pst.setString(1, "%" + categoryName + "%");
 
-                listCategory.add(category);
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    CategoryDTO category = new CategoryDTO();
+                    category.setCategoryID(rs.getString("categoryID"));
+                    category.setCategoryName(rs.getString("categoryName"));
+                    category.setSportType(rs.getString("sportType"));
+                    category.setIsActive(rs.getBoolean("isActive"));
+                    listCategory.add(category);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -86,18 +111,17 @@ public class CategoryDAO {
         return listCategory;
     }
 
-    // Thêm mới category
+    // ---------------------- THÊM CATEGORY MỚI ----------------------
     public boolean insert(CategoryDTO category) {
-        try {
-            Connection c = DBUtils.getConnection();
-            String sql = "INSERT INTO Category(categoryID, categoryName, sportType, parentCategoryID) "
-                       + "VALUES(?, ?, ?, ?)";
+        // DB có DEFAULT isActive = 1 nên không cần truyền isActive
+        String sql = "INSERT INTO Category(categoryID, categoryName, sportType) VALUES(?, ?, ?)";
 
-            PreparedStatement pst = c.prepareStatement(sql);
+        try (Connection conn = DBUtils.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
+
             pst.setString(1, category.getCategoryID());
             pst.setString(2, category.getCategoryName());
             pst.setString(3, category.getSportType());
-            pst.setString(4, category.getParentCategoryID());
 
             int rows = pst.executeUpdate();
             return rows > 0;
@@ -107,42 +131,38 @@ public class CategoryDAO {
         return false;
     }
 
-    // Xóa cứng (DELETE thật). 
-    // Nếu bạn muốn "soft delete" thì bảng phải có cột isActive / status. Hiện chưa có => mình để DELETE.
-    public boolean delete(String categoryID) {
-        try {
-            Connection c = DBUtils.getConnection();
-            String sql = "DELETE FROM Category WHERE categoryID = ?";
+    // ---------------------- CẬP NHẬT CATEGORY ----------------------
+    public boolean update(CategoryDTO category) {
+        String sql = "UPDATE Category "
+                   + "SET categoryName = ?, "
+                   + "    sportType = ? "
+                   + "WHERE categoryID = ?";
 
-            PreparedStatement pst = c.prepareStatement(sql);
-            pst.setString(1, categoryID);
+        try (Connection conn = DBUtils.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
 
-            int i = pst.executeUpdate();
-            return i > 0;
+            pst.setString(1, category.getCategoryName());
+            pst.setString(2, category.getSportType());
+            pst.setString(3, category.getCategoryID());
+
+            int rows = pst.executeUpdate();
+            return rows > 0;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    // Cập nhật category
-    public boolean update(CategoryDTO category) {
-        try {
-            Connection c = DBUtils.getConnection();
-            String sql = "UPDATE Category "
-                       + "SET categoryName = ?, "
-                       + "sportType = ?, "
-                       + "parentCategoryID = ? "
-                       + "WHERE categoryID = ?";
+    // ---------------------- DEACTIVATE CATEGORY (SOFT DELETE) ----------------------
+    public boolean delete(String categoryID) {
+        String sql = "UPDATE Category SET isActive = 0 WHERE categoryID = ?";
 
-            PreparedStatement pst = c.prepareStatement(sql);
-            pst.setString(1, category.getCategoryName());
-            pst.setString(2, category.getSportType());
-            pst.setString(3, category.getParentCategoryID());
-            pst.setString(4, category.getCategoryID());
+        try (Connection conn = DBUtils.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
 
-            int i = pst.executeUpdate();
-            return i > 0;
+            pst.setString(1, categoryID);
+            int rows = pst.executeUpdate();
+            return rows > 0;
         } catch (Exception e) {
             e.printStackTrace();
         }

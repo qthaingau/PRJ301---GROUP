@@ -20,6 +20,59 @@ public class ProductDAO {
     public ProductDAO() {
     }
 
+    public boolean toggleStatus(String productID) {
+        // 1. Lấy trạng thái hiện tại + tổng stock của tất cả variant thuộc product
+        String checkSql
+                = "SELECT isActive, "
+                + "       COALESCE((SELECT SUM(stock) FROM ProductVariant WHERE productID = ?), 0) AS totalStock "
+                + "FROM Product "
+                + "WHERE productID = ?";
+
+        try ( Connection conn = DBUtils.getConnection();  PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
+
+            checkStmt.setString(1, productID);
+            checkStmt.setString(2, productID);
+
+            try ( ResultSet rs = checkStmt.executeQuery()) {
+                if (!rs.next()) {
+                    System.out.println("toggleStatus: product not found, id = " + productID);
+                    return false;
+                }
+
+                boolean currentActive = rs.getBoolean("isActive");
+                int totalStock = rs.getInt("totalStock");
+
+                System.out.println("toggleStatus CHECK: productID=" + productID
+                        + ", currentActive=" + currentActive
+                        + ", totalStock=" + totalStock);
+
+                // 2. Nếu đang Inactive mà hết hàng (totalStock <= 0) -> KHÔNG cho bật lại
+                if (!currentActive && totalStock <= 0) {
+                    System.out.println("toggleStatus BLOCKED: no stock for product " + productID);
+                    return false;
+                }
+
+                // 3. Tính trạng thái mới (đảo ngược)
+                boolean newStatus = !currentActive;
+
+                String updateSql = "UPDATE Product SET isActive = ? WHERE productID = ?";
+                try ( PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
+                    updateStmt.setBoolean(1, newStatus);
+                    updateStmt.setString(2, productID);
+
+                    int rows = updateStmt.executeUpdate();
+                    System.out.println("toggleStatus UPDATE: productID=" + productID
+                            + ", newStatus=" + newStatus + ", rows=" + rows);
+                    return rows > 0;
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public ArrayList<ProductDTO> getAllProduct() {
         ArrayList<ProductDTO> listProduct = new ArrayList<>();
         try {
@@ -142,7 +195,7 @@ public class ProductDAO {
     }
 
     /**
-     *Kiểm tra tổng stock của ProductVariant, nếu > 0 thì còn hàng.
+     * Kiểm tra tổng stock của ProductVariant, nếu > 0 thì còn hàng.
      */
     private boolean checkStockStatus(String productID) {
         String sql = "SELECT COALESCE(SUM(stock), 0) AS totalStock "

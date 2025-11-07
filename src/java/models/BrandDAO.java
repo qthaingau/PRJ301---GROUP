@@ -1,146 +1,168 @@
-package models; // Đặt class trong package models
+package models;
 
-// Import các thư viện cần thiết để làm việc với DB
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
-import utils.DBUtils; // Lớp tiện ích để lấy kết nối DB
+import utils.DBUtils;
 
-// Lớp DAO (Data Access Object) dành cho bảng Brand
+/**
+ * DAO for Brand table.
+ */
 public class BrandDAO {
 
-    // Constructor mặc định
     public BrandDAO() {
     }
 
-    // ---------------------- LẤY TẤT CẢ CÁC BRAND ----------------------
+    // ---------------------- LẤY TẤT CẢ BRAND (kể cả bị deactivate) ----------------------
+    // Dùng cho ADMIN nếu muốn xem cả brand đã ẩn
     public ArrayList<BrandDTO> getAllBrand() {
-        ArrayList<BrandDTO> listBrand = new ArrayList<>(); // Danh sách chứa kết quả
-        try {
-            Connection conn = DBUtils.getConnection(); // Lấy kết nối tới DB
-            String sql = "SELECT * FROM Brand"; // Câu truy vấn SQL
-            PreparedStatement pst = conn.prepareStatement(sql); // Chuẩn bị câu lệnh SQL
-            ResultSet rs = pst.executeQuery(); // Thực thi truy vấn
+        ArrayList<BrandDTO> listBrand = new ArrayList<>();
+        String sql = "SELECT * FROM Brand";
 
-            // Duyệt qua từng dòng kết quả
-            while (rs.next()) {
-                BrandDTO brand = new BrandDTO(); // Tạo đối tượng DTO
-                brand.setBrandID(rs.getString("brandID")); // Gán giá trị cho brandID
-                brand.setBrandName(rs.getString("brandName")); // Gán giá trị cho brandName
-                brand.setOrigin(rs.getString("origin")); // Gán giá trị cho origin
-                listBrand.add(brand); // Thêm đối tượng vào danh sách
-            }
-        } catch (Exception e) {
-            e.printStackTrace(); // In lỗi nếu có
-        }
-        return listBrand; // Trả về danh sách brand
-    }
-
-    // ---------------------- LẤY BRAND THEO ID ----------------------
-    public BrandDTO getBrandByID(String brandID) {
-        try {
-            Connection conn = DBUtils.getConnection(); // Kết nối DB
-            String sql = "SELECT * FROM Brand WHERE brandID = ?"; // Câu SQL có điều kiện
-            PreparedStatement pst = conn.prepareStatement(sql); // Chuẩn bị câu lệnh
-            pst.setString(1, brandID); // Gán giá trị cho tham số 1
-
-            ResultSet rs = pst.executeQuery(); // Thực thi câu lệnh
-
-            // Nếu có kết quả trả về
-            if (rs.next()) {
-                BrandDTO brand = new BrandDTO(); // Tạo đối tượng DTO
-                brand.setBrandID(rs.getString("brandID"));
-                brand.setBrandName(rs.getString("brandName"));
-                brand.setOrigin(rs.getString("origin"));
-                return brand; // Trả về kết quả
-            }
-        } catch (Exception e) {
-            e.printStackTrace(); // In lỗi nếu có
-        }
-        return null; // Nếu không tìm thấy => null
-    }
-
-    // ---------------------- TÌM BRAND THEO TÊN ----------------------
-    public List<BrandDTO> getBrandByName(String brandName) {
-        List<BrandDTO> listBrand = new ArrayList<>(); // Danh sách kết quả
-        try {
-            Connection conn = DBUtils.getConnection(); // Kết nối DB
-            String sql = "SELECT * FROM Brand WHERE brandName LIKE ?"; // Truy vấn có điều kiện LIKE
-            PreparedStatement pst = conn.prepareStatement(sql); // Chuẩn bị câu lệnh
-            pst.setString(1, "%" + brandName + "%"); // Dùng wildcard để tìm gần đúng
-
-            ResultSet rs = pst.executeQuery(); // Thực thi truy vấn
+        try ( Connection conn = DBUtils.getConnection();  PreparedStatement pst = conn.prepareStatement(sql);  ResultSet rs = pst.executeQuery()) {
 
             while (rs.next()) {
                 BrandDTO brand = new BrandDTO();
                 brand.setBrandID(rs.getString("brandID"));
                 brand.setBrandName(rs.getString("brandName"));
                 brand.setOrigin(rs.getString("origin"));
-                listBrand.add(brand); // Thêm vào danh sách kết quả
+                brand.setIsActive(rs.getBoolean("isActive")); // <-- map isActive
+                listBrand.add(brand);
             }
         } catch (Exception e) {
-            e.printStackTrace(); // In lỗi nếu có
+            e.printStackTrace();
         }
-        return listBrand; // Trả về danh sách brand tìm được
+        return listBrand;
+    }
+
+    // ---------------------- LẤY BRAND ACTIVE (isActive = 1) ----------------------
+    public List<BrandDTO> getActiveBrands() {
+        List<BrandDTO> listBrand = new ArrayList<>();
+        String sql = "SELECT * FROM Brand WHERE isActive = 1";
+
+        try ( Connection conn = DBUtils.getConnection();  PreparedStatement pst = conn.prepareStatement(sql);  ResultSet rs = pst.executeQuery()) {
+
+            while (rs.next()) {
+                BrandDTO brand = new BrandDTO();
+                brand.setBrandID(rs.getString("brandID"));
+                brand.setBrandName(rs.getString("brandName"));
+                brand.setOrigin(rs.getString("origin"));
+                brand.setIsActive(rs.getBoolean("isActive"));
+                listBrand.add(brand);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listBrand;
+    }
+
+    // ---------------------- LẤY BRAND THEO ID ----------------------
+    public BrandDTO getBrandByID(String brandID) {
+        String sql = "SELECT * FROM Brand WHERE brandID = ?";
+
+        try ( Connection conn = DBUtils.getConnection();  PreparedStatement pst = conn.prepareStatement(sql)) {
+
+            pst.setString(1, brandID);
+
+            try ( ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    BrandDTO brand = new BrandDTO();
+                    brand.setBrandID(rs.getString("brandID"));
+                    brand.setBrandName(rs.getString("brandName"));
+                    brand.setOrigin(rs.getString("origin"));
+                    brand.setIsActive(rs.getBoolean("isActive"));
+                    return brand;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // ---------------------- TÌM BRAND THEO TÊN (chỉ brand active) ----------------------
+    public List<BrandDTO> getBrandByName(String brandName) {
+        List<BrandDTO> listBrand = new ArrayList<>();
+        String sql = "SELECT * FROM Brand WHERE brandName LIKE ? AND isActive = 1";
+
+        try ( Connection conn = DBUtils.getConnection();  PreparedStatement pst = conn.prepareStatement(sql)) {
+
+            pst.setString(1, "%" + brandName + "%");
+
+            try ( ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    BrandDTO brand = new BrandDTO();
+                    brand.setBrandID(rs.getString("brandID"));
+                    brand.setBrandName(rs.getString("brandName"));
+                    brand.setOrigin(rs.getString("origin"));
+                    brand.setIsActive(rs.getBoolean("isActive"));
+                    listBrand.add(brand);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listBrand;
     }
 
     // ---------------------- THÊM BRAND MỚI ----------------------
     public boolean insert(BrandDTO brand) {
-        try {
-            Connection c = DBUtils.getConnection(); // Lấy kết nối DB
-            String sql = "INSERT INTO Brand(brandID, brandName, origin) VALUES(?, ?, ?)"; // Câu SQL thêm dữ liệu
+        // DB đã có DEFAULT isActive = 1, nên không cần truyền isActive nếu thêm brand mới bình thường
+        String sql = "INSERT INTO Brand(brandID, brandName, origin) VALUES(?, ?, ?)";
 
-            PreparedStatement pst = c.prepareStatement(sql); // Chuẩn bị câu lệnh
-            pst.setString(1, brand.getBrandID()); // Gán giá trị cho brandID
-            pst.setString(2, brand.getBrandName()); // Gán giá trị cho brandName
-            pst.setString(3, brand.getOrigin()); // Gán giá trị cho origin
+        try ( Connection conn = DBUtils.getConnection();  PreparedStatement pst = conn.prepareStatement(sql)) {
 
-            int rows = pst.executeUpdate(); // Thực thi câu lệnh INSERT
-            return rows > 0; // Trả về true nếu có ít nhất 1 dòng được thêm
+            pst.setString(1, brand.getBrandID());
+            pst.setString(2, brand.getBrandName());
+            pst.setString(3, brand.getOrigin());
+
+            int rows = pst.executeUpdate();
+            return rows > 0;
         } catch (Exception e) {
-            e.printStackTrace(); // In lỗi nếu có
+            e.printStackTrace();
         }
-        return false; // Nếu lỗi => false
+        return false;
     }
 
+    // (OPTIONAL) Nếu em muốn control luôn isActive khi insert:
+    // public boolean insert(BrandDTO brand) {
+    //     String sql = "INSERT INTO Brand(brandID, brandName, origin, isActive) VALUES(?, ?, ?, ?)";
+    //     ...
+    // }
     // ---------------------- CẬP NHẬT BRAND ----------------------
     public boolean update(BrandDTO brand) {
-        try {
-            Connection c = DBUtils.getConnection(); // Lấy kết nối DB
-            String sql = "UPDATE Brand "
-                       + "SET brandName = ?, " // Cập nhật tên thương hiệu
-                       + "origin = ? " // Cập nhật quốc gia xuất xứ
-                       + "WHERE brandID = ?"; // Điều kiện WHERE theo brandID
+        String sql = "UPDATE Brand "
+                + "SET brandName = ?, origin = ? "
+                + "WHERE brandID = ?";
 
-            PreparedStatement pst = c.prepareStatement(sql); // Chuẩn bị câu lệnh
-            pst.setString(1, brand.getBrandName()); // Gán giá trị mới cho brandName
-            pst.setString(2, brand.getOrigin()); // Gán giá trị mới cho origin
-            pst.setString(3, brand.getBrandID()); // Gán brandID cho WHERE
+        try ( Connection conn = DBUtils.getConnection();  PreparedStatement pst = conn.prepareStatement(sql)) {
 
-            int i = pst.executeUpdate(); // Thực thi câu lệnh UPDATE
-            return i > 0; // Trả về true nếu có dòng được cập nhật
+            pst.setString(1, brand.getBrandName());
+            pst.setString(2, brand.getOrigin());
+            pst.setString(3, brand.getBrandID());
+
+            int rows = pst.executeUpdate();
+            return rows > 0;
         } catch (Exception e) {
-            e.printStackTrace(); // In lỗi
+            e.printStackTrace();
         }
-        return false; // Nếu có lỗi => false
+        return false;
     }
 
-    // ---------------------- XÓA BRAND ----------------------
+    // ---------------------- DEACTIVATE BRAND (SOFT DELETE) ----------------------
     public boolean delete(String brandID) {
-        try {
-            Connection c = DBUtils.getConnection(); // Lấy kết nối DB
-            String sql = "DELETE FROM Brand WHERE brandID = ?"; // Câu SQL xóa dữ liệu
+        String sql = "UPDATE Brand SET isActive = 0 WHERE brandID = ?";
 
-            PreparedStatement pst = c.prepareStatement(sql); // Chuẩn bị câu lệnh
-            pst.setString(1, brandID); // Gán brandID cần xóa
+        try ( Connection conn = DBUtils.getConnection();  PreparedStatement pst = conn.prepareStatement(sql)) {
 
-            int i = pst.executeUpdate(); // Thực thi DELETE
-            return i > 0; // Trả về true nếu xóa thành công
+            pst.setString(1, brandID);
+            int rows = pst.executeUpdate();
+            return rows > 0;
         } catch (Exception e) {
-            e.printStackTrace(); // In lỗi nếu có
+            e.printStackTrace();
         }
-        return false; // Nếu lỗi => false
+        return false;
     }
 }

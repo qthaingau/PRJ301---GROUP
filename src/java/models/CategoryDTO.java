@@ -1,27 +1,23 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package models;
 
 /**
- *
+ * DTO for Category table
  * @author TEST
  */
 public class CategoryDTO {
     private String categoryID;
     private String categoryName;
     private String sportType;
-    private String parentCategoryID;
+    private boolean isActive; // ✅ Trạng thái hiển thị (1 = active, 0 = inactive)
 
     public CategoryDTO() {
     }
 
-    public CategoryDTO(String categoryID, String categoryName, String sportType, String parentCategoryID) {
+    public CategoryDTO(String categoryID, String categoryName, String sportType, boolean isActive) {
         this.categoryID = categoryID;
         this.categoryName = categoryName;
         this.sportType = sportType;
-        this.parentCategoryID = parentCategoryID;
+        this.isActive = isActive;
     }
 
     public String getCategoryID() {
@@ -48,16 +44,21 @@ public class CategoryDTO {
         this.sportType = sportType;
     }
 
-    public String getParentCategoryID() {
-        return parentCategoryID;
+    public boolean getIsActive() {
+        return isActive;
     }
 
-    public void setParentCategoryID(String parentCategoryID) {
-        this.parentCategoryID = parentCategoryID;
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
     }
 
     @Override
     public String toString() {
-        return "CategoryDTO{" + "categoryID=" + categoryID + ", categoryName=" + categoryName + ", sportType=" + sportType + ", parentCategoryID=" + parentCategoryID + '}';
+        return "CategoryDTO{" +
+                "categoryID='" + categoryID + '\'' +
+                ", categoryName='" + categoryName + '\'' +
+                ", sportType='" + sportType + '\'' +
+                ", isActive=" + isActive +
+                '}';
     }
 }

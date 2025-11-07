@@ -68,8 +68,7 @@
                                     <!-- Status + Action chỉ cho ADMIN -->
                                     <c:if test="${user.role eq 'admin'}">
                                         <th>Status</th>
-                                        <th class="text-center">Action</th>
-                                    </c:if>
+                                        </c:if>
                                 </tr>
                             </thead>
 
@@ -79,6 +78,18 @@
                                         <c:param name="txtAction" value="viewProductDetail"/>
                                         <c:param name="productID" value="${p.productID}"/>
                                         <c:param name="productName" value="${p.productName}"/>
+                                    </c:url>
+
+                                    <!-- URL tới Brand form -->
+                                    <c:url var="brandUrl" value="MainController">
+                                        <c:param name="txtAction" value="viewBrandList"/>
+                                        <c:param name="brandID" value="${p.brandID}"/>
+                                    </c:url>
+
+                                    <!-- URL tới Category form -->
+                                    <c:url var="categoryUrl" value="MainController">
+                                        <c:param name="txtAction" value="viewCategoryList"/>
+                                        <c:param name="categoryID" value="${p.categoryID}"/>
                                     </c:url>
 
                                     <!-- ADMIN: thấy tất cả -->
@@ -99,13 +110,36 @@
                                                     ${p.description}
                                                 </a>
                                             </td>
-                                            <td>${p.categoryID}</td>
-                                            <td>${p.brandID}</td>
-                                            <td>${p.isActive}</td>
-                                            <td class="text-center">
-                                                <a href="${detailUrl}" class="view-detail-btn">
-                                                    View Detail
+
+                                            <!-- Category ID clickable -->
+                                            <td>
+                                                <a href="${categoryUrl}" class="product-link">
+                                                    ${p.categoryID}
                                                 </a>
+                                            </td>
+
+                                            <!-- Brand ID clickable -->
+                                            <td>
+                                                <a href="${brandUrl}" class="product-link">
+                                                    ${p.brandID}
+                                                </a>
+                                            </td>
+
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${p.isActive}">
+                                                        <a href="MainController?txtAction=toggleProductStatus&productID=${p.productID}"
+                                                           class="status-badge status-active">
+                                                            Active
+                                                        </a>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <a href="MainController?txtAction=toggleProductStatus&productID=${p.productID}"
+                                                           class="status-badge status-inactive">
+                                                            Inactive
+                                                        </a>
+                                                    </c:otherwise>
+                                                </c:choose>
                                             </td>
                                         </tr>
                                     </c:if>
@@ -128,13 +162,24 @@
                                                     ${p.description}
                                                 </a>
                                             </td>
-                                            <td>${p.categoryID}</td>
-                                            <td>${p.brandID}</td>
+
+                                            <!-- Category ID clickable -->
+                                            <td>
+                                                <a href="${categoryUrl}" class="product-link">
+                                                    ${p.categoryID}
+                                                </a>
+                                            </td>
+
+                                            <!-- Brand ID clickable -->
+                                            <td>
+                                                <a href="${brandUrl}" class="product-link">
+                                                    ${p.brandID}
+                                                </a>
+                                            </td>
                                         </tr>
                                     </c:if>
                                 </c:forEach>
                             </tbody>
-
                         </table>
                     </div>
                 </c:otherwise>

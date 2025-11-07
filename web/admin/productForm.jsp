@@ -73,18 +73,30 @@
                 </c:if>
                 <br/>
 
-                <!-- Brand ID -->
-                Brand ID (B***):
-                <input type="text"
-                       name="txtBrandID"
-                       value="${p.brandID}"
-                       required
-                       pattern="B[0-9]{3}"
-                       title="Brand ID must follow the format B***, e.g., B001"/><br/>
+                <!-- ================= BRAND (DROPDOWN) ================= -->
+                Brand:
+                <select name="txtBrandID" required>
+                    <option value="">-- Select Brand --</option>
+
+                    <c:forEach var="b" items="${brandList}">
+                        <%-- xác định selected bằng biến tạm cho dễ debug --%>
+                        <c:set var="selected" value=""/>
+
+                        <c:if test="${not empty p && p.brandID eq b.brandID}">
+                            <c:set var="selected" value="selected='selected'"/>
+                        </c:if>
+
+                        <option value="${b.brandID}" ${selected}>
+                            ${b.brandID} - ${b.brandName}
+                            <c:if test="${not empty b.origin}"> (${b.origin})</c:if>
+                            </option>
+                    </c:forEach>
+                </select><br/>
                 <c:if test="${not empty error_brandID}">
                     <span style="color:red">${error_brandID}</span><br/>
                 </c:if>
                 <br/>
+
 
                 <!-- ================= VARIANT ================= -->
 

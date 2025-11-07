@@ -5,19 +5,23 @@
 package controllers;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.io.PrintWriter;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import models.BrandDAO;
+import models.BrandDTO;
 
 /**
  *
- * @author tungi
+ * @author TEST
  */
-@WebServlet(name = "MainController", urlPatterns = {"/MainController"})
-public class MainController extends HttpServlet {
+@WebServlet(name = "BrandController", urlPatterns = {"/BrandController"})
+public class BrandController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -28,41 +32,43 @@ public class MainController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+    private void processViewBrandList(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html; charset=UTF-8");
-        // request.getParameter
-        String txtAction = request.getParameter("txtAction");
 
-        String url = "home.jsp";       // chú ý dấu / và đúng path file login
+        response.setContentType("text/html;charset=UTF-8");
+        try ( PrintWriter out = response.getWriter()) {
 
-        String[] userActions = {"login", "logout", "searchUser", "addUser",
-            "callUpdateUser", "updateUser", "deleteUser", "registerUser", "showRegister"};
+            try {
+                BrandDAO brandDAO = new BrandDAO();
+                List<BrandDTO> listBrands = brandDAO.getAllBrand();
 
-        String[] productActions = {"viewProducts", "addProduct", "deleteProduct",
-            "viewProductDetail", "filterProduct",
-            "callSaveProduct", "addProductWithVariant", "updateProductWithVariant", "deleteProductWithVariant", "toggleProductStatus"};
+                HttpSession session = request.getSession();
+                session.setAttribute("brandList", listBrands);
 
-        String[] brandActions = {"viewBrandList", "updateBrand", "addBrand"};
-        String[] categoryActions = {"viewCategoryList", "updateCategory", "addCategory"};
+                // nếu em muốn list brand trong brandForm.jsp:
+                request.getRequestDispatcher("customer/brandList.jsp").forward(request, response);
 
-        if (txtAction != null) {
-            if (Arrays.asList(userActions).contains(txtAction)) {
-                url = "UserController";
-            } else if (Arrays.asList(productActions).contains(txtAction)) {
-                url = "ProductController";
-            } else if (Arrays.asList(categoryActions).contains(txtAction)) {
-                url = "CategoryController";
-            } else if (Arrays.asList(brandActions).contains(txtAction)) {
-                url = "BrandController";
+                // nếu muốn show trong home.jsp thì sửa lại:
+                // request.getRequestDispatcher("home.jsp").forward(request, response);
+            } catch (Exception e) {
+                e.printStackTrace();
+                request.setAttribute("msg", "Error loading brand list!");
+                request.getRequestDispatcher("customer/brandList.jsp").forward(request, response);
             }
         }
-        request.getRequestDispatcher(url).forward(request, response);
     }
 
-//    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        String action = request.getParameter("txtAction");
+
+        if (action.equals("viewBrandList")) {
+            processViewBrandList(request, response);
+        }
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *

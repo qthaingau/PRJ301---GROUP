@@ -5,19 +5,23 @@
 package controllers;
 
 import java.io.IOException;
-import java.util.Arrays;
+import java.io.PrintWriter;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import models.CategoryDAO;
+import models.CategoryDTO;
 
 /**
  *
- * @author tungi
+ * @author TEST
  */
-@WebServlet(name = "MainController", urlPatterns = {"/MainController"})
-public class MainController extends HttpServlet {
+@WebServlet(name = "CategoryController", urlPatterns = {"/CategoryController"})
+public class CategoryController extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -28,41 +32,43 @@ public class MainController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+    private void processViewCategoryList(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html; charset=UTF-8");
-        // request.getParameter
-        String txtAction = request.getParameter("txtAction");
 
-        String url = "home.jsp";       // chú ý dấu / và đúng path file login
+        response.setContentType("text/html;charset=UTF-8");
+        try ( PrintWriter out = response.getWriter()) {
 
-        String[] userActions = {"login", "logout", "searchUser", "addUser",
-            "callUpdateUser", "updateUser", "deleteUser", "registerUser", "showRegister"};
+            try {
+                CategoryDAO categoryDAO = new CategoryDAO();
+                List<CategoryDTO> listCategories = categoryDAO.getAllCategory();
 
-        String[] productActions = {"viewProducts", "addProduct", "deleteProduct",
-            "viewProductDetail", "filterProduct",
-            "callSaveProduct", "addProductWithVariant", "updateProductWithVariant", "deleteProductWithVariant", "toggleProductStatus"};
+                HttpSession session = request.getSession();
+                session.setAttribute("categoryList", listCategories);
 
-        String[] brandActions = {"viewBrandList", "updateBrand", "addBrand"};
-        String[] categoryActions = {"viewCategoryList", "updateCategory", "addCategory"};
+                // nếu em có trang categoryForm.jsp:
+                request.getRequestDispatcher("customer/categoryList.jsp").forward(request, response);
 
-        if (txtAction != null) {
-            if (Arrays.asList(userActions).contains(txtAction)) {
-                url = "UserController";
-            } else if (Arrays.asList(productActions).contains(txtAction)) {
-                url = "ProductController";
-            } else if (Arrays.asList(categoryActions).contains(txtAction)) {
-                url = "CategoryController";
-            } else if (Arrays.asList(brandActions).contains(txtAction)) {
-                url = "BrandController";
+                // hoặc muốn include trong home.jsp:
+                // request.getRequestDispatcher("home.jsp").forward(request, response);
+            } catch (Exception e) {
+                e.printStackTrace();
+                request.setAttribute("msg", "Error loading category list!");
+                request.getRequestDispatcher("error.jsp").forward(request, response);
             }
         }
-        request.getRequestDispatcher(url).forward(request, response);
     }
 
-//    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        String action = request.getParameter("txtAction");
+
+        if (action.equals("viewCategoryList")) {
+            processViewCategoryList(request, response);
+        }
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *

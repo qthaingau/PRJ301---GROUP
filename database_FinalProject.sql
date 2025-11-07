@@ -297,7 +297,7 @@ SELECT * FROM ProductVariant;
 CREATE TABLE ProductImage ( -- Tạo bảng ảnh sản phẩm
     imageID NVARCHAR(50) PRIMARY KEY,          -- Khoá chính ảnh
     productID NVARCHAR(50) NOT NULL,           -- FK tới Product (ảnh gắn chung cho product)
-    imageUrl NVARCHAR(255) NOT NULL,           -- URL hoặc đường dẫn file ảnh
+    imageUrl NVARCHAR(max) NOT NULL,           -- URL hoặc đường dẫn file ảnh
     isMain BIT DEFAULT 0,                      -- 1 = ảnh chính
     FOREIGN KEY (productID) REFERENCES Product(productID) -- FK Product
 ); -- Ảnh lưu theo product để tiện load gallery
