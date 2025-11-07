@@ -39,7 +39,7 @@ public class CategoryController extends HttpServlet {
     private void processAddCategory(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String categoryID = request.getParameter("txtCategoryID");
+        String categoryID = request.getParameter("txtCategoryID").toUpperCase();
         String categoryName = request.getParameter("txtCategoryName");
         String sportType = request.getParameter("txtSportType");
 
@@ -129,7 +129,8 @@ public class CategoryController extends HttpServlet {
         CategoryDAO categoryDAO = new CategoryDAO();
         List<CategoryDTO> listCategories = categoryDAO.getAllCategory();
 
-        request.setAttribute("listCategories", listCategories);
+        HttpSession session = request.getSession();
+        session.setAttribute("listCategories", listCategories);
         request.getRequestDispatcher("customer/categoryList.jsp").forward(request, response);
     }
 
@@ -183,6 +184,38 @@ public class CategoryController extends HttpServlet {
         }
     }
 
+    private void processDeleteCategory(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String categoryID = request.getParameter("categoryID");
+
+        try {
+            if (categoryID != null && !categoryID.trim().isEmpty()) {
+                categoryID = categoryID.trim().toUpperCase();   // phòng khi id bị thường
+
+                CategoryDAO dao = new CategoryDAO();
+                boolean success = dao.delete(categoryID);
+
+                if (!success) {
+                    request.setAttribute("msg",
+                            "Failed to delete category (ID: " + categoryID + ")!");
+                }
+            } else {
+                request.setAttribute("msg", "Category ID is missing, cannot delete!");
+            }
+
+            // Cách 1: Gọi lại hàm view để luôn có listCategories đúng
+            processViewCategoryList(request, response);
+
+            // Cách 2 (nếu thích redirect qua MainController):
+            // response.sendRedirect("MainController?txtAction=viewCategoryList");
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("msg", "Error while deleting category!");
+            processViewCategoryList(request, response);
+        }
+    }
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -194,10 +227,12 @@ public class CategoryController extends HttpServlet {
             processCallCategoryForm(request, response);
         } else if (txtAction.equals("filterCategory")) {
             processFilterCategory(request, response);
-        } else if ("addCategory".equals(txtAction)) {
+        } else if (txtAction.equals("addCategory")) {
             processAddCategory(request, response);
-        } else if ("updateCategory".equals(txtAction)) {
+        } else if (txtAction.equals("updateCategory")) {
             processUpdateCategory(request, response);
+        } else if (txtAction.equals("deleteCategory")) {
+            processDeleteCategory(request, response);
         }
 
     }

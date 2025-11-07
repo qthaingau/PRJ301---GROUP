@@ -41,7 +41,7 @@
                            name="txtCategoryID"
                            class="form-control"
                            value="${c.categoryID}"
-                           pattern="C[0-9]{3}"
+                           pattern="[cC][0-9]{3}"
                            title="Category ID must follow format C***, e.g., C001"
                            ${update ? "readonly" : "required"} />
                     <c:if test="${not empty error_categoryID}">

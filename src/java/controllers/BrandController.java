@@ -58,13 +58,35 @@ public class BrandController extends HttpServlet {
         }
     }
 
+    private void processFilterBrand(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String keyword = request.getParameter("keyword");
+        BrandDAO dao = new BrandDAO();
+        List<BrandDTO> list;
+
+        if (keyword == null || keyword.trim().isEmpty()) {
+            list = dao.getAllBrand();              // hoặc getActiveBrands() tuỳ ý em
+        } else {
+            list = dao.filterBrand(keyword);       // hàm dưới
+        }
+
+        request.setAttribute("brandList", list);
+        request.setAttribute("keyword", keyword);
+        HttpSession session = request.getSession();
+        session.setAttribute("user", request.getParameter("user"));
+        request.getRequestDispatcher("customer/brandList.jsp").forward(request, response);
+    }
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String action = request.getParameter("txtAction");
+        String txtAction = request.getParameter("txtAction");
 
-        if (action.equals("viewBrandList")) {
+        if (txtAction.equals("viewBrandList")) {
             processViewBrandList(request, response);
+        } else if ("filterBrand".equals(txtAction)) {
+            processFilterBrand(request, response);
         }
     }
 

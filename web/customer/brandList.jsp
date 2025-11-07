@@ -6,9 +6,7 @@
         <meta charset="UTF-8">
         <title>Brand Management</title>
 
-        <%-- CSS chung, em chỉnh path theo project của em --%>
         <link rel="stylesheet" href="assets/css/productList.css">
-        <%-- nếu có CSS riêng cho brand thì include thêm ở đây --%>
     </head>
     <body class="product-list-body">
 
@@ -23,17 +21,40 @@
                 <p style="color:red">${error}</p>
             </c:if>
 
-            <!-- NÚT ADD CHỈ HIỆN KHI LÀ ADMIN -->
-            <c:if test="${user.role eq 'admin'}">
-                <div class="mb-3">
-                    <form action="MainController" method="get" style="display:inline;">
-                        <input type="hidden" name="txtAction" value="callAddBrandForm"/>
-                        <button type="submit" class="btn btn-apply">
-                            Add New Brand
-                        </button>
-                    </form>
+            <!-- Search bar -->
+            <form action="MainController" method="post" class="product-search-form mb-3">
+                <!-- Action cho brand -->
+                <input type="hidden" name="txtAction" value="filterBrand"/>
+
+                <div class="row g-2 align-items-center">
+                    <!-- Ô search -->
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark text-light">Search</span>
+                            <input type="text"
+                                   class="form-control"
+                                   name="keyword"
+                                   value="${keyword}"
+                                   placeholder="Enter brand id / name / origin..."/>
+                        </div>
+                    </div>
+
+                    <!-- Nút Apply -->
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-apply">Apply</button>
+                    </div>
+
+                    <!-- Chỉ admin mới có thể thêm Brand -->
+                    <c:if test="${not empty user and user.role eq 'admin'}">
+                        <div class="col-auto">
+                            <a href="MainController?txtAction=callBrandForm" class="btn btn-add">
+                                Add New Brand
+                            </a>
+                        </div>
+                    </c:if>
                 </div>
-            </c:if>
+            </form>
+
 
             <!-- DANH SÁCH BRAND -->
             <c:choose>
@@ -52,56 +73,63 @@
                                     <th>Brand ID</th>
                                     <th>Brand Name</th>
                                     <th>Origin</th>
-                                    <th>Status</th>
 
-                                    <!-- Cột Action chỉ cho ADMIN -->
-                                    <c:if test="${user.role eq 'admin'}">
+                                    <!-- Chỉ admin mới thấy cột Status + Action -->
+                                    <c:if test="${not empty user and user.role eq 'admin'}">
+                                        <th>Status</th>
                                         <th>Action</th>
-                                    </c:if>
+                                        </c:if>
                                 </tr>
                             </thead>
 
                             <tbody>
                                 <c:forEach var="b" items="${brandList}">
-                                    <tr>
-                                        <td>${b.brandID}</td>
-                                        <td>${b.brandName}</td>
-                                        <td>${b.origin}</td>
+                                    <!--
+                                        Admin: thấy tất cả brand.
+                                        User: chỉ thấy brand đang active (b.isActive == true).
+                                    -->
+                                    <c:if test="${(not empty user and user.role eq 'admin') or b.isActive}">
+                                        <tr>
+                                            <td>${b.brandID}</td>
+                                            <td>${b.brandName}</td>
+                                            <td>${b.origin}</td>
 
-                                        <!-- Status hiển thị Active / Inactive -->
-                                        <td>
-                                            <c:choose>
-                                                <c:when test="${b.isActive}">
-                                                    <span class="status-badge status-active">
-                                                        Active
-                                                    </span>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <span class="status-badge status-inactive">
-                                                        Inactive
-                                                    </span>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </td>
+                                            <!-- STATUS + ACTION chỉ hiện cho admin -->
+                                            <c:if test="${not empty user and user.role eq 'admin'}">
+                                                <!-- Status -->
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${b.isActive}">
+                                                            <span class="status-badge status-active">
+                                                                Active
+                                                            </span>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <span class="status-badge status-inactive">
+                                                                Inactive
+                                                            </span>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </td>
 
-                                        <!-- ACTION CHỈ KHI ADMIN -->
-                                        <c:if test="${user.role eq 'admin'}">
-                                            <td>
-                                                <!-- UPDATE -->
-                                                <a href="MainController?txtAction=callUpdateBrand&brandID=${b.brandID}"
-                                                   class="btn btn-sm btn-primary">
-                                                    Update
-                                                </a>
+                                                <!-- Action -->
+                                                <td>
+                                                    <!-- UPDATE -->
+                                                    <a href="MainController?txtAction=callUpdateBrand&brandID=${b.brandID}"
+                                                       class="btn btn-sm btn-primary">
+                                                        Update
+                                                    </a>
 
-                                                <!-- DELETE (soft delete hoặc hard delete tuỳ em xử lý trong DAO) -->
-                                                <a href="MainController?txtAction=deleteBrand&brandID=${b.brandID}"
-                                                   class="btn btn-sm btn-danger"
-                                                   onclick="return confirm('Are you sure you want to delete this brand?');">
-                                                    Delete
-                                                </a>
-                                            </td>
-                                        </c:if>
-                                    </tr>
+                                                    <!-- DELETE (soft delete: isActive = 0) -->
+                                                    <a href="MainController?txtAction=deleteBrand&brandID=${b.brandID}"
+                                                       class="btn btn-sm btn-danger"
+                                                       onclick="return confirm('Are you sure you want to deactivate this brand?');">
+                                                        Delete
+                                                    </a>
+                                                </td>
+                                            </c:if>
+                                        </tr>
+                                    </c:if>
                                 </c:forEach>
                             </tbody>
                         </table>

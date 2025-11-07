@@ -107,6 +107,36 @@ public class BrandDAO {
         return listBrand;
     }
 
+    public List<BrandDTO> filterBrand(String keyword) {
+        List<BrandDTO> list = new ArrayList<>();
+        String sql = "SELECT * FROM Brand "
+                + "WHERE brandID   LIKE ? "
+                + "   OR brandName LIKE ? "
+                + "   OR origin    LIKE ?";
+
+        try ( Connection conn = DBUtils.getConnection();  PreparedStatement pst = conn.prepareStatement(sql)) {
+
+            String like = "%" + keyword + "%";
+            pst.setString(1, like);
+            pst.setString(2, like);
+            pst.setString(3, like);
+
+            try ( ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    BrandDTO b = new BrandDTO();
+                    b.setBrandID(rs.getString("brandID"));
+                    b.setBrandName(rs.getString("brandName"));
+                    b.setOrigin(rs.getString("origin"));
+                    b.setIsActive(rs.getBoolean("isActive"));
+                    list.add(b);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     // ---------------------- THÊM BRAND MỚI ----------------------
     public boolean insert(BrandDTO brand) {
         // DB đã có DEFAULT isActive = 1, nên không cần truyền isActive nếu thêm brand mới bình thường
