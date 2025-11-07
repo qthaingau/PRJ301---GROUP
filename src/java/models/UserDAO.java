@@ -36,6 +36,8 @@ public class UserDAO {
                 if (rs.getDate("createdAt") != null) {
                     user.setCreatedAt(rs.getDate("createdAt").toLocalDate());
                 }
+                user.setAvatar(rs.getString("avatar"));
+
                 return user;
             }
         } catch (Exception e) {
@@ -126,5 +128,18 @@ public class UserDAO {
     }
     return result;
 }
+    public boolean updateAvatar(String username, String avatarFileName) {
+    String sql = "UPDATE [User] SET avatar = ? WHERE username = ?";
+    try (Connection conn = DBUtils.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, avatarFileName);
+        ps.setString(2, username);
+        return ps.executeUpdate() > 0;
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+
 
 }

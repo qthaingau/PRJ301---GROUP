@@ -4,14 +4,17 @@
  */
 package controllers;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 import models.UserDAO;
 import models.UserDTO;
 
@@ -20,6 +23,12 @@ import models.UserDTO;
  * @author TEST
  */
 @WebServlet(name = "UserController", urlPatterns = {"/UserController"})
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024 * 2, // 2MB
+    maxFileSize = 1024 * 1024 * 10,      // 10MB
+    maxRequestSize = 1024 * 1024 * 50    // 50MB
+)
+
 public class UserController extends HttpServlet {
 
     /**
@@ -132,6 +141,48 @@ public class UserController extends HttpServlet {
         request.getRequestDispatcher("customer/changePassword.jsp").forward(request, response);
     }
 
+    private void processUploadAvatar(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+    HttpSession session = request.getSession();
+    UserDTO user = (UserDTO) session.getAttribute("user");
+
+    if (user == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
+
+    Part filePart = request.getPart("avatar");
+    String fileName = filePart.getSubmittedFileName();
+
+    if (fileName != null && !fileName.isEmpty()) {
+        // Đường dẫn cố định (ngoài project)
+        String uploadPath = getServletContext().getRealPath("/uploads");
+        File uploadDir = new File(uploadPath);
+        if (!uploadDir.exists()) uploadDir.mkdirs();
+
+        // tránh trùng tên
+        String uniqueFileName = user.getUsername() + "_" + System.currentTimeMillis() + "_" + fileName;
+        String filePath = uploadPath + File.separator + uniqueFileName;
+        filePart.write(filePath);
+
+        // cập nhật DB
+        UserDAO dao = new UserDAO();
+        boolean updated = dao.updateAvatar(user.getUsername(), uniqueFileName);
+
+        if (updated) {
+            // cập nhật session
+            user.setAvatar(uniqueFileName);
+            session.setAttribute("user", user);
+            System.out.println("Avatar updated successfully: " + uniqueFileName);
+        } else {
+            System.out.println("Avatar update failed in DB!");
+        }
+    }
+
+    response.sendRedirect("customer/profile.jsp");
+}
+
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
@@ -151,6 +202,8 @@ public class UserController extends HttpServlet {
             request.getRequestDispatcher("register.jsp").forward(request, response);
         } else if (txtAction.equals("changePassword")) {
             processChangePassword(request, response);
+        } else if (txtAction.equals("uploadAvatar")) {
+            processUploadAvatar(request, response);
         }
 
     }

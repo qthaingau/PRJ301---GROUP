@@ -11,6 +11,7 @@ import java.time.LocalDate;
  * @author Admin
  */
 public class UserDTO {
+
     private String userID;
     private String username;
     private String email;
@@ -19,6 +20,7 @@ public class UserDTO {
     private String phoneNumber;
     private String role;
     private LocalDate createdAt;
+     private String avatar;
 
     public UserDTO() {
     }
@@ -43,9 +45,17 @@ public class UserDTO {
         this.role = role;
         this.createdAt = createdAt;
     }
-    
-    
-    
+
+   
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
     public String getUserID() {
         return userID;
     }
@@ -109,6 +119,5 @@ public class UserDTO {
     public void setCreatedAt(LocalDate createdAt) {
         this.createdAt = createdAt;
     }
-    
-    
+
 }
