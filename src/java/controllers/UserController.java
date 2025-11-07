@@ -58,7 +58,7 @@ public class UserController extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         session.invalidate(); // Huy tat ca nhung cai dang co trong session
-        response.sendRedirect("login.jsp");
+        response.sendRedirect("home.jsp");
     }
 
     private void processRegister(HttpServletRequest request, HttpServletResponse response)
