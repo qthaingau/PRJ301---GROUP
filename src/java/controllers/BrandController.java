@@ -57,6 +57,34 @@ public class BrandController extends HttpServlet {
             }
         }
     }
+    
+    protected void processViewBrandNameList(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        response.setContentType("text/html;charset=UTF-8");
+
+        String url = "error.jsp";
+
+        try {
+            BrandDAO brandDAO = new BrandDAO();
+
+                // ✅ Lấy danh sách brand đang active
+                List<BrandDTO> listBrand = brandDAO.getActiveBrands();
+
+                // ✅ Gửi sang JSP (thường là header hoặc trang home)
+                request.setAttribute("listBrand", listBrand);
+
+                // ✅ Chuyển tiếp về trang home.jsp hoặc header.jspf được include
+                url = "home.jsp";
+ 
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            request.getRequestDispatcher(url).forward(request, response);
+        }
+    }
+
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -65,7 +93,9 @@ public class BrandController extends HttpServlet {
 
         if (action.equals("viewBrandList")) {
             processViewBrandList(request, response);
-        }
+        }else if (action.equals("viewBrandNameList")) {
+            processViewBrandNameList(request, response);
+        }  
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
