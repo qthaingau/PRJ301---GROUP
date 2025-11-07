@@ -1,24 +1,34 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
     <head>
         <meta charset="UTF-8">
-        <title>Brand Management</title>
+        <title>Brand List</title>
 
+        <!-- CSS theme đen – đỏ – trắng -->
         <link rel="stylesheet" href="assets/css/productList.css">
     </head>
     <body class="product-list-body">
 
+        <!-- ✅ Back to Home giống categoryList.jsp -->
+        <a href="home.jsp" class="btn btn-secondary" style="margin-left: 10px;">
+            Back to Home
+        </a>
+
         <div class="container product-list-wrapper">
             <h3 class="product-list-title">Brand List</h3>
 
-            <!-- Thông báo chung -->
+            <!-- Thông báo chung (dùng alert cho đồng bộ) -->
             <c:if test="${not empty message}">
-                <p style="color:green">${message}</p>
+                <div class="alert alert-success text-center">
+                    ${message}
+                </div>
             </c:if>
             <c:if test="${not empty error}">
-                <p style="color:red">${error}</p>
+                <div class="alert alert-danger text-center">
+                    ${error}
+                </div>
             </c:if>
 
             <!-- Search bar -->
@@ -47,14 +57,13 @@
                     <!-- Chỉ admin mới có thể thêm Brand -->
                     <c:if test="${not empty user and user.role eq 'admin'}">
                         <div class="col-auto">
-                            <a href="MainController?txtAction=callBrandForm" class="btn btn-add">
-                                Add New Brand
+                            <a href="MainController?txtAction=callBrandForm&update=false" class="btn btn-add">
+                                + Add New Brand
                             </a>
                         </div>
                     </c:if>
                 </div>
             </form>
-
 
             <!-- DANH SÁCH BRAND -->
             <c:choose>
@@ -77,7 +86,7 @@
                                     <!-- Chỉ admin mới thấy cột Status + Action -->
                                     <c:if test="${not empty user and user.role eq 'admin'}">
                                         <th>Status</th>
-                                        <th>Action</th>
+                                        <th>Actions</th>
                                         </c:if>
                                 </tr>
                             </thead>
@@ -112,17 +121,17 @@
                                                     </c:choose>
                                                 </td>
 
-                                                <!-- Action -->
+                                                <!-- Actions -->
                                                 <td>
                                                     <!-- UPDATE -->
-                                                    <a href="MainController?txtAction=callUpdateBrand&brandID=${b.brandID}"
-                                                       class="btn btn-sm btn-primary">
+                                                    <a href="MainController?txtAction=callBrandForm&brandID=${b.brandID}&update=true"
+                                                       class="btn btn-update">
                                                         Update
                                                     </a>
 
                                                     <!-- DELETE (soft delete: isActive = 0) -->
                                                     <a href="MainController?txtAction=deleteBrand&brandID=${b.brandID}"
-                                                       class="btn btn-sm btn-danger"
+                                                       class="btn btn-delete"
                                                        onclick="return confirm('Are you sure you want to deactivate this brand?');">
                                                         Delete
                                                     </a>

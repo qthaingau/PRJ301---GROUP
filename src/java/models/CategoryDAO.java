@@ -128,14 +128,16 @@ public class CategoryDAO {
     public boolean update(CategoryDTO category) {
         String sql = "UPDATE Category "
                 + "SET categoryName = ?, "
-                + "    sportType = ? "
+                + "    sportType = ?, "
+                + "    isActive = ? "
                 + "WHERE categoryID = ?";
 
         try ( Connection conn = DBUtils.getConnection();  PreparedStatement pst = conn.prepareStatement(sql)) {
 
             pst.setString(1, category.getCategoryName());
             pst.setString(2, category.getSportType());
-            pst.setString(3, category.getCategoryID());
+            pst.setBoolean(3, category.getIsActive());
+            pst.setString(4, category.getCategoryID());
 
             int rows = pst.executeUpdate();
             return rows > 0;
@@ -166,10 +168,9 @@ public class CategoryDAO {
         List<CategoryDTO> listCategory = new ArrayList<>();
 
         String sql = "SELECT * FROM Category "
-           + "WHERE categoryName LIKE ? "
-           + "OR categoryID LIKE ? "
-           + "OR sportType LIKE ?";
-
+                + "WHERE categoryName LIKE ? "
+                + "OR categoryID LIKE ? "
+                + "OR sportType LIKE ?";
 
         try ( Connection conn = DBUtils.getConnection();  PreparedStatement pst = conn.prepareStatement(sql)) {
 

@@ -81,12 +81,19 @@
                 <!-- Status (chỉ hiển thị khi update và là admin) -->
                 <c:if test="${update and user.role eq 'admin'}">
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Status:</label>
-                        <span class="${c.isActive ? 'status-badge status-active' : 'status-badge status-inactive'}">
-                            ${c.isActive ? "Active" : "Inactive"}
-                        </span>
+                        <label class="form-label fw-bold d-block">Status:</label>
+                        <label class="me-3">
+                            <input type="radio" name="txtIsActive" value="true"
+                                   ${c.isActive ? 'checked="checked"' : ''}/> Active
+                        </label>
+                        <label>
+                            <input type="radio" name="txtIsActive" value="false"
+                                   ${not c.isActive ? 'checked="checked"' : ''}/> Inactive
+                        </label>
                     </div>
                 </c:if>
+
+
 
                 <!-- Submit Button -->
                 <div class="mt-4">

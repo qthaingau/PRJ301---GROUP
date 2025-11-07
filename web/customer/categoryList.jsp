@@ -10,7 +10,10 @@
         <link rel="stylesheet" href="assets/css/productList.css">
     </head>
     <body class="product-list-body">
-
+        <!-- ✅ NEW: Back to Home -->
+        <a href="home.jsp" class="btn btn-secondary" style="margin-left: 10px;">
+            Back to Home
+        </a>
         <div class="container product-list-wrapper">
             <h3 class="product-list-title">Category List</h3>
 
@@ -60,10 +63,10 @@
                                     <th>Category ID</th>
                                     <th>Category Name</th>
                                     <th>Sport Type</th>
-                                    <c:if test="${user.role eq 'admin'}">
+                                        <c:if test="${user.role eq 'admin'}">
                                         <th>Status</th>
                                         <th>Actions</th>
-                                    </c:if>
+                                        </c:if>
                                 </tr>
                             </thead>
 

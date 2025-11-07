@@ -18,6 +18,7 @@ import models.CategoryDAO;
 import models.CategoryDTO;
 import models.ProductDAO;
 import models.ProductDTO;
+import models.UserDTO;
 
 /**
  *
@@ -35,19 +36,25 @@ public class CategoryController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    // ---------------------- ADD CATEGORY ----------------------
-    
-    
-    private void processAddCategory(HttpServletRequest request, HttpServletResponse response)
+    private void processSaveCategory(HttpServletRequest request, HttpServletResponse response, boolean isUpdate)
             throws ServletException, IOException {
 
-        String categoryID = request.getParameter("txtCategoryID").toUpperCase();
+        // Cờ phân biệt add / update
+//        boolean isUpdate = Boolean.parseBoolean(request.getParameter("update"));
+        // Lấy dữ liệu từ form
+        String categoryID = request.getParameter("txtCategoryID");
         String categoryName = request.getParameter("txtCategoryName");
         String sportType = request.getParameter("txtSportType");
+        String isActiveParam = request.getParameter("txtIsActive"); // chỉ có khi UPDATE + admin
+
+        // Chuẩn hoá ID: Cxxx
+        if (categoryID != null) {
+            categoryID = categoryID.trim().toUpperCase();
+        }
 
         boolean valid = true;
 
-        // Validate dữ liệu nhập
+        // ==== VALIDATION CHUNG ====
         if (categoryID == null || !categoryID.matches("C\\d{3}")) {
             request.setAttribute("error_categoryID", "Category ID must follow format C***, e.g., C001");
             valid = false;
@@ -61,67 +68,65 @@ public class CategoryController extends HttpServlet {
             valid = false;
         }
 
+        CategoryDAO dao = new CategoryDAO();
+
+        // Lấy user để check quyền
+        UserDTO user = (UserDTO) request.getSession().getAttribute("user");
+        boolean isAdmin = (user != null && "admin".equalsIgnoreCase(user.getRole()));
+
+        // Xử lý isActive
+        boolean isActive = true; // mặc định khi ADD
+
+        if (isUpdate) {
+            if (isAdmin) {
+                // Admin update: đọc từ radio txtIsActive (true/false)
+                if (isActiveParam != null) {
+                    isActive = Boolean.parseBoolean(isActiveParam);
+                }
+            } else {
+                // User thường: không được đổi trạng thái -> lấy từ DB
+                CategoryDTO old = dao.getCategoryByID(categoryID);
+                if (old != null) {
+                    isActive = old.getIsActive();
+                }
+            }
+        } else {
+            // ADD: cho là active (hoặc dùng default trong DB)
+            isActive = true;
+        }
+
+        // Nếu dữ liệu không hợp lệ -> quay lại form
         if (!valid) {
-            request.setAttribute("update", false);
+            CategoryDTO c = new CategoryDTO();
+            c.setCategoryID(categoryID);
+            c.setCategoryName(categoryName);
+            c.setSportType(sportType);
+            c.setIsActive(isActive);
+
+            request.setAttribute("c", c);
+            request.setAttribute("update", isUpdate);
             request.getRequestDispatcher("/admin/categoryForm.jsp").forward(request, response);
             return;
         }
 
-        // Tạo DTO và lưu
-        CategoryDTO category = new CategoryDTO(categoryID, categoryName, sportType, true);
-        CategoryDAO dao = new CategoryDAO();
+        // Tạo DTO
+        CategoryDTO category = new CategoryDTO(categoryID, categoryName, sportType, isActive);
 
-        boolean success = dao.insert(category);
+        boolean success;
+        if (isUpdate) {
+            success = dao.update(category);
+        } else {
+            success = dao.insert(category);
+        }
 
         if (success) {
             response.sendRedirect("MainController?txtAction=viewCategoryList");
         } else {
-            request.setAttribute("error", "Failed to add new category! ID or name may already exist.");
-            request.setAttribute("update", false);
-            request.getRequestDispatcher("/admin/categoryForm.jsp").forward(request, response);
-        }
-    }
-
-// ---------------------- UPDATE CATEGORY ----------------------
-    private void processUpdateCategory(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        String categoryID = request.getParameter("txtCategoryID");
-        String categoryName = request.getParameter("txtCategoryName");
-        String sportType = request.getParameter("txtSportType");
-
-        boolean valid = true;
-
-        if (categoryName == null || categoryName.trim().isEmpty()) {
-            request.setAttribute("error_categoryName", "Category name cannot be empty.");
-            valid = false;
-        }
-        if (sportType == null || sportType.trim().isEmpty()) {
-            request.setAttribute("error_sportType", "Sport type cannot be empty.");
-            valid = false;
-        }
-
-        if (!valid) {
-            request.setAttribute("update", true);
-            CategoryDTO old = new CategoryDAO().getCategoryByID(categoryID);
-            request.setAttribute("c", old);
-            request.getRequestDispatcher("admin/categoryForm.jsp").forward(request, response);
-            return;
-        }
-
-        // Cập nhật
-        CategoryDTO category = new CategoryDTO(categoryID, categoryName, sportType, true);
-        CategoryDAO dao = new CategoryDAO();
-
-        boolean success = dao.update(category);
-
-        if (success) {
-            response.sendRedirect("MainController?txtAction=viewCategoryList");
-        } else {
-            request.setAttribute("error", "Failed to update category!");
-            request.setAttribute("update", true);
+            request.setAttribute("error",
+                    isUpdate ? "Failed to update category!" : "Failed to add new category! ID or name may already exist.");
             request.setAttribute("c", category);
-            request.getRequestDispatcher("admin/categoryForm.jsp").forward(request, response);
+            request.setAttribute("update", isUpdate);
+            request.getRequestDispatcher("/admin/categoryForm.jsp").forward(request, response);
         }
     }
 
@@ -225,14 +230,14 @@ public class CategoryController extends HttpServlet {
 
         if (txtAction.equals("viewCategoryList")) {
             processViewCategoryList(request, response);
-        } else if (txtAction.equals("callCategoryForm")) {
+        } else if (txtAction.equals("callBrandForm")) {
             processCallCategoryForm(request, response);
         } else if (txtAction.equals("filterCategory")) {
             processFilterCategory(request, response);
         } else if (txtAction.equals("addCategory")) {
-            processAddCategory(request, response);
+            processSaveCategory(request, response, false);
         } else if (txtAction.equals("updateCategory")) {
-            processUpdateCategory(request, response);
+            processSaveCategory(request, response, true);
         } else if (txtAction.equals("deleteCategory")) {
             processDeleteCategory(request, response);
         }
