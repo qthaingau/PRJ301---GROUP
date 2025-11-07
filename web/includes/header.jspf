@@ -26,7 +26,7 @@
             <c:if test="${empty sessionScope.user}">
                 <li class="nav-item">
                     <a class="nav-link text-white" href="login.jsp">
-                        <i class="bi bi-person"></i> Đăng nhập
+                        <i class="bi bi-person"></i> Log In
                     </a>
                 </li>
             </c:if>
@@ -34,17 +34,35 @@
             <!-- Nếu đã đăng nhập -->
             <c:if test="${not empty sessionScope.user}">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle text-white" href="#" id="userMenu" data-bs-toggle="dropdown">
-                        <i class="bi bi-person-circle"></i>
-                        Welcome, <strong>${sessionScope.user.fullName}</strong>
+                    <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#" id="userMenu" data-bs-toggle="dropdown">
+                        <!-- Avatar -->
+                        <c:choose>
+                            <c:when test="${not empty sessionScope.user.avatar}">
+                                <img src="${pageContext.request.contextPath}/uploads/${sessionScope.user.avatar}" 
+                                     alt="avatar" 
+                                     class="rounded-circle me-2" 
+                                     style="width: 35px; height: 35px; object-fit: cover; border: 2px solid #ffc107;">
+                            </c:when>
+                            <c:otherwise>
+                                <img src="${pageContext.request.contextPath}/assets/img/default-avatar.png" 
+                                     alt="default avatar" 
+                                     class="rounded-circle me-2" 
+                                     style="width: 35px; height: 35px; object-fit: cover; border: 2px solid #ffc107;">
+                            </c:otherwise>
+                        </c:choose>
+
+                        <!-- Tên người dùng -->
+                        <span>Welcome, <strong>${sessionScope.user.fullName}</strong></span>
                     </a>
+
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="listOfPayments.jsp">Trang cá nhân</a></li>
+                        <li><a class="dropdown-item" href="customer/profile.jsp">Trang cá nhân</a></li>
+
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item text-danger" href="MainController?txtAction=logout">Đăng xuất</a></li>
                     </ul>
                 </li>
- 
+
             </c:if>
 
             <!-- Giỏ hàng -->
