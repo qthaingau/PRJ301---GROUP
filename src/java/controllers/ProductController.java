@@ -383,6 +383,9 @@ public class ProductController extends HttpServlet {
         // Get params
         String productID = request.getParameter("productID");
         String productName = request.getParameter("productName");
+        ProductDAO productDAO = new ProductDAO();
+        ProductDTO product = productDAO.getProductByID(productID);
+                
 
         ProductVariantDAO variantDAO = new ProductVariantDAO();
 
@@ -405,6 +408,7 @@ public class ProductController extends HttpServlet {
             }
 
             // Set attributes
+            request.setAttribute("product", product);
             request.setAttribute("productID", productID);
             request.setAttribute("productName", productName);
             request.setAttribute("variants", variants);

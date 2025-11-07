@@ -72,32 +72,37 @@ SELECT * FROM Address
 /* ===========================
    2. CATEGORY
    =========================== */
-CREATE TABLE Category ( -- Tạo bảng Category
-    categoryID NVARCHAR(50) PRIMARY KEY,        -- Khoá chính
-    categoryName NVARCHAR(100) UNIQUE NOT NULL,         -- Tên danh mục
-    sportType NVARCHAR(50),                     -- Môn thể thao (Football, Running,...)
-    parentCategoryID NVARCHAR(50) NULL,         -- ID danh mục cha (nếu có)
-    FOREIGN KEY (parentCategoryID) REFERENCES Category(categoryID) -- FK tự tham chiếu
-); -- Bảng phân loại sản phẩm
+CREATE TABLE Category (
+    categoryID NVARCHAR(50) PRIMARY KEY,                  -- Khóa chính
+    categoryName NVARCHAR(100) UNIQUE NOT NULL,           -- Tên danh mục (duy nhất)
+    sportType NVARCHAR(50),                               -- Loại thể thao
+    isActive BIT DEFAULT 1                                -- Trạng thái hiển thị (1: active, 0: inactive)
+);
 GO
-INSERT INTO Category (categoryID, categoryName, sportType, parentCategoryID)
+
+-- Dữ liệu mẫu cho Category
+INSERT INTO Category (categoryID, categoryName, sportType)
 VALUES
-    ('C001', 'Football Shoes', 'Football', NULL),
-    ('C002', 'Running Shoes', 'Running', NULL),
-    ('C003', 'Training Shoes', 'Training', NULL),
-    ('C004', 'Basketball Shoes', 'Basketball', NULL),
-    ('C005', 'Gym Shoes', 'Gym', NULL);
-SELECT * FROM Category
+    ('C001', 'Football Shoes', 'Football'),
+    ('C002', 'Running Shoes', 'Running'),
+    ('C003', 'Training Shoes', 'Training'),
+    ('C004', 'Basketball Shoes', 'Basketball'),
+    ('C005', 'Gym Shoes', 'Gym');
+GO
+SELECT * FROM Category;
+GO
 /* ===========================
    3. BRAND
    =========================== */
-CREATE TABLE Brand ( -- Tạo bảng Brand
-    brandID NVARCHAR(50) PRIMARY KEY,          -- Khoá chính
-    brandName NVARCHAR(100) NOT NULL,          -- Tên thương hiệu
-    origin NVARCHAR(100)                       -- Nguồn gốc/Quốc gia
-); -- Bảng thương hiệu
+CREATE TABLE Brand (
+    brandID NVARCHAR(50) PRIMARY KEY,                     -- Khóa chính
+    brandName NVARCHAR(100) NOT NULL UNIQUE,              -- Tên thương hiệu (duy nhất)
+    origin NVARCHAR(100),                                 -- Quốc gia / nguồn gốc
+    isActive BIT DEFAULT 1                                -- Trạng thái hiển thị
+);
 GO
--- Thêm các bản ghi cho bảng Brand
+
+-- Dữ liệu mẫu cho Brand
 INSERT INTO Brand (brandID, brandName, origin)
 VALUES
     ('B001', 'Nike', 'USA'),
@@ -105,6 +110,10 @@ VALUES
     ('B003', 'Puma', 'Germany'),
     ('B004', 'Reebok', 'USA'),
     ('B005', 'Under Armour', 'USA');
+GO
+
+SELECT * FROM Brand;
+GO
 
 /* ===========================
    4. PRODUCT
@@ -318,7 +327,7 @@ GO
 
 --8. PROMOTION (ĐÃ ĐỔI TÊN TỪ DISCOUNT EVENT) + LINK
    -- =========================== */
-CREATE TABLE Promotion ( -- Tạo bảng sự kiện giảm giá (**ĐÃ ĐỔI TÊN**)
+/*CREATE TABLE Promotion ( -- Tạo bảng sự kiện giảm giá (**ĐÃ ĐỔI TÊN**)
     discountID NVARCHAR(50) PRIMARY KEY,      -- ID sự kiện
     discountName NVARCHAR(100) NOT NULL,      -- Tên sự kiện
     description NVARCHAR(255),                 -- Mô tả
@@ -336,7 +345,7 @@ CREATE TABLE ProductDiscount ( -- Tạo bảng trung gian liên kết product <-
     FOREIGN KEY (productID) REFERENCES Product(productID), -- FK Product
     FOREIGN KEY (discountID) REFERENCES Promotion(discountID) -- FK DiscountEvent
 ); -- Liên kết nhiều-nhiều giữa sản phẩm và sự kiện giảm giá
-GO
+GO*/
 
 /* ===========================
    9. CART & CARTITEM

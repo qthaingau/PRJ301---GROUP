@@ -33,27 +33,99 @@
                 <section class="product-detail-card">
                     <c:choose>
                         <c:when test="${not empty productDetail}">
-                            <h2 class="product-name">${productName}</h2>
+                            <!-- TÊN SẢN PHẨM -->
+                            <h2 class="product-name">${product.productName}</h2>
 
+                            <!-- THÔNG TIN CHUNG CỦA PRODUCT -->
+                            <div class="product-info mb-3 p-3 border rounded">
+                                <p>
+                                    <span class="label">Product ID:</span>
+                                    <span class="value">${product.productID}</span>
+                                </p>
+
+                                <!-- CATEGORY: click để sang categoryList (filterCategory) -->
+                                <p>
+                                    <span class="label">Category ID:</span>
+                                    <span class="value">
+                                        <a class="product-link"
+                                           href="MainController?txtAction=filterCategory&keyword=${product.categoryID}">
+                                            ${product.categoryID}
+                                        </a>
+                                    </span>
+                                </p>
+
+                                <!-- BRAND: click để sang brandList (filterBrand) -->
+                                <p>
+                                    <span class="label">Brand ID:</span>
+                                    <span class="value">
+                                        <a class="product-link"
+                                           href="MainController?txtAction=filterBrand&keyword=${product.brandID}">
+                                            ${product.brandID}
+                                        </a>
+                                    </span>
+                                </p>
+
+                                <p>
+                                    <span class="label">Description:</span>
+                                    <span class="value">${product.description}</span>
+                                </p>
+
+                                <!-- Status chỉ cho admin -->
+                                <c:if test="${isAdmin}">
+                                    <p>
+                                        <span class="label">Status:</span>
+                                        <span class="value">
+                                            <c:choose>
+                                                <c:when test="${product.isActive}">
+                                                    Active
+                                                </c:when>
+                                                <c:otherwise>
+                                                    Inactive
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </span>
+                                    </p>
+                                </c:if>
+                            </div>
+
+                            <!-- NẾU KHÔNG CÓ VARIANT -->
                             <c:if test="${empty variants}">
                                 <p class="text-muted">This product is currently out of stock.</p>
                             </c:if>
 
                             <!-- DANH SÁCH VARIANT -->
                             <c:forEach var="v" items="${variants}">
-                                <!-- Hiển thị nếu là admin hoặc variant có stock > 0 -->
+                                <!-- Admin thấy hết, user chỉ thấy variant có stock > 0 -->
                                 <c:if test="${isAdmin or v.stock > 0}">
                                     <div class="product-detail-card mb-3 p-3 border rounded">
-                                        <p><span class="label">Variant ID:</span> <span class="value">${v.variantID}</span></p>
-                                        <p><span class="label">Size:</span> <span class="value">${v.size}</span></p>
-                                        <p><span class="label">Color:</span> <span class="value">${v.color}</span></p>
-                                        <p><span class="label">Price:</span> <span class="value">${v.price}</span></p>
+                                        <p>
+                                            <span class="label">Variant ID:</span>
+                                            <span class="value">${v.variantID}</span>
+                                        </p>
+                                        <p>
+                                            <span class="label">Size:</span>
+                                            <span class="value">${v.size}</span>
+                                        </p>
+                                        <p>
+                                            <span class="label">Color:</span>
+                                            <span class="value">${v.color}</span>
+                                        </p>
+                                        <p>
+                                            <span class="label">Price:</span>
+                                            <span class="value">${v.price}</span>
+                                        </p>
 
-                                        <!-- Chỉ Admin mới thấy stock, sales count và các nút -->
+
+                                        <p>
+                                            <span class="label">Stock:</span>
+                                            <span class="value">${v.stock}</span>
+                                        </p>
+                                        <p>
+                                            <span class="label">Sales Count:</span>
+                                            <span class="value">${v.salesCount}</span>
+                                        </p>
+                                        <!-- Chỉ admin mới thấy stock, sales và nút chỉnh sửa -->
                                         <c:if test="${isAdmin}">
-                                            <p><span class="label">Stock:</span> <span class="value">${v.stock}</span></p>
-                                            <p><span class="label">Sales Count:</span> <span class="value">${v.salesCount}</span></p>
-
                                             <div class="mt-2 d-flex gap-2">
                                                 <!-- UPDATE VARIANT -->
                                                 <a href="MainController?txtAction=callSaveProduct&productID=${v.productID}&variantID=${v.variantID}&update=true"
@@ -80,6 +152,7 @@
                     </c:choose>
                 </section>
 
+
                 <!-- ==== RIGHT: OTHER PRODUCTS LIST ==== -->
                 <section class="product-list-section">
                     <h2 class="section-title">Other Products</h2>
@@ -97,17 +170,14 @@
                                 <table class="table table-hover align-middle product-table">
                                     <thead>
                                         <tr>
-                                            <th>Product ID</th>
                                             <th>Product Name</th>
                                             <th>Description</th>
                                             <th>Category ID</th>
                                             <th>Brand ID</th>
-                                            <th>Created At</th>
                                             <!-- Chỉ hiện cột Status cho Admin -->
                                             <c:if test="${isAdmin}">
                                                 <th>Status</th>
                                                 </c:if>
-                                            <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -119,34 +189,33 @@
                                                 <c:if test="${isAdmin}">
                                                     <tr>
                                                         <td>${p.productID}</td>
-                                                        <td>${p.productName}</td>
+                                                        <td class="text-center">
+                                                            <a href="MainController?txtAction=viewProductDetail&productID=${p.productID}&productName=${p.productName}">
+                                                                ${p.productName}
+                                                            </a>
+                                                        </td>
+
                                                         <td>${p.description}</td>
                                                         <td>${p.categoryID}</td>
                                                         <td>${p.brandID}</td>
-                                                        <td>${p.createdAt}</td>
                                                         <td>${p.isActive}</td>
-                                                        <td class="text-center">
-                                                            <a href="MainController?txtAction=viewProductDetail&productID=${p.productID}&productName=${p.productName}">
-                                                                View Detail
-                                                            </a>
-                                                        </td>
+
                                                     </tr>
                                                 </c:if>
 
                                                 <!-- Trường hợp USER: chỉ hiển thị khi isActive = true -->
                                                 <c:if test="${not isAdmin and p.isActive}">
                                                     <tr>
-                                                        <td>${p.productID}</td>
-                                                        <td>${p.productName}</td>
+                                                        <td class="text-center">
+                                                            <a href="MainController?txtAction=viewProductDetail&productID=${p.productID}&productName=${p.productName}">
+                                                                ${p.productName}
+                                                            </a>
+                                                        </td>
+
                                                         <td>${p.description}</td>
                                                         <td>${p.categoryID}</td>
                                                         <td>${p.brandID}</td>
-                                                        <td>${p.createdAt}</td>
-                                                        <td class="text-center">
-                                                            <a href="MainController?txtAction=viewProductDetail&productID=${p.productID}&productName=${p.productName}">
-                                                                View Detail
-                                                            </a>
-                                                        </td>
+
                                                     </tr>
                                                 </c:if>
 

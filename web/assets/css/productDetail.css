@@ -350,6 +350,17 @@
     }
 }
 
+a.product-link {
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+a.product-link:hover {
+    text-decoration: underline; /* hoặc bỏ nếu không muốn underline */
+}
+
+
 /* ================== ANIMATIONS ================== */
 @keyframes fadeSlideDown {
     from {
