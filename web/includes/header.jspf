@@ -92,12 +92,25 @@
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle text-white px-3" href="#" data-bs-toggle="dropdown">Thương hiệu</a>
                 <ul class="dropdown-menu bg-dark">
-                    <li><a class="dropdown-item text-white" href="brand?name=Nike">Giày hãng Nike</a></li>
-                    <li><a class="dropdown-item text-white" href="brand?name=Adidas">Giày hãng Adidas</a></li>
-                    <li><a class="dropdown-item text-white" href="brand?name=Puma">Giày hãng Puma</a></li>
-                    <li><a class="dropdown-item text-white" href="brand?name=Mizuno">Giày hãng Mizuno</a></li>
+
+                    <!-- Lặp qua danh sách thương hiệu từ request attribute -->
+                    <c:forEach var="brand" items="${listBrand}">
+                        <li>
+                            <a class="dropdown-item text-white" 
+                               href="MainController?txtAction=viewProducts&brandID=${brand.brandID}">
+                                ${brand.brandName}
+                            </a>
+                        </li>
+                    </c:forEach>
+
+                    <!-- Nếu không có thương hiệu nào -->
+                    <c:if test="${empty listBrand}">
+                        <li><span class="dropdown-item text-muted">Không có thương hiệu nào</span></li>
+                    </c:if>
+
                 </ul>
             </li>
+
 
             <!-- Các loại giày -->
             <li class="nav-item dropdown">
