@@ -6,6 +6,7 @@ package controllers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,6 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import models.CategoryDAO;
 import models.CategoryDTO;
+import models.ProductDAO;
+import models.ProductDTO;
 
 /**
  *
@@ -32,40 +35,171 @@ public class CategoryController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    // ---------------------- ADD CATEGORY ----------------------
+    private void processAddCategory(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String categoryID = request.getParameter("txtCategoryID");
+        String categoryName = request.getParameter("txtCategoryName");
+        String sportType = request.getParameter("txtSportType");
+
+        boolean valid = true;
+
+        // Validate dữ liệu nhập
+        if (categoryID == null || !categoryID.matches("C\\d{3}")) {
+            request.setAttribute("error_categoryID", "Category ID must follow format C***, e.g., C001");
+            valid = false;
+        }
+        if (categoryName == null || categoryName.trim().isEmpty()) {
+            request.setAttribute("error_categoryName", "Category name cannot be empty.");
+            valid = false;
+        }
+        if (sportType == null || sportType.trim().isEmpty()) {
+            request.setAttribute("error_sportType", "Sport type cannot be empty.");
+            valid = false;
+        }
+
+        if (!valid) {
+            request.setAttribute("update", false);
+            request.getRequestDispatcher("/admin/categoryForm.jsp").forward(request, response);
+            return;
+        }
+
+        // Tạo DTO và lưu
+        CategoryDTO category = new CategoryDTO(categoryID, categoryName, sportType, true);
+        CategoryDAO dao = new CategoryDAO();
+
+        boolean success = dao.insert(category);
+
+        if (success) {
+            response.sendRedirect("MainController?txtAction=viewCategoryList");
+        } else {
+            request.setAttribute("error", "Failed to add new category! ID or name may already exist.");
+            request.setAttribute("update", false);
+            request.getRequestDispatcher("/admin/categoryForm.jsp").forward(request, response);
+        }
+    }
+
+// ---------------------- UPDATE CATEGORY ----------------------
+    private void processUpdateCategory(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String categoryID = request.getParameter("txtCategoryID");
+        String categoryName = request.getParameter("txtCategoryName");
+        String sportType = request.getParameter("txtSportType");
+
+        boolean valid = true;
+
+        if (categoryName == null || categoryName.trim().isEmpty()) {
+            request.setAttribute("error_categoryName", "Category name cannot be empty.");
+            valid = false;
+        }
+        if (sportType == null || sportType.trim().isEmpty()) {
+            request.setAttribute("error_sportType", "Sport type cannot be empty.");
+            valid = false;
+        }
+
+        if (!valid) {
+            request.setAttribute("update", true);
+            CategoryDTO old = new CategoryDAO().getCategoryByID(categoryID);
+            request.setAttribute("c", old);
+            request.getRequestDispatcher("admin/categoryForm.jsp").forward(request, response);
+            return;
+        }
+
+        // Cập nhật
+        CategoryDTO category = new CategoryDTO(categoryID, categoryName, sportType, true);
+        CategoryDAO dao = new CategoryDAO();
+
+        boolean success = dao.update(category);
+
+        if (success) {
+            response.sendRedirect("MainController?txtAction=viewCategoryList");
+        } else {
+            request.setAttribute("error", "Failed to update category!");
+            request.setAttribute("update", true);
+            request.setAttribute("c", category);
+            request.getRequestDispatcher("admin/categoryForm.jsp").forward(request, response);
+        }
+    }
+
     private void processViewCategoryList(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
+        CategoryDAO categoryDAO = new CategoryDAO();
+        List<CategoryDTO> listCategories = categoryDAO.getAllCategory();
 
-            try {
-                CategoryDAO categoryDAO = new CategoryDAO();
-                List<CategoryDTO> listCategories = categoryDAO.getAllCategory();
+        request.setAttribute("listCategories", listCategories);
+        request.getRequestDispatcher("customer/categoryList.jsp").forward(request, response);
+    }
 
-                HttpSession session = request.getSession();
-                session.setAttribute("categoryList", listCategories);
+    private void processCallCategoryForm(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-                // nếu em có trang categoryForm.jsp:
-                request.getRequestDispatcher("customer/categoryList.jsp").forward(request, response);
+        String updateParam = request.getParameter("update");
+        boolean isUpdate = Boolean.parseBoolean(updateParam);
 
-                // hoặc muốn include trong home.jsp:
-                // request.getRequestDispatcher("home.jsp").forward(request, response);
-            } catch (Exception e) {
-                e.printStackTrace();
-                request.setAttribute("msg", "Error loading category list!");
-                request.getRequestDispatcher("error.jsp").forward(request, response);
+        String categoryID = request.getParameter("categoryID");
+        CategoryDAO categoryDAO = new CategoryDAO();
+
+        if (isUpdate && categoryID != null && !categoryID.isEmpty()) {
+            CategoryDTO category = categoryDAO.getCategoryByID(categoryID);
+            request.setAttribute("c", category);
+        }
+
+        request.setAttribute("update", isUpdate);
+        request.getRequestDispatcher("admin/categoryForm.jsp").forward(request, response);
+    }
+
+    private void processFilterCategory(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String keyword = request.getParameter("keyword");
+        CategoryDAO categoryDAO = new CategoryDAO();
+        List<CategoryDTO> list;   // dùng List, không dùng ArrayList
+
+        try {
+            if (keyword == null || keyword.trim().isEmpty()) {
+                // Không nhập gì -> lấy tất cả
+                list = categoryDAO.getAllCategory();
+            } else {
+                // Có keyword -> filter
+                list = categoryDAO.filterCategory(keyword);
             }
+
+            // Gửi dữ liệu cho JSP
+            request.setAttribute("listCategories", list);
+            request.setAttribute("keyword", keyword);
+
+            // Forward tới trang categoryList.jsp
+            request.getRequestDispatcher("customer/categoryList.jsp")
+                    .forward(request, response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("msg", "Error searching category!");
+            request.getRequestDispatcher("customer/categoryList.jsp")
+                    .forward(request, response);
         }
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String action = request.getParameter("txtAction");
+        String txtAction = request.getParameter("txtAction");
 
-        if (action.equals("viewCategoryList")) {
+        if (txtAction.equals("viewCategoryList")) {
             processViewCategoryList(request, response);
+        } else if (txtAction.equals("callCategoryForm")) {
+            processCallCategoryForm(request, response);
+        } else if (txtAction.equals("filterCategory")) {
+            processFilterCategory(request, response);
+        } else if ("addCategory".equals(txtAction)) {
+            processAddCategory(request, response);
+        } else if ("updateCategory".equals(txtAction)) {
+            processUpdateCategory(request, response);
         }
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

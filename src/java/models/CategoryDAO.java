@@ -18,9 +18,7 @@ public class CategoryDAO {
         ArrayList<CategoryDTO> listCategory = new ArrayList<>();
         String sql = "SELECT * FROM Category";
 
-        try (Connection conn = DBUtils.getConnection();
-             PreparedStatement pst = conn.prepareStatement(sql);
-             ResultSet rs = pst.executeQuery()) {
+        try ( Connection conn = DBUtils.getConnection();  PreparedStatement pst = conn.prepareStatement(sql);  ResultSet rs = pst.executeQuery()) {
 
             while (rs.next()) {
                 CategoryDTO category = new CategoryDTO();
@@ -42,9 +40,7 @@ public class CategoryDAO {
         List<CategoryDTO> listCategory = new ArrayList<>();
         String sql = "SELECT * FROM Category WHERE isActive = 1";
 
-        try (Connection conn = DBUtils.getConnection();
-             PreparedStatement pst = conn.prepareStatement(sql);
-             ResultSet rs = pst.executeQuery()) {
+        try ( Connection conn = DBUtils.getConnection();  PreparedStatement pst = conn.prepareStatement(sql);  ResultSet rs = pst.executeQuery()) {
 
             while (rs.next()) {
                 CategoryDTO category = new CategoryDTO();
@@ -64,12 +60,11 @@ public class CategoryDAO {
     public CategoryDTO getCategoryByID(String categoryID) {
         String sql = "SELECT * FROM Category WHERE categoryID = ?";
 
-        try (Connection conn = DBUtils.getConnection();
-             PreparedStatement pst = conn.prepareStatement(sql)) {
+        try ( Connection conn = DBUtils.getConnection();  PreparedStatement pst = conn.prepareStatement(sql)) {
 
             pst.setString(1, categoryID);
 
-            try (ResultSet rs = pst.executeQuery()) {
+            try ( ResultSet rs = pst.executeQuery()) {
                 if (rs.next()) {
                     CategoryDTO category = new CategoryDTO();
                     category.setCategoryID(rs.getString("categoryID"));
@@ -86,16 +81,15 @@ public class CategoryDAO {
     }
 
     // ---------------------- TÌM CATEGORY THEO TÊN (chỉ active) ----------------------
-    public List<CategoryDTO> getCategoryByName(String categoryName) {
-        List<CategoryDTO> listCategory = new ArrayList<>();
+    public ArrayList<CategoryDTO> getCategoryByName(String categoryName) {
+        ArrayList<CategoryDTO> listCategory = new ArrayList<>();
         String sql = "SELECT * FROM Category WHERE categoryName LIKE ? AND isActive = 1";
 
-        try (Connection conn = DBUtils.getConnection();
-             PreparedStatement pst = conn.prepareStatement(sql)) {
+        try ( Connection conn = DBUtils.getConnection();  PreparedStatement pst = conn.prepareStatement(sql)) {
 
             pst.setString(1, "%" + categoryName + "%");
 
-            try (ResultSet rs = pst.executeQuery()) {
+            try ( ResultSet rs = pst.executeQuery()) {
                 while (rs.next()) {
                     CategoryDTO category = new CategoryDTO();
                     category.setCategoryID(rs.getString("categoryID"));
@@ -116,8 +110,7 @@ public class CategoryDAO {
         // DB có DEFAULT isActive = 1 nên không cần truyền isActive
         String sql = "INSERT INTO Category(categoryID, categoryName, sportType) VALUES(?, ?, ?)";
 
-        try (Connection conn = DBUtils.getConnection();
-             PreparedStatement pst = conn.prepareStatement(sql)) {
+        try ( Connection conn = DBUtils.getConnection();  PreparedStatement pst = conn.prepareStatement(sql)) {
 
             pst.setString(1, category.getCategoryID());
             pst.setString(2, category.getCategoryName());
@@ -134,12 +127,11 @@ public class CategoryDAO {
     // ---------------------- CẬP NHẬT CATEGORY ----------------------
     public boolean update(CategoryDTO category) {
         String sql = "UPDATE Category "
-                   + "SET categoryName = ?, "
-                   + "    sportType = ? "
-                   + "WHERE categoryID = ?";
+                + "SET categoryName = ?, "
+                + "    sportType = ? "
+                + "WHERE categoryID = ?";
 
-        try (Connection conn = DBUtils.getConnection();
-             PreparedStatement pst = conn.prepareStatement(sql)) {
+        try ( Connection conn = DBUtils.getConnection();  PreparedStatement pst = conn.prepareStatement(sql)) {
 
             pst.setString(1, category.getCategoryName());
             pst.setString(2, category.getSportType());
@@ -157,8 +149,7 @@ public class CategoryDAO {
     public boolean delete(String categoryID) {
         String sql = "UPDATE Category SET isActive = 0 WHERE categoryID = ?";
 
-        try (Connection conn = DBUtils.getConnection();
-             PreparedStatement pst = conn.prepareStatement(sql)) {
+        try ( Connection conn = DBUtils.getConnection();  PreparedStatement pst = conn.prepareStatement(sql)) {
 
             pst.setString(1, categoryID);
             int rows = pst.executeUpdate();
@@ -168,4 +159,39 @@ public class CategoryDAO {
         }
         return false;
     }
+
+    // ---------------------- FILTER CATEGORY THEO KEYWORD ----------------------
+// Tìm theo ID, tên hoặc sportType, chỉ lấy isActive = 1
+    public List<CategoryDTO> filterCategory(String keyword) {
+        List<CategoryDTO> listCategory = new ArrayList<>();
+
+        String sql = "SELECT * FROM Category "
+           + "WHERE categoryName LIKE ? "
+           + "OR categoryID LIKE ? "
+           + "OR sportType LIKE ?";
+
+
+        try ( Connection conn = DBUtils.getConnection();  PreparedStatement pst = conn.prepareStatement(sql)) {
+
+            String like = "%" + keyword + "%";
+            pst.setString(1, like);
+            pst.setString(2, like);
+            pst.setString(3, like);
+
+            try ( ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    CategoryDTO category = new CategoryDTO();
+                    category.setCategoryID(rs.getString("categoryID"));
+                    category.setCategoryName(rs.getString("categoryName"));
+                    category.setSportType(rs.getString("sportType"));
+                    category.setIsActive(rs.getBoolean("isActive"));
+                    listCategory.add(category);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listCategory;
+    }
+
 }

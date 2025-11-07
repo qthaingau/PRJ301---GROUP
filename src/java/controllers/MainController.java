@@ -46,7 +46,7 @@ public class MainController extends HttpServlet {
             "callSaveProduct", "addProductWithVariant", "updateProductWithVariant", "deleteProductWithVariant", "toggleProductStatus"};
 
         String[] brandActions = {"viewBrandList", "updateBrand", "addBrand"};
-        String[] categoryActions = {"viewCategoryList", "updateCategory", "addCategory"};
+        String[] categoryActions = {"viewCategoryList", "updateCategory", "addCategory", "callCategoryForm", "filterCategory"};
 
         if (txtAction != null) {
             if (Arrays.asList(userActions).contains(txtAction)) {

@@ -1,17 +1,105 @@
-<%-- 
-    Document   : categoryForm
-    Created on : Nov 3, 2025, 8:14:21 AM
-    Author     : TEST
---%>
-
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
-<html>
+<html lang="vi">
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <meta charset="UTF-8">
+        <title>${update ? "Update Category" : "Add New Category"}</title>
+
+        <!-- CSS theme đen – đỏ – trắng -->
+        <link rel="stylesheet" href="assets/css/productList.css">
     </head>
-    <body>
-        <h1>Hello World!</h1>
+
+    <body class="product-list-body">
+
+        <div class="container product-list-wrapper">
+            <h3 class="product-list-title">
+                ${update ? "Update Category" : "Add New Category"}
+            </h3>
+
+            <!-- Hiển thị lỗi chung -->
+            <c:if test="${not empty error}">
+                <div class="alert alert-danger text-center">
+                    ${error}
+                </div>
+            </c:if>
+
+            <!-- Form xử lý -->
+            <form action="MainController" method="post" class="category-form">
+                <!-- Action -->
+                <input type="hidden" name="txtAction"
+                       value="${update ? 'updateCategory' : 'addCategory'}" />
+
+                <!-- Gửi lại flag update -->
+                <input type="hidden" name="update" value="${update}" />
+
+                <!-- Category ID -->
+                <div class="mb-3">
+                    <label for="categoryID" class="form-label fw-bold">Category ID (C***):</label>
+                    <input type="text"
+                           id="categoryID"
+                           name="txtCategoryID"
+                           class="form-control"
+                           value="${c.categoryID}"
+                           pattern="C[0-9]{3}"
+                           title="Category ID must follow format C***, e.g., C001"
+                           ${update ? "readonly" : "required"} />
+                    <c:if test="${not empty error_categoryID}">
+                        <small class="text-danger">${error_categoryID}</small>
+                    </c:if>
+                </div>
+
+                <!-- Category Name -->
+                <div class="mb-3">
+                    <label for="categoryName" class="form-label fw-bold">Category Name:</label>
+                    <input type="text"
+                           id="categoryName"
+                           name="txtCategoryName"
+                           class="form-control"
+                           value="${c.categoryName}"
+                           required />
+                    <c:if test="${not empty error_categoryName}">
+                        <small class="text-danger">${error_categoryName}</small>
+                    </c:if>
+                </div>
+
+                <!-- Sport Type -->
+                <div class="mb-3">
+                    <label for="sportType" class="form-label fw-bold">Sport Type:</label>
+                    <input type="text"
+                           id="sportType"
+                           name="txtSportType"
+                           class="form-control"
+                           value="${c.sportType}"
+                           placeholder="e.g. Football, Running, Gym..."
+                           required />
+                    <c:if test="${not empty error_sportType}">
+                        <small class="text-danger">${error_sportType}</small>
+                    </c:if>
+                </div>
+
+                <!-- Status (chỉ hiển thị khi update và là admin) -->
+                <c:if test="${update and user.role eq 'admin'}">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Status:</label>
+                        <span class="${c.isActive ? 'status-badge status-active' : 'status-badge status-inactive'}">
+                            ${c.isActive ? "Active" : "Inactive"}
+                        </span>
+                    </div>
+                </c:if>
+
+                <!-- Submit Button -->
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-apply">
+                        ${update ? "Update Category" : "Add Category"}
+                    </button>
+
+                    <!-- Back -->
+                    <a href="MainController?txtAction=viewCategoryList" class="btn btn-cancel">
+                        Back to List
+                    </a>
+                </div>
+            </form>
+        </div>
     </body>
 </html>

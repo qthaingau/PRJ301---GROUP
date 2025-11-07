@@ -16,7 +16,7 @@
 
             <!-- Search bar -->
             <form action="MainController" method="post" class="product-search-form mb-3">
-                <input type="hidden" name="txtAction" value="searchCategory"/>
+                <input type="hidden" name="txtAction" value="filterCategory"/>
                 <div class="row g-2 align-items-center">
                     <div class="col-md-6">
                         <div class="input-group">
