@@ -7,6 +7,7 @@ package controllers;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -24,9 +25,9 @@ import models.UserDTO;
  */
 @WebServlet(name = "UserController", urlPatterns = {"/UserController"})
 @MultipartConfig(
-    fileSizeThreshold = 1024 * 1024 * 2, // 2MB
-    maxFileSize = 1024 * 1024 * 10,      // 10MB
-    maxRequestSize = 1024 * 1024 * 50    // 50MB
+        fileSizeThreshold = 1024 * 1024 * 2, // 2MB
+        maxFileSize = 1024 * 1024 * 10, // 10MB
+        maxRequestSize = 1024 * 1024 * 50 // 50MB
 )
 
 public class UserController extends HttpServlet {
@@ -142,46 +143,47 @@ public class UserController extends HttpServlet {
     }
 
     private void processUploadAvatar(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-    HttpSession session = request.getSession();
-    UserDTO user = (UserDTO) session.getAttribute("user");
+            throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        UserDTO user = (UserDTO) session.getAttribute("user");
 
-    if (user == null) {
-        response.sendRedirect("login.jsp");
-        return;
-    }
-
-    Part filePart = request.getPart("avatar");
-    String fileName = filePart.getSubmittedFileName();
-
-    if (fileName != null && !fileName.isEmpty()) {
-        // Đường dẫn cố định (ngoài project)
-        String uploadPath = getServletContext().getRealPath("/uploads");
-        File uploadDir = new File(uploadPath);
-        if (!uploadDir.exists()) uploadDir.mkdirs();
-
-        // tránh trùng tên
-        String uniqueFileName = user.getUsername() + "_" + System.currentTimeMillis() + "_" + fileName;
-        String filePath = uploadPath + File.separator + uniqueFileName;
-        filePart.write(filePath);
-
-        // cập nhật DB
-        UserDAO dao = new UserDAO();
-        boolean updated = dao.updateAvatar(user.getUsername(), uniqueFileName);
-
-        if (updated) {
-            // cập nhật session
-            user.setAvatar(uniqueFileName);
-            session.setAttribute("user", user);
-            System.out.println("Avatar updated successfully: " + uniqueFileName);
-        } else {
-            System.out.println("Avatar update failed in DB!");
+        if (user == null) {
+            response.sendRedirect("login.jsp");
+            return;
         }
+
+        Part filePart = request.getPart("avatar");
+        String fileName = filePart.getSubmittedFileName();
+
+        if (fileName != null && !fileName.isEmpty()) {
+            // Đường dẫn cố định (ngoài project)
+            String uploadPath = getServletContext().getRealPath("/uploads");
+            File uploadDir = new File(uploadPath);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdirs();
+            }
+
+            // tránh trùng tên
+            String uniqueFileName = user.getUsername() + "_" + System.currentTimeMillis() + "_" + fileName;
+            String filePath = uploadPath + File.separator + uniqueFileName;
+            filePart.write(filePath);
+
+            // cập nhật DB
+            UserDAO dao = new UserDAO();
+            boolean updated = dao.updateAvatar(user.getUsername(), uniqueFileName);
+
+            if (updated) {
+                // cập nhật session
+                user.setAvatar(uniqueFileName);
+                session.setAttribute("user", user);
+                System.out.println("Avatar updated successfully: " + uniqueFileName);
+            } else {
+                System.out.println("Avatar update failed in DB!");
+            }
+        }
+
+        response.sendRedirect("customer/profile.jsp");
     }
-
-    response.sendRedirect("customer/profile.jsp");
-}
-
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -204,6 +206,17 @@ public class UserController extends HttpServlet {
             processChangePassword(request, response);
         } else if (txtAction.equals("uploadAvatar")) {
             processUploadAvatar(request, response);
+        } else if (txtAction.equals("searchUser")) {
+            try {
+                UserDAO dao = new UserDAO();
+                List<UserDTO> list = dao.getAllUsers();
+                request.setAttribute("listOfUsers", list);
+                request.getRequestDispatcher("admin/listOfUsers.jsp").forward(request, response);
+            } catch (Exception e) {
+                e.printStackTrace();
+                request.setAttribute("msg", "Lỗi khi tải danh sách người dùng!");
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            }
         }
 
     }

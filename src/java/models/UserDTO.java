@@ -20,7 +20,8 @@ public class UserDTO {
     private String phoneNumber;
     private String role;
     private LocalDate createdAt;
-     private String avatar;
+    private String avatar;
+    private boolean active;
 
     public UserDTO() {
     }
@@ -46,7 +47,13 @@ public class UserDTO {
         this.createdAt = createdAt;
     }
 
-   
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 
     public String getAvatar() {
         return avatar;
