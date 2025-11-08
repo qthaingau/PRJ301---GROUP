@@ -3,6 +3,35 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< HEAD
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/web/includes/header.jspf</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/web/register.jsp</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/src/java/models/UserDAO.java</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/src/java/models/UserDTO.java</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/web/admin/dashboard.jsp</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/web/assets/css/productDetail.css</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/web/customer/customerOrderDetail.jsp</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/src/java/filters/AdminFilter.java</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/web/assets/css/changePassword.css</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/web/customer/changePassword.jsp</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/web/customer/orderSuccess.jsp</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/src/java/controllers/MainController.java</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/web/admin/listOfUsers.jsp</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/src/java/controllers/UserController.java</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/web/admin/productForm.jsp</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/web/loginSuccess.jsp</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/web/assets/css/login.css</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/web/customer/productDetail.jsp</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/web/error.jsp</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/web/login.jsp</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/src/java/controllers/PromotionController.java</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/web/home.jsp</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/web/assets/css/register.css</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/web/403.jsp</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/web/customer/productList.jsp</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/web/error/404.jsp</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/web/customer/profile.jsp</file>
+=======
             <file>file:/D:/PRJ301/WebBanHang/web/admin/productForm.jsp</file>
             <file>file:/D:/PRJ301/WebBanHang/web/assets/js/productImage.js</file>
             <file>file:/D:/PRJ301/WebBanHang/src/java/models/BrandDAO.java</file>
@@ -15,6 +44,7 @@
             <file>file:/D:/PRJ301/WebBanHang/src/java/controllers/MainController.java</file>
             <file>file:/D:/PRJ301/WebBanHang/src/java/models/CategoryDAO.java</file>
             <file>file:/D:/PRJ301/WebBanHang/web/home.jsp</file>
+>>>>>>> 65755c9159660b45b00b2cea5cc156e1e9452f28
         </group>
     </open-files>
 </project-private>

@@ -148,17 +148,21 @@ public class UserDAO {
         return result;
     }
 
-    public boolean updateAvatar(String username, String avatarFileName) {
-        String sql = "UPDATE [User] SET avatar = ? WHERE username = ?";
-        try ( Connection conn = DBUtils.getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, avatarFileName);
-            ps.setString(2, username);
-            return ps.executeUpdate() > 0;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
+    public boolean updateAvatar(String username, String base64Avatar) {
+    String sql = "UPDATE [User] SET avatar = ? WHERE username = ?";
+    try (Connection conn = DBUtils.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, base64Avatar);  // ✅ không dùng setNString
+        ps.setString(2, username);
+        return ps.executeUpdate() > 0;
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+    return false;
+}
+
+
+
 
     public ArrayList<UserDTO> getAllUsers() throws SQLException {
         ArrayList<UserDTO> list = new ArrayList<>();
