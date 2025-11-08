@@ -6,9 +6,6 @@
     <meta charset="UTF-8">
     <title>Product List</title>
 
-    <!-- Bootstrap có thể đã được load ở layout ngoài -->
-    <!-- <link rel="stylesheet" href="assets/css/bootstrap.min.css"> -->
-
     <!-- CSS theme đen – đỏ – trắng -->
     <link rel="stylesheet" href="assets/css/productList.css">
 </head>
@@ -17,7 +14,7 @@
 <div class="container px-4 px-lg-5 mt-5">
     <!-- Header section -->
     <div class="text-center mb-4">
-        <h1 class="fw-bolder">HTV STYLES</h1>
+        <h1 class="fw-bolder text-white">HTV STYLES</h1>
         <p class="lead fw-normal text-muted mb-0">SHOES WITH YOU</p>
     </div>
 
@@ -73,7 +70,7 @@
                             <div class="card-body p-4">
                                 <div class="text-center">
                                     <h5 class="fw-bolder">
-                                        <a href="${detailUrl}" class="text-dark text-decoration-none">${p.productName}</a>
+                                        <a href="${detailUrl}" class="product-link">${p.productName}</a>
                                     </h5>
                                     <p class="text-muted">${p.description}</p>
                                 </div>
