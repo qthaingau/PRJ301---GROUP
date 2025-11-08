@@ -65,12 +65,15 @@
 
             </c:if>
 
-            <!-- Giỏ hàng -->
-            <li class="nav-item ms-3">
-                <a class="nav-link text-white" href="cart.jsp">
-                    <i class="bi bi-cart"></i> Giỏ hàng
-                    <c:if test="${not empty sessionScope.cart}">
-                        <span class="badge bg-warning text-dark">${sessionScope.cart.size()}</span>
+            <!-- GIỎ HÀNG CÓ BADGE -->
+            <li class="nav-item position-relative">
+                <a class="nav-link" href="MainController?txtAction=viewCart">
+                    Cart
+                    <c:if test="${not empty sessionScope.cart && sessionScope.cart.size() > 0}">
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            ${sessionScope.cart.size()}
+                            <span class="visually-hidden">sản phẩm</span>
+                        </span>
                     </c:if>
                 </a>
             </li>
