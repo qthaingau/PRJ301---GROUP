@@ -37,9 +37,8 @@ public class ProductController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    private void processCallSaveProduct(HttpServletRequest request, HttpServletResponse response)
+private void processCallSaveProduct(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         // Lấy cờ update từ request (true/false)
         String updateParam = request.getParameter("update");
         boolean isUpdate = Boolean.parseBoolean(updateParam);
@@ -51,6 +50,7 @@ public class ProductController extends HttpServlet {
         ProductDAO productDAO = new ProductDAO();
         ProductVariantDAO variantDAO = new ProductVariantDAO();
         BrandDAO brandDAO = new BrandDAO(); // NEW
+        CategoryDAO categoryDAO = new CategoryDAO();
 
         // Nếu là update và có productID, variantID thì load dữ liệu lên form
         if (isUpdate && productID != null && !productID.isEmpty()
@@ -66,15 +66,18 @@ public class ProductController extends HttpServlet {
         // Luôn set cờ update cho JSP
         request.setAttribute("update", isUpdate);
 
+        HttpSession session = request.getSession();
         // NEW: luôn load danh sách brand đang active cho dropdown
-        request.setAttribute("brandList", brandDAO.getActiveBrands());
+        session.setAttribute("variantList", variantDAO.getAllVariants());
+        session.setAttribute("brandList", brandDAO.getActiveBrands());
+        session.setAttribute("categoryList", categoryDAO.getActiveCategories());
 
         // Forward sang form
         request.getRequestDispatcher("/admin/productForm.jsp")
                 .forward(request, response);
     }
 
-    private void processAddProductWithVariant(HttpServletRequest request, HttpServletResponse response, boolean update)
+    private void processSaveProductWithVariant(HttpServletRequest request, HttpServletResponse response, boolean update)
             throws ServletException, IOException {
 
         // *** CHANGED: dùng 1 dòng set luôn, không if (update == true) nữa
@@ -92,6 +95,7 @@ public class ProductController extends HttpServlet {
         String description = request.getParameter("txtDescription");
         String categoryID = request.getParameter("txtCategoryID");
         String brandID = request.getParameter("txtBrandID");
+        String productImage = request.getParameter("txtProductImage");
 
         String variantID = request.getParameter("txtVariantID");
         String size = request.getParameter("txtSize");
@@ -265,7 +269,8 @@ public class ProductController extends HttpServlet {
                 categoryID,
                 brandID,
                 null,
-                true
+                true,
+                productImage
         );
 
         // *** CHANGED: chỉ giữ lại salesCount cũ khi update,
@@ -497,11 +502,11 @@ private void processViewProducts(HttpServletRequest request, HttpServletResponse
             } else if (txtAction.equals("viewProductDetail")) {
                 processViewProductDetail(request, response);
             } else if (txtAction.equals("addProductWithVariant")) {
-                processAddProductWithVariant(request, response, false);
+                processSaveProductWithVariant(request, response, false);
             } else if (txtAction.equals("callSaveProduct")) {
                 processCallSaveProduct(request, response);
             } else if (txtAction.equals("updateProductWithVariant")) {
-                processAddProductWithVariant(request, response, true);
+                processSaveProductWithVariant(request, response, true);
             } else if (txtAction.equals("deleteProductWithVariant")) {
                 processDeleteWithVariant(request, response);
             } else if (txtAction.equals("toggleProductStatus")) {

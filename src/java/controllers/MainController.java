@@ -31,6 +31,7 @@ public class MainController extends HttpServlet {
         String[] brandActions = {"viewBrandList", "updateBrand", "addBrand", "filterBrand", "callBrandForm", "deleteBrand"};
         String[] categoryActions = {"viewCategoryList", "updateCategory", "addCategory", "callCategoryForm", "filterCategory", "deleteCategory"};
 
+
         String[] cartActions = {"viewCart", "addToCart", "updateCart", "removeFromCart"};
 
         // Trong MainController.java, thêm vào đầu class:
@@ -39,6 +40,7 @@ public class MainController extends HttpServlet {
             "deleteAddress", "setDefaultAddress"
         };
         // Trong try block, thêm:
+
 
         try {
             if (txtAction != null) {

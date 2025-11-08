@@ -77,6 +77,7 @@ public class ProductDAO {
         ArrayList<ProductDTO> listProduct = new ArrayList<>();
         try {
             Connection conn = DBUtils.getConnection();
+            // Cập nhật SQL nếu bạn chỉ chọn các cột cụ thể. Tuy nhiên, SELECT * vẫn hoạt động.
             String sql = "SELECT * FROM Product";
             PreparedStatement pst = conn.prepareStatement(sql);
             ResultSet rs = pst.executeQuery();
@@ -86,13 +87,18 @@ public class ProductDAO {
                 product.setProductID(rs.getString("productID"));
                 product.setProductName(rs.getString("productName"));
                 product.setDescription(rs.getString("description"));
-                product.setCategoryID(rs.getString("categoryID"));  // ✅ lấy từ ResultSet
+                product.setCategoryID(rs.getString("categoryID"));
                 product.setBrandID(rs.getString("brandID"));
                 product.setCreatedAt(rs.getDate("createdAT").toLocalDate());
                 product.setIsActive(rs.getBoolean("isActive"));
+
+                // ✅ BỔ SUNG: Lấy và thiết lập productImage
+                product.setProductImage(rs.getString("productImage"));
+
                 listProduct.add(product);
             }
         } catch (Exception e) {
+            e.printStackTrace(); // Nên in lỗi để dễ debug hơn
         }
         return listProduct;
     }
@@ -166,8 +172,10 @@ public class ProductDAO {
     }
 
     public boolean insert(ProductDTO product) {
-        String sql = "INSERT INTO Product(productID, productName, description, categoryID, brandID, createdAT, isActive) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        // ✅ Cập nhật SQL: Thêm productImage và dấu ?
+        String sql = "INSERT INTO Product(productID, productName, description, categoryID, brandID, createdAT, isActive, productImage) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
         try ( Connection c = DBUtils.getConnection();  PreparedStatement pst = c.prepareStatement(sql)) {
 
             pst.setString(1, product.getProductID());
@@ -185,6 +193,9 @@ public class ProductDAO {
             // Kiểm tra stock của productID trong ProductVariant
             boolean isActive = checkStockStatus(product.getProductID());
             pst.setBoolean(7, isActive);
+
+            // ✅ BỔ SUNG: Thiết lập giá trị cho productImage (vị trí tham số thứ 8)
+            pst.setString(8, product.getProductImage());
 
             return pst.executeUpdate() > 0;
 
@@ -257,7 +268,8 @@ public class ProductDAO {
                     + "    description = ?, "
                     + "    categoryID = ?, "
                     + "    brandID = ?, "
-                    + "    isActive = ? "
+                    + "    isActive = ?, "
+                    + "    productImage = ? " // ✅ BỔ SUNG: Cột productImage
                     + "WHERE productID = ?";
 
             PreparedStatement pst = c.prepareStatement(sql);
@@ -266,7 +278,12 @@ public class ProductDAO {
             pst.setString(3, productDTO.getCategoryID());
             pst.setString(4, productDTO.getBrandID());
             pst.setBoolean(5, productDTO.isIsActive());
-            pst.setString(6, productDTO.getProductID());
+
+            // ✅ BỔ SUNG: Thiết lập giá trị cho productImage (vị trí tham số thứ 6)
+            pst.setString(6, productDTO.getProductImage());
+
+            // Cập nhật vị trí của productID (vị trí tham số thứ 7)
+            pst.setString(7, productDTO.getProductID());
 
             int i = pst.executeUpdate();
             return i > 0;

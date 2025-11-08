@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package models;
 
 import java.time.LocalDate;
@@ -18,10 +14,24 @@ public class ProductDTO {
     private String brandID;
     private LocalDate createdAt;
     private boolean isActive;
+    private String productImage; // Trường mới
 
     public ProductDTO() {
     }
 
+    // Constructor đã được cập nhật để bao gồm productImage
+    public ProductDTO(String productID, String productName, String description, String categoryID, String brandID, LocalDate createdAt, boolean isActive, String productImage) {
+        this.productID = productID;
+        this.productName = productName;
+        this.description = description;
+        this.categoryID = categoryID;
+        this.brandID = brandID;
+        this.createdAt = createdAt;
+        this.isActive = isActive;
+        this.productImage = productImage; // Thêm productImage
+    }
+
+    // Constructor cũ, có thể giữ lại hoặc xóa tùy vào nhu cầu sử dụng
     public ProductDTO(String productID, String productName, String description, String categoryID, String brandID, LocalDate createdAt, boolean isActive) {
         this.productID = productID;
         this.productName = productName;
@@ -30,6 +40,7 @@ public class ProductDTO {
         this.brandID = brandID;
         this.createdAt = createdAt;
         this.isActive = isActive;
+        // productImage sẽ là null
     }
 
     public String getProductID() {
@@ -87,9 +98,19 @@ public class ProductDTO {
     public void setIsActive(boolean isActive) {
         this.isActive = isActive;
     }
+    
+    // Getter cho productImage
+    public String getProductImage() {
+        return productImage;
+    }
+
+    // Setter cho productImage
+    public void setProductImage(String productImage) {
+        this.productImage = productImage;
+    }
 
     @Override
     public String toString() {
-        return "ProductDTO{" + "productID=" + productID + ", productName=" + productName + ", description=" + description + ", categoryID=" + categoryID + ", brandID=" + brandID + ", createdAt=" + createdAt + ", isActive=" + isActive + '}';
+        return "ProductDTO{" + "productID=" + productID + ", productName=" + productName + ", description=" + description + ", categoryID=" + categoryID + ", brandID=" + brandID + ", createdAt=" + createdAt + ", isActive=" + isActive + ", productImage=" + productImage + '}'; // Cập nhật toString
     }
 }

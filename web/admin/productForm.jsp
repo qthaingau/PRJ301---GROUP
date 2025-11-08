@@ -5,6 +5,8 @@
     <head>
         <meta charset="UTF-8">
         <title>${update ? "Update Product" : "Add New Product"}</title>
+        <!-- Gọi JavaScript riêng -->
+        <!--<script src="assets/js/productImage.js"></script>-->
     </head>
     <body>
 
@@ -60,18 +62,28 @@
                 </c:if>
                 <br/>
 
-                <!-- Category ID -->
-                Category ID (C***):
-                <input type="text"
-                       name="txtCategoryID"
-                       value="${p.categoryID}"
-                       required
-                       pattern="[Cc][0-9]{3}"
-                       title="Category ID must follow the format C***, e.g., C001"/><br/>
+                <!-- ================= CATEGORY (DROPDOWN) ================= -->
+                Category:
+                <select name="txtCategoryID" required>
+                    <option value="">-- Select Category --</option>
+
+                    <c:forEach var="c" items="${categoryList}">
+                        <%-- xác định selected bằng biến tạm cho dễ debug --%>
+                        <c:set var="selected" value=""/>
+
+                        <c:if test="${not empty p && p.categoryID eq c.categoryID}">
+                            <c:set var="selected" value="selected='selected'"/>
+                        </c:if>
+
+                        <option value="${c.categoryID}" ${selected}>
+                            ${c.categoryID} - ${c.categoryName}
+                        </option>
+                    </c:forEach>
+                </select><br/>
                 <c:if test="${not empty error_categoryID}">
                     <span style="color:red">${error_categoryID}</span><br/>
                 </c:if>
-                <br/>
+
 
                 <!-- ================= BRAND (DROPDOWN) ================= -->
                 Brand:
@@ -97,24 +109,55 @@
                 </c:if>
                 <br/>
 
+                <!-- Avatar Upload -->
+                <div class="mb-3">
+                    <label class="form-label">Avatar</label>
+                    <input type="file" id="productImageFile" accept="image/*" class="form-control" />
+                    <!-- Trường ẩn để lưu base64 gửi lên server -->
+                    <input type="hidden" name="txtProductImage" id="productImage" value="${p.productImage}" />
+
+                    <!-- Xem trước ảnh -->
+                    <div class="mt-3">
+                        <img id="productPreview" 
+                             src="${not empty p.productImage ? p.productImage : ''}" 
+                             alt="Avatar Preview" 
+                             class="rounded border" 
+                             style="max-width: 150px; max-height: 150px; display: ${not empty p.productImage ? 'block' : 'none'};">
+                    </div>
+                </div>
 
                 <!-- ================= VARIANT ================= -->
 
                 <h3>Variant</h3>
 
-                <!-- Variant ID -->
-                Variant ID (V***):
-                <input type="text"
-                       name="txtVariantID"
-                       value="${v.variantID}"
-                       required
-                       pattern="[Vv][0-9]{3}"
-                       title="Variant ID must follow the format V***, e.g., V001"
-                       ${update ? 'readonly="readonly"' : ''} /><br/>
-                <c:if test="${not empty error_variantID}">
-                    <span style="color:red">${error_variantID}</span><br/>
-                </c:if>
-                <br/>
+                <h3>Variant</h3>
+Variant ID (V***):
+<input type="text"
+       name="txtVariantID"
+       value="${v.variantID}"
+       required
+       pattern="(?i)[Vv][0-9]{3}"
+       title="Variant ID must follow the format V***, e.g., V001"
+       ${update ? 'readonly="readonly"' : ''} />
+<br/>
+
+<c:if test="${not empty error_variantID}">
+    <span style="color:red">${error_variantID}</span><br/>
+</c:if>
+
+<br/>
+<div>
+    <strong>Variant ID đã tồn tại:</strong>
+    <c:forEach var="vItem" items="${variantList}" varStatus="loop">
+        <span>
+            ${vItem.variantID}<c:if test="${!loop.last}">, </c:if>
+        </span>
+    </c:forEach>
+    <c:if test="${empty variantList}">
+        <span>(Chưa có ID nào)</span>
+    </c:if>
+</div>
+<br/>
 
                 <!-- Size -->
                 Size:
@@ -169,6 +212,58 @@
             </form>
 
         </div>
+                 <!--JavaScript: convert ảnh sang base64--> 
+<script>
+document.getElementById('productImageFile').addEventListener('change', function() {
+    const file = this.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const base64String = e.target.result; // chứa cả header data:image/png;base64,...
+        document.getElementById('productImage').value = base64String;
+
+        // Hiển thị xem trước
+        const imgPreview = document.getElementById('productPreview');
+        imgPreview.src = base64String;
+        imgPreview.style.display = 'block';
+    };
+    reader.readAsDataURL(file); // đọc file dưới dạng Base64
+});
+</script>
+<script>
+    // 1. Convert the list of IDs from JSTL to a JavaScript array
+    const existingVariantIDs = [];
+    <c:forEach var="vItem" items="${variantList}">
+        // Ensure VariantID is in uppercase for comparison (or lowercase, as long as it's consistent)
+        existingVariantIDs.push("${vItem.variantID}".toUpperCase()); 
+    </c:forEach>
+
+    // 2. Validation function when the user enters data
+    document.addEventListener('DOMContentLoaded', function() {
+        const variantIDInput = document.querySelector('input[name="txtVariantID"]');
+
+        if (variantIDInput) {
+            variantIDInput.addEventListener('input', function() {
+                // Only check if it's not in update mode (not readonly)
+                if (!variantIDInput.readOnly) {
+                    const enteredID = variantIDInput.value.trim().toUpperCase();
+
+                    // Check if the entered ID already exists in the array
+                    if (existingVariantIDs.includes(enteredID)) {
+                        // If duplicated, add an error (can show red) and prevent submission
+                        variantIDInput.setCustomValidity('This Variant ID already exists. Please enter a different ID.');
+                        variantIDInput.style.border = '2px solid red';
+                    } else {
+                        // If not duplicated, remove the error
+                        variantIDInput.setCustomValidity('');
+                        variantIDInput.style.border = '1px solid #ccc'; // Or default color
+                    }
+                }
+            });
+        }
+    });
+</script>
 
     </body>
 </html>

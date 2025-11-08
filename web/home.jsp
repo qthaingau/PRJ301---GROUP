@@ -22,7 +22,14 @@
         </c:if>     
         <!-- main content -->
         <div class="container mt-4">
-            <jsp:include page="/customer/productList.jsp"/>
+            <c:choose>
+                <c:when test="${user.role eq 'admin' or user.role eq 'staff'}">
+                    <jsp:include page="admin/listOfProducts.jsp" />
+                </c:when>
+                <c:otherwise>
+                    <jsp:include page="customer/productList.jsp" />
+                </c:otherwise>
+            </c:choose>
         </div>
 
         <!-- External JS -->
