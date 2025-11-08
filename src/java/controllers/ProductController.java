@@ -429,23 +429,38 @@ public class ProductController extends HttpServlet {
         }
     }
 
-    private void processViewProducts(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            try {
-                ProductDAO productDAO = new ProductDAO();
-                List<ProductDTO> listProducts = productDAO.getAllProduct();
-                request.setAttribute("listProducts", listProducts);
-                request.getRequestDispatcher("home.jsp").forward(request, response);
-            } catch (Exception e) {
-                e.printStackTrace();
-                request.setAttribute("msg", "Error loading product list!");
-                request.getRequestDispatcher("home.jsp").forward(request, response);
-            }
-        }
+private void processViewProducts(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+    response.setContentType("text/html;charset=UTF-8");
+
+    // Lấy session hiện tại (nếu có)
+    HttpSession session = request.getSession(false);
+
+    // Nếu session đã tồn tại, xóa danh sách sản phẩm cũ
+    if (session != null) {
+        session.removeAttribute("listProducts");  // Xóa danh sách sản phẩm cũ trong session
+    } else {
+        session = request.getSession(true); // Nếu không có session, tạo session mới
     }
+
+    try {
+        // Lấy danh sách sản phẩm mới nhất từ ProductDAO
+        ProductDAO productDAO = new ProductDAO();
+        List<ProductDTO> listProducts = productDAO.getAllProduct();
+
+        // Đưa listProducts vào session
+        session.setAttribute("listProducts", listProducts);
+
+        // Chuyển hướng tới trang home.jsp
+        request.getRequestDispatcher("home.jsp").forward(request, response);
+    } catch (Exception e) {
+        e.printStackTrace();
+        request.setAttribute("msg", "Error loading product list!");
+        request.getRequestDispatcher("home.jsp").forward(request, response);
+    }
+}
+
+
 
     private void processToggleProductStatus(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

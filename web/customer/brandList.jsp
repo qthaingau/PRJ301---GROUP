@@ -12,7 +12,7 @@
     <body class="product-list-body">
 
         <!-- ✅ Back to Home giống categoryList.jsp -->
-        <a href="MainController?txtAction=viewProductList" class="btn btn-secondary" style="margin-left: 10px;">
+        <a href="MainController?txtAction=viewProducts" class="btn btn-secondary" style="margin-left: 10px;">
             Back to Home
         </a>
 

@@ -11,7 +11,7 @@
     </head>
     <body class="product-list-body">
         <!-- ✅ NEW: Back to Home -->
-        <a href="MainController?txtAction=viewProductList" class="btn btn-secondary" style="margin-left: 10px;">
+        <a href="MainController?txtAction=viewProducts" class="btn btn-secondary" style="margin-left: 10px;">
             Back to Home
         </a>
         <div class="container product-list-wrapper">

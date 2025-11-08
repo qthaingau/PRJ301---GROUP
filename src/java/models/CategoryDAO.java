@@ -217,7 +217,11 @@ private void updateProductsToActive(String brandID, Connection conn) throws SQLE
 
             pst.setString(1, categoryID);
             int rows = pst.executeUpdate();
-            return rows > 0;
+            if (rows > 0) {
+                // Cập nhật tất cả sản phẩm liên kết với brandID này thành inactive
+                updateProductsToInactive(categoryID, conn);
+                return true;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
