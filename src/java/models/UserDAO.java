@@ -4,6 +4,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import utils.DBUtils;
 
 /**
@@ -58,7 +62,7 @@ public class UserDAO {
         return false;
 
     }
-    
+
     public boolean registerUser(String username, String email, String password, String fullName, String phoneNumber) {
         boolean result = false;
         Connection conn = null;
@@ -108,38 +112,81 @@ public class UserDAO {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try { if (rs != null) rs.close(); } catch (Exception e) {}
-            try { if (ps != null) ps.close(); } catch (Exception e) {}
-            try { if (conn != null) conn.close(); } catch (Exception e) {}
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (Exception e) {
+            }
+            try {
+                if (ps != null) {
+                    ps.close();
+                }
+            } catch (Exception e) {
+            }
+            try {
+                if (conn != null) {
+                    conn.close();
+                }
+            } catch (Exception e) {
+            }
         }
         return result;
     }
-    
-    public boolean updatePassword(String username, String newPassword) {
-    boolean result = false;
-    try (Connection conn = DBUtils.getConnection()) {
-        String sql = "UPDATE [User] SET password = ? WHERE username = ?";
-        PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setString(1, newPassword);
-        ps.setString(2, username);
-        result = ps.executeUpdate() > 0;
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-    return result;
-}
-    public boolean updateAvatar(String username, String avatarFileName) {
-    String sql = "UPDATE [User] SET avatar = ? WHERE username = ?";
-    try (Connection conn = DBUtils.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setString(1, avatarFileName);
-        ps.setString(2, username);
-        return ps.executeUpdate() > 0;
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-    return false;
-}
 
+    public boolean updatePassword(String username, String newPassword) {
+        boolean result = false;
+        try ( Connection conn = DBUtils.getConnection()) {
+            String sql = "UPDATE [User] SET password = ? WHERE username = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, newPassword);
+            ps.setString(2, username);
+            result = ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public boolean updateAvatar(String username, String avatarFileName) {
+        String sql = "UPDATE [User] SET avatar = ? WHERE username = ?";
+        try ( Connection conn = DBUtils.getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, avatarFileName);
+            ps.setString(2, username);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public ArrayList<UserDTO> getAllUsers() throws SQLException {
+        ArrayList<UserDTO> list = new ArrayList<>();
+        try {
+            Connection conn = DBUtils.getConnection();
+            String sql = "SELECT * FROM [User]";
+            PreparedStatement pst = conn.prepareStatement(sql);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                UserDTO u = new UserDTO();
+                u.setUserID(rs.getString("userID"));
+                u.setUsername(rs.getString("username"));
+                u.setFullName(rs.getString("fullName"));
+                u.setRole(rs.getString("role"));
+                u.setAvatar(rs.getString("avatar"));
+                u.setPhoneNumber(rs.getString("phoneNumber"));
+                u.setEmail(rs.getString("email"));
+                u.setActive(rs.getBoolean("active")); // nếu cột active là kiểu BIT
+
+                list.add(u);
+                System.out.println("Loaded users: " + list.size());
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+
+    }
 
 }

@@ -37,24 +37,34 @@ public class AdminFilter implements Filter {
     public AdminFilter() {
     }
 
-    private void doBeforeProcessing(ServletRequest request, ServletResponse response)
+    private boolean doBeforeProcessing(HttpServletRequest httpRequest, HttpServletResponse httpResponse)
             throws IOException, ServletException {
-        if (debug) {
-            log("AdminFilter:DoBeforeProcessing");
+
+        HttpSession session = httpRequest.getSession(false);
+        String uri = httpRequest.getRequestURI();
+
+        // Cho phép các trang không cần filter
+        if (uri.endsWith("login.jsp") || uri.endsWith("403.jsp") || uri.contains("/assets/")) {
+            return true; // cho phép đi tiếp
         }
 
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        HttpSession session = httpRequest.getSession();
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
-
-        if (session.getAttribute("user") == null) {
-            httpResponse.sendRedirect("login.jsp");
-        } else {
-            UserDTO user = (UserDTO)session.getAttribute("user");
-            if (!user.getRole().equals("AD")) {
-                httpResponse.sendRedirect("403.jsp");
-            }
+        // Nếu chưa đăng nhập
+        if (session == null || session.getAttribute("user") == null) {
+            httpResponse.sendRedirect(httpRequest.getContextPath() + "/login.jsp");
+            return false;
         }
+
+        // Kiểm tra quyền
+        UserDTO user = (UserDTO) session.getAttribute("user");
+        String role = user.getRole();
+
+        if (!"admin".equalsIgnoreCase(role) && !"staff".equalsIgnoreCase(role)) {
+            httpResponse.sendRedirect(httpRequest.getContextPath() + "/403.jsp");
+
+            return false;
+        }
+
+        return true;
     }
 
     private void doAfterProcessing(ServletRequest request, ServletResponse response)
@@ -91,39 +101,20 @@ public class AdminFilter implements Filter {
      * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet error occurs
      */
-    public void doFilter(ServletRequest request, ServletResponse response,
-            FilterChain chain)
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
+
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
 
         if (debug) {
             log("AdminFilter:doFilter()");
         }
 
-        doBeforeProcessing(request, response);
+        boolean allow = doBeforeProcessing(httpRequest, httpResponse);
 
-        Throwable problem = null;
-        try {
-            chain.doFilter(request, response);
-        } catch (Throwable t) {
-            // If an exception is thrown somewhere down the filter chain,
-            // we still want to execute our after processing, and then
-            // rethrow the problem after that.
-            problem = t;
-            t.printStackTrace();
-        }
-
-        doAfterProcessing(request, response);
-
-        // If there was a problem, we want to rethrow it if it is
-        // a known type, otherwise log it.
-        if (problem != null) {
-            if (problem instanceof ServletException) {
-                throw (ServletException) problem;
-            }
-            if (problem instanceof IOException) {
-                throw (IOException) problem;
-            }
-            sendProcessingError(problem, response);
+        if (allow) {
+            chain.doFilter(request, response); // chỉ cho đi tiếp nếu được phép
         }
     }
 

@@ -131,12 +131,23 @@
                 </ul>
             </li>
 
-            <!-- Profile (nếu đã login) -->
+<!--             Profile (nếu đã login) 
             <c:if test="${not empty sessionScope.user}">
                 <li class="nav-item">
                     <a class="nav-link text-white px-3" href="profile.jsp">Profile</a>
                 </li>
-            </c:if>
+            </c:if>-->
+            
+            <!-- Quản lý Users (chỉ hiện nếu là admin hoặc staff) -->
+<c:if test="${not empty sessionScope.user 
+             && (sessionScope.user.role eq 'admin' 
+             || sessionScope.user.role eq 'staff')}">
+    <li class="nav-item">
+        <a class="nav-link text-white px-3" href="MainController?txtAction=searchUser">User management</a>
+      
+
+    </li>
+</c:if>
 
         </ul>
     </div>
