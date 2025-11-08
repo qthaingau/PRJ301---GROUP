@@ -5,25 +5,29 @@
 package models;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  *
  * @author nguye
  */
 public class CartDTO {
-    private String cartID;
-    private String customerID;
-    private LocalDate createAt;
+
+    private String cartID;  // NVARCHAR(50)
+    private String userID;
+    private LocalDate createdAt;
+    private List<CartItemDTO> items;
 
     public CartDTO() {
     }
 
-    public CartDTO(String cartID, String customerID, LocalDate createAt) {
+    public CartDTO(String cartID, String userID, LocalDate createdAt) {
         this.cartID = cartID;
-        this.customerID = customerID;
-        this.createAt = createAt;
+        this.userID = userID;
+        this.createdAt = createdAt;
     }
 
+    // Getters & Setters
     public String getCartID() {
         return cartID;
     }
@@ -32,21 +36,36 @@ public class CartDTO {
         this.cartID = cartID;
     }
 
-    public String getCustomerID() {
-        return customerID;
+    public String getUserID() {
+        return userID;
     }
 
-    public void setCustomerID(String customerID) {
-        this.customerID = customerID;
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 
-    public LocalDate getCreateAt() {
-        return createAt;
+    public LocalDate getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreateAt(LocalDate createAt) {
-        this.createAt = createAt;
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
     }
-    
-    
+
+    public List<CartItemDTO> getItems() {
+        return items;
+    }
+
+    public void setItems(List<CartItemDTO> items) {
+        this.items = items;
+    }
+
+    public double getTotal() {
+        if (items == null) {
+            return 0;
+        }
+        return items.stream()
+                .mapToDouble(item -> item.getPrice() * item.getQuantity())
+                .sum();
+    }
 }

@@ -28,7 +28,7 @@ public class MainController extends HttpServlet {
             "viewProductDetail", "filterProduct",
             "callSaveProduct", "addProductWithVariant", "updateProductWithVariant", "deleteProductWithVariant", "toggleProductStatus"};
 
-        String[] brandActions = {"viewBrandList", "updateBrand", "addBrand", "filterBrand", "callBrandForm"};
+        String[] brandActions = {"viewBrandList", "updateBrand", "addBrand", "filterBrand", "callBrandForm", "deleteBrand"};
         String[] categoryActions = {"viewCategoryList", "updateCategory", "addCategory", "callCategoryForm", "filterCategory", "deleteCategory"};
 
         try {

@@ -39,96 +39,84 @@ public class CategoryController extends HttpServlet {
     private void processSaveCategory(HttpServletRequest request, HttpServletResponse response, boolean isUpdate)
             throws ServletException, IOException {
 
-        // Cờ phân biệt add / update
-//        boolean isUpdate = Boolean.parseBoolean(request.getParameter("update"));
-        // Lấy dữ liệu từ form
-        String categoryID = request.getParameter("txtCategoryID");
-        String categoryName = request.getParameter("txtCategoryName");
-        String sportType = request.getParameter("txtSportType");
-        String isActiveParam = request.getParameter("txtIsActive"); // chỉ có khi UPDATE + admin
+    // Lấy dữ liệu từ form
+    String categoryID = request.getParameter("txtCategoryID");
+    String categoryName = request.getParameter("txtCategoryName");
+    String sportType = request.getParameter("txtSportType");
+    String isActiveParam = request.getParameter("txtIsActive");
 
-        // Chuẩn hoá ID: Cxxx
-        if (categoryID != null) {
-            categoryID = categoryID.trim().toUpperCase();
-        }
+    // Chuẩn hoá dữ liệu đầu vào
+    categoryID = categoryID.trim().toUpperCase();  // Chuyển categoryID về định dạng chuẩn
+    categoryName = categoryName.trim();
+    sportType = sportType.trim();
 
-        boolean valid = true;
+    boolean valid = true;
+    // Kiểm tra tính hợp lệ
+    if (categoryID == null || !categoryID.matches("C\\d{3}")) {
+        request.setAttribute("error_categoryID", "Category ID must follow format C***, e.g., C001");
+        valid = false;
+    }
+    if (categoryName == null || categoryName.isEmpty()) {
+        request.setAttribute("error_categoryName", "Category name cannot be empty.");
+        valid = false;
+    }
+    if (sportType == null || sportType.isEmpty()) {
+        request.setAttribute("error_sportType", "Sport type cannot be empty.");
+        valid = false;
+    }
 
-        // ==== VALIDATION CHUNG ====
-        if (categoryID == null || !categoryID.matches("C\\d{3}")) {
-            request.setAttribute("error_categoryID", "Category ID must follow format C***, e.g., C001");
-            valid = false;
-        }
-        if (categoryName == null || categoryName.trim().isEmpty()) {
-            request.setAttribute("error_categoryName", "Category name cannot be empty.");
-            valid = false;
-        }
-        if (sportType == null || sportType.trim().isEmpty()) {
-            request.setAttribute("error_sportType", "Sport type cannot be empty.");
-            valid = false;
-        }
+    // Kiểm tra quyền của người dùng
+    CategoryDAO dao = new CategoryDAO();
+    UserDTO user = (UserDTO) request.getSession().getAttribute("user");
+    boolean isAdmin = (user != null && "admin".equalsIgnoreCase(user.getRole()));
 
-        CategoryDAO dao = new CategoryDAO();
-
-        // Lấy user để check quyền
-        UserDTO user = (UserDTO) request.getSession().getAttribute("user");
-        boolean isAdmin = (user != null && "admin".equalsIgnoreCase(user.getRole()));
-
-        // Xử lý isActive
-        boolean isActive = true; // mặc định khi ADD
-
-        if (isUpdate) {
-            if (isAdmin) {
-                // Admin update: đọc từ radio txtIsActive (true/false)
-                if (isActiveParam != null) {
-                    isActive = Boolean.parseBoolean(isActiveParam);
-                }
-            } else {
-                // User thường: không được đổi trạng thái -> lấy từ DB
-                CategoryDTO old = dao.getCategoryByID(categoryID);
-                if (old != null) {
-                    isActive = old.getIsActive();
-                }
-            }
-        } else {
-            // ADD: cho là active (hoặc dùng default trong DB)
-            isActive = true;
-        }
-
-        // Nếu dữ liệu không hợp lệ -> quay lại form
-        if (!valid) {
-            CategoryDTO c = new CategoryDTO();
-            c.setCategoryID(categoryID);
-            c.setCategoryName(categoryName);
-            c.setSportType(sportType);
-            c.setIsActive(isActive);
-
-            request.setAttribute("c", c);
-            request.setAttribute("update", isUpdate);
-            request.getRequestDispatcher("/admin/categoryForm.jsp").forward(request, response);
-            return;
-        }
-
-        // Tạo DTO
-        CategoryDTO category = new CategoryDTO(categoryID, categoryName, sportType, isActive);
-
-        boolean success;
-        if (isUpdate) {
-            success = dao.update(category);
-        } else {
-            success = dao.insert(category);
-        }
-
-        if (success) {
-            response.sendRedirect("MainController?txtAction=viewCategoryList");
-        } else {
-            request.setAttribute("error",
-                    isUpdate ? "Failed to update category!" : "Failed to add new category! ID or name may already exist.");
-            request.setAttribute("c", category);
-            request.setAttribute("update", isUpdate);
-            request.getRequestDispatcher("/admin/categoryForm.jsp").forward(request, response);
+    boolean isActive = true;  // Mặc định khi ADD
+    if (isUpdate && isAdmin && isActiveParam != null) {
+        isActive = Boolean.parseBoolean(isActiveParam);
+    } else {
+        // Nếu không phải admin hoặc không thay đổi trạng thái, lấy trạng thái cũ từ DB
+        CategoryDTO old = dao.getCategoryByID(categoryID);
+        if (old != null) {
+            isActive = old.getIsActive();
         }
     }
+
+    // Nếu dữ liệu không hợp lệ, quay lại form
+    if (!valid) {
+        CategoryDTO c = new CategoryDTO();
+        c.setCategoryID(categoryID);
+        c.setCategoryName(categoryName);
+        c.setSportType(sportType);
+        c.setIsActive(isActive);
+
+        request.setAttribute("c", c);
+        request.setAttribute("update", isUpdate);
+        request.getRequestDispatcher("/admin/categoryForm.jsp").forward(request, response);
+        return;
+    }
+
+    // Tạo đối tượng DTO để lưu vào cơ sở dữ liệu
+    CategoryDTO category = new CategoryDTO(categoryID, categoryName, sportType, isActive);
+
+    boolean success;
+    if (isUpdate) {
+        success = dao.update(category);
+    } else {
+        success = dao.insert(category);
+    }
+
+    if (success) {
+        // Đồng bộ trạng thái cho tất cả sản phẩm trong category
+        response.sendRedirect("MainController?txtAction=viewCategoryList");
+    } else {
+        request.setAttribute("error",
+                isUpdate ? "Failed to update category!" : "Failed to add new category! ID or name may already exist.");
+        request.setAttribute("c", category);
+        request.setAttribute("update", isUpdate);
+        request.getRequestDispatcher("/admin/categoryForm.jsp").forward(request, response);
+    }
+}
+
 
     private void processViewCategoryList(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -230,7 +218,7 @@ public class CategoryController extends HttpServlet {
 
         if (txtAction.equals("viewCategoryList")) {
             processViewCategoryList(request, response);
-        } else if (txtAction.equals("callBrandForm")) {
+        } else if (txtAction.equals("callCategoryForm")) {
             processCallCategoryForm(request, response);
         } else if (txtAction.equals("filterCategory")) {
             processFilterCategory(request, response);

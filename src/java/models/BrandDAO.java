@@ -3,6 +3,7 @@ package models;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import utils.DBUtils;
@@ -107,6 +108,7 @@ public class BrandDAO {
         return listBrand;
     }
 
+    // ---------------------- FILTER BRAND THEO KEYWORD ----------------------
     public List<BrandDTO> filterBrand(String keyword) {
         List<BrandDTO> list = new ArrayList<>();
         String sql = "SELECT * FROM Brand "
@@ -156,40 +158,106 @@ public class BrandDAO {
         return false;
     }
 
-    // (OPTIONAL) Nếu em muốn control luôn isActive khi insert:
-    // public boolean insert(BrandDTO brand) {
-    //     String sql = "INSERT INTO Brand(brandID, brandName, origin, isActive) VALUES(?, ?, ?, ?)";
-    //     ...
-    // }
     // ---------------------- CẬP NHẬT BRAND ----------------------
     public boolean update(BrandDTO brand) {
-        String sql = "UPDATE Brand "
-                + "SET brandName = ?, origin = ? "
-                + "WHERE brandID = ?";
+        String sql = "UPDATE Brand SET brandName = ?, origin = ?, isActive = ? WHERE brandID = ?";
 
         try ( Connection conn = DBUtils.getConnection();  PreparedStatement pst = conn.prepareStatement(sql)) {
+            // Cập nhật thông tin Brand
+            pst.setString(1, brand.getBrandName());   // brandName
+            pst.setString(2, brand.getOrigin());       // origin
+            pst.setBoolean(3, brand.isIsActive());    // isActive
+            pst.setString(4, brand.getBrandID());     // brandID (for WHERE clause)
 
-            pst.setString(1, brand.getBrandName());
-            pst.setString(2, brand.getOrigin());
-            pst.setString(3, brand.getBrandID());
-
+            // Thực thi câu lệnh update và lấy số dòng bị ảnh hưởng
             int rows = pst.executeUpdate();
-            return rows > 0;
+
+            // Nếu có ít nhất một dòng bị ảnh hưởng (Brand đã được cập nhật)
+            if (rows > 0) {
+                // Nếu brand bị vô hiệu hóa (isActive = false)
+                if (!brand.isIsActive()) {
+                    // Nếu brand bị vô hiệu hóa, cập nhật tất cả sản phẩm liên kết với brandID này thành inactive
+                    updateProductsToInactive(brand.getBrandID(), conn);
+                } else {
+                    // Nếu brand được kích hoạt lại (isActive = true), cập nhật tất cả sản phẩm liên kết với brandID này thành active
+                    updateProductsToActive(brand.getBrandID(), conn);
+                }
+                return true;
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace();  // In ra lỗi nếu có
         }
         return false;
     }
 
+// Cập nhật trạng thái của tất cả sản phẩm có liên kết với brandID thành inactive
+    public void updateProductsToInactive(String brandID, Connection conn) throws SQLException {
+        String sql = "UPDATE Product SET isActive = 0 WHERE brandID = ?";
+        try ( PreparedStatement pst = conn.prepareStatement(sql)) {
+            pst.setString(1, brandID);  // brandID
+            pst.executeUpdate();  // Thực thi câu lệnh update
+        }
+    }
+
+// Cập nhật trạng thái của tất cả sản phẩm có liên kết với brandID thành active
+    public void updateProductsToActive(String brandID, Connection conn) throws SQLException {
+    // Truy vấn để lấy tất cả các sản phẩm có liên kết với brandID, kiểm tra trạng thái của category và tổng stock
+    String sql = "SELECT p.productID, c.isActive AS categoryActive, SUM(v.stock) AS totalStock "
+               + "FROM Product p "
+               + "JOIN Category c ON p.categoryID = c.categoryID "  // Kiểm tra trạng thái category
+               + "JOIN ProductVariant v ON p.productID = v.productID "  // Kiểm tra stock của variant
+               + "WHERE p.brandID = ? "
+               + "GROUP BY p.productID, c.isActive";  // Nhóm theo productID và category's isActive
+
+    try (PreparedStatement pst = conn.prepareStatement(sql)) {
+        pst.setString(1, brandID);  // brandID
+        ResultSet rs = pst.executeQuery();
+
+        // Lặp qua tất cả các sản phẩm của brandID
+        while (rs.next()) {
+            String productID = rs.getString("productID");
+            boolean isCategoryActive = rs.getBoolean("categoryActive");
+            int totalStock = rs.getInt("totalStock");
+
+            // Nếu category là Active và có stock > 0, cập nhật trạng thái sản phẩm thành Active
+            if (isCategoryActive && totalStock > 0) {
+                String updateSql = "UPDATE Product SET isActive = 1 WHERE productID = ?";
+                try (PreparedStatement updatePst = conn.prepareStatement(updateSql)) {
+                    updatePst.setString(1, productID);
+                    updatePst.executeUpdate();
+                    System.out.println("Product " + productID + " updated to Active.");
+                }
+            } else {
+                // Nếu không đủ điều kiện, cập nhật trạng thái sản phẩm thành Inactive
+                String updateSql = "UPDATE Product SET isActive = 0 WHERE productID = ?";
+                try (PreparedStatement updatePst = conn.prepareStatement(updateSql)) {
+                    updatePst.setString(1, productID);
+                    updatePst.executeUpdate();
+                    System.out.println("Product " + productID + " updated to Inactive.");
+                }
+            }
+        }
+    }
+}
+
+
     // ---------------------- DEACTIVATE BRAND (SOFT DELETE) ----------------------
     public boolean delete(String brandID) {
+        // Cập nhật trạng thái isActive của Brand thành false (soft delete)
         String sql = "UPDATE Brand SET isActive = 0 WHERE brandID = ?";
 
         try ( Connection conn = DBUtils.getConnection();  PreparedStatement pst = conn.prepareStatement(sql)) {
 
-            pst.setString(1, brandID);
+            pst.setString(1, brandID);  // brandID
             int rows = pst.executeUpdate();
-            return rows > 0;
+
+            // Nếu có dòng bị ảnh hưởng, tức là cập nhật thành công
+            if (rows > 0) {
+                // Cập nhật tất cả sản phẩm liên kết với brandID này thành inactive
+                updateProductsToInactive(brandID, conn);
+                return true;
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }

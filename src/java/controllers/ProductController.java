@@ -437,8 +437,7 @@ public class ProductController extends HttpServlet {
             try {
                 ProductDAO productDAO = new ProductDAO();
                 List<ProductDTO> listProducts = productDAO.getAllProduct();
-                HttpSession session = request.getSession();
-                session.setAttribute("listProducts", listProducts);
+                request.setAttribute("listProducts", listProducts);
                 request.getRequestDispatcher("home.jsp").forward(request, response);
             } catch (Exception e) {
                 e.printStackTrace();

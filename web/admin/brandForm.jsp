@@ -4,15 +4,15 @@
 <html lang="vi">
     <head>
         <meta charset="UTF-8">
-        <title>Brand Form</title>
+        <title>${b != null ? "Update Brand" : "Add New Brand"}</title>
 
-        <!-- Giao diện chung (đen - đỏ - trắng) -->
+        <!-- CSS theme đen – đỏ – trắng -->
         <link rel="stylesheet" href="assets/css/productList.css">
     </head>
 
     <body class="product-list-body">
         <div class="container product-list-wrapper">
-            <h3 class="product-list-title text-center mb-4">
+            <h3 class="product-list-title">
                 ${b != null ? "Update Brand" : "Add New Brand"}
             </h3>
 
@@ -25,7 +25,12 @@
 
             <!-- FORM SAVE BRAND -->
             <form action="MainController" method="post" class="category-form">
-                <input type="hidden" name="txtAction" value="saveBrand"/>
+                <!-- Action -->
+                <input type="hidden" name="txtAction"
+                       value="${b != null ? 'updateBrand' : 'addBrand'}" />
+
+                <!-- Gửi lại flag update -->
+                <input type="hidden" name="update" value="${b != null}" />
 
                 <!-- Brand ID -->
                 <div class="mb-3">
@@ -73,7 +78,7 @@
                 </div>
 
                 <!-- Status (chỉ hiện với Admin khi đang Update) -->
-                <c:if test="${not empty user and user.role eq 'admin' and b != null}">
+                <c:if test="${b != null and user.role eq 'admin'}">
                     <div class="mb-3">
                         <label class="form-label fw-bold d-block">Status:</label>
                         <label class="me-3">
@@ -95,10 +100,6 @@
 
                     <a href="MainController?txtAction=viewBrandList" class="btn btn-cancel">
                         Back to List
-                    </a>
-
-                    <a href="home.jsp" class="btn btn-secondary">
-                        Back to Home
                     </a>
                 </div>
             </form>

@@ -170,6 +170,9 @@
                                 <table class="table table-hover align-middle product-table">
                                     <thead>
                                         <tr>
+                                            <c:if test="${isAdmin}">
+                                                <th>Product ID</th>
+                                                </c:if>
                                             <th>Product Name</th>
                                             <th>Description</th>
                                             <th>Category ID</th>
@@ -198,7 +201,17 @@
                                                         <td>${p.description}</td>
                                                         <td>${p.categoryID}</td>
                                                         <td>${p.brandID}</td>
-                                                        <td>${p.isActive}</td>
+                                                        <td>
+                                                            <c:choose>
+                                                                <c:when test="${p.isActive}">
+                                                                    Active
+                                                                </c:when>
+                                                                <c:otherwise>
+                                                                    Inactive
+                                                                </c:otherwise>
+                                                            </c:choose>
+                                                        </td>
+
 
                                                     </tr>
                                                 </c:if>

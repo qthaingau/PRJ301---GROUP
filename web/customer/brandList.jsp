@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -12,7 +12,7 @@
     <body class="product-list-body">
 
         <!-- ✅ Back to Home giống categoryList.jsp -->
-        <a href="home.jsp" class="btn btn-secondary" style="margin-left: 10px;">
+        <a href="MainController?txtAction=viewProductList" class="btn btn-secondary" style="margin-left: 10px;">
             Back to Home
         </a>
 
