@@ -38,11 +38,12 @@
                         <!-- Avatar -->
                         <c:choose>
                             <c:when test="${not empty sessionScope.user.avatar}">
-                                <img src="${pageContext.request.contextPath}/uploads/${sessionScope.user.avatar}" 
-                                     alt="avatar" 
-                                     class="rounded-circle me-2" 
+                                <img src="data:image/png;base64,${sessionScope.user.avatar}" 
+                                     alt="avatar"
+                                     class="rounded-circle me-2"
                                      style="width: 35px; height: 35px; object-fit: cover; border: 2px solid #ffc107;">
                             </c:when>
+
                             <c:otherwise>
                                 <img src="${pageContext.request.contextPath}/assets/img/default-avatar.png" 
                                      alt="default avatar" 
@@ -131,23 +132,23 @@
                 </ul>
             </li>
 
-<!--             Profile (nếu đã login) 
-            <c:if test="${not empty sessionScope.user}">
-                <li class="nav-item">
-                    <a class="nav-link text-white px-3" href="profile.jsp">Profile</a>
-                </li>
-            </c:if>-->
-            
-            <!-- Quản lý Users (chỉ hiện nếu là admin hoặc staff) -->
-<c:if test="${not empty sessionScope.user 
-             && (sessionScope.user.role eq 'admin' 
-             || sessionScope.user.role eq 'staff')}">
-    <li class="nav-item">
-        <a class="nav-link text-white px-3" href="MainController?txtAction=searchUser">User management</a>
-      
+            <!--             Profile (nếu đã login) 
+                        <c:if test="${not empty sessionScope.user}">
+                            <li class="nav-item">
+                                <a class="nav-link text-white px-3" href="profile.jsp">Profile</a>
+                            </li>
+                        </c:if>-->
 
-    </li>
-</c:if>
+            <!-- Quản lý Users (chỉ hiện nếu là admin hoặc staff) -->
+            <c:if test="${not empty sessionScope.user 
+                          && (sessionScope.user.role eq 'admin' 
+                          || sessionScope.user.role eq 'staff')}">
+                <li class="nav-item">
+                    <a class="nav-link text-white px-3" href="MainController?txtAction=searchUser">User management</a>
+
+
+                </li>
+            </c:if>
 
         </ul>
     </div>

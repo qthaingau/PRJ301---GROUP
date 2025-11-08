@@ -4,9 +4,12 @@
  */
 package controllers;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.Base64;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -143,47 +146,52 @@ public class UserController extends HttpServlet {
     }
 
     private void processUploadAvatar(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        UserDTO user = (UserDTO) session.getAttribute("user");
+        throws ServletException, IOException {
 
-        if (user == null) {
-            response.sendRedirect("login.jsp");
-            return;
-        }
+    HttpSession session = request.getSession();
+    UserDTO user = (UserDTO) session.getAttribute("user");
 
-        Part filePart = request.getPart("avatar");
-        String fileName = filePart.getSubmittedFileName();
+    if (user == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
 
-        if (fileName != null && !fileName.isEmpty()) {
-            // Đường dẫn cố định (ngoài project)
-            String uploadPath = getServletContext().getRealPath("/uploads");
-            File uploadDir = new File(uploadPath);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdirs();
+    Part filePart = request.getPart("avatar");
+    if (filePart != null && filePart.getSize() > 0) {
+        try (InputStream inputStream = filePart.getInputStream();
+             ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
+
+            byte[] data = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(data, 0, data.length)) != -1) {
+                buffer.write(data, 0, bytesRead);
             }
 
-            // tránh trùng tên
-            String uniqueFileName = user.getUsername() + "_" + System.currentTimeMillis() + "_" + fileName;
-            String filePath = uploadPath + File.separator + uniqueFileName;
-            filePart.write(filePath);
+            byte[] imageBytes = buffer.toByteArray();
+            String base64Image = Base64.getEncoder().encodeToString(imageBytes);
 
-            // cập nhật DB
             UserDAO dao = new UserDAO();
-            boolean updated = dao.updateAvatar(user.getUsername(), uniqueFileName);
+            boolean updated = dao.updateAvatar(user.getUsername(), base64Image);
 
             if (updated) {
-                // cập nhật session
-                user.setAvatar(uniqueFileName);
+                user.setAvatar(base64Image);
                 session.setAttribute("user", user);
-                System.out.println("Avatar updated successfully: " + uniqueFileName);
+                System.out.println("✅ Avatar updated successfully as Base64 (" + base64Image.length() + " chars)");
             } else {
-                System.out.println("Avatar update failed in DB!");
+                System.out.println("❌ Avatar update failed in DB!");
             }
-        }
 
-        response.sendRedirect("customer/profile.jsp");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
+    response.sendRedirect(request.getContextPath() + "/customer/profile.jsp");
+
+}
+
+
+
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
