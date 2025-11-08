@@ -14,12 +14,22 @@
         </a>
 
         <!-- Thanh tìm kiếm -->
-        <form class="d-flex ms-auto me-3 search-bar" action="search" method="post" style="width: 350px;">
-            <input class="form-control me-2" type="search" placeholder="Tìm kiếm sản phẩm..." name="keyword">
-            <button class="btn btn-outline-warning" type="submit">
-                Tìm kiếm
-            </button>
+        <form action="MainController" method="post" class="product-search-form mb-4">
+            <input type="hidden" name="txtAction" value="filterProduct"/>
+            <div class="row g-2 align-items-center">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark text-light">Search</span>
+                        <input type="text" class="form-control" name="keyword" placeholder="Tìm kiếm sản phẩm..." value="${keyword}" />
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-outline-warning">SEARCH</button>
+                </div>
+            </div>
         </form>
+
+
 
         <!-- Icon login + giỏ hàng -->
         <ul class="navbar-nav mb-2 mb-lg-0 d-flex align-items-center">
@@ -101,7 +111,7 @@
                     </c:forEach>
                     <c:if test="${empty listBrand}">
                         <li><span class="dropdown-item text-muted">Không có thương hiệu nào</span></li>
-                    </c:if>
+                        </c:if>
                 </ul>
             </li>
 
@@ -121,7 +131,7 @@
                     </c:forEach>
                     <c:if test="${empty listCategory}">
                         <li><span class="dropdown-item text-muted">Không có loại giày</span></li>
-                    </c:if>
+                        </c:if>
                 </ul>
             </li>
 
