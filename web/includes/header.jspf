@@ -1,11 +1,12 @@
 <%-- any content can be specified here e.g.: --%>
 <%@ page pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <link rel="stylesheet" href="assets/css/header.css">
 <script src="assets/js/header.js"></script>
+
 <!-- Header Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
     <div class="container-fluid">
-
         <!-- Logo -->
         <a class="navbar-brand d-flex align-items-center" href="home">
             <img src="img/logo.png" alt="Logo" width="45" height="45" class="me-2">
@@ -16,7 +17,7 @@
         <form class="d-flex ms-auto me-3 search-bar" action="search" method="post" style="width: 350px;">
             <input class="form-control me-2" type="search" placeholder="Tìm kiếm sản phẩm..." name="keyword">
             <button class="btn btn-outline-warning" type="submit">
-                <i class="bi bi-search">🔍</i>
+                Tìm kiếm
             </button>
         </form>
 
@@ -26,7 +27,7 @@
             <c:if test="${empty sessionScope.user}">
                 <li class="nav-item">
                     <a class="nav-link text-white" href="login.jsp">
-                        <i class="bi bi-person"></i> Log In
+                        Đăng nhập
                     </a>
                 </li>
             </c:if>
@@ -38,37 +39,33 @@
                         <!-- Avatar -->
                         <c:choose>
                             <c:when test="${not empty sessionScope.user.avatar}">
-                                <img src="${pageContext.request.contextPath}/uploads/${sessionScope.user.avatar}" 
-                                     alt="avatar" 
-                                     class="rounded-circle me-2" 
+                                <img src="${pageContext.request.contextPath}/uploads/${sessionScope.user.avatar}"
+                                     alt="avatar"
+                                     class="rounded-circle me-2"
                                      style="width: 35px; height: 35px; object-fit: cover; border: 2px solid #ffc107;">
                             </c:when>
                             <c:otherwise>
-                                <img src="${pageContext.request.contextPath}/assets/img/default-avatar.png" 
-                                     alt="default avatar" 
-                                     class="rounded-circle me-2" 
+                                <img src="${pageContext.request.contextPath}/assets/img/default-avatar.png"
+                                     alt="default avatar"
+                                     class="rounded-circle me-2"
                                      style="width: 35px; height: 35px; object-fit: cover; border: 2px solid #ffc107;">
                             </c:otherwise>
                         </c:choose>
-
                         <!-- Tên người dùng -->
                         <span>Welcome, <strong>${sessionScope.user.fullName}</strong></span>
                     </a>
-
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="customer/profile.jsp">Trang cá nhân</a></li>
-
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item text-danger" href="MainController?txtAction=logout">Đăng xuất</a></li>
                     </ul>
                 </li>
-
             </c:if>
 
             <!-- GIỎ HÀNG CÓ BADGE -->
             <li class="nav-item position-relative">
                 <a class="nav-link" href="MainController?txtAction=viewCart">
-                    Cart
+                    Giỏ hàng
                     <c:if test="${not empty sessionScope.cart && sessionScope.cart.size() > 0}">
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                             ${sessionScope.cart.size()}
@@ -85,7 +82,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-top border-secondary">
     <div class="container-fluid justify-content-center">
         <ul class="navbar-nav">
-
             <!-- Trang chủ -->
             <li class="nav-item">
                 <a class="nav-link text-white px-3" href="home.jsp">Trang chủ</a>
@@ -103,13 +99,11 @@
                             </a>
                         </li>
                     </c:forEach>
-
                     <c:if test="${empty listBrand}">
                         <li><span class="dropdown-item text-muted">Không có thương hiệu nào</span></li>
                     </c:if>
                 </ul>
             </li>
-
 
             <!-- Các loại giày -->
             <li class="nav-item dropdown">
@@ -131,25 +125,24 @@
                 </ul>
             </li>
 
-<!--             Profile (nếu đã login) 
-            <c:if test="${not empty sessionScope.user}">
+            <!-- QUẢN LÝ USER (admin/staff) -->
+            <c:if test="${not empty sessionScope.user && (sessionScope.user.role eq 'admin' || sessionScope.user.role eq 'staff')}">
                 <li class="nav-item">
-                    <a class="nav-link text-white px-3" href="profile.jsp">Profile</a>
+                    <a class="nav-link text-white px-3" href="MainController?txtAction=searchUser">
+                        Quản lý người dùng
+                    </a>
                 </li>
-            </c:if>-->
-            
-            <!-- Quản lý Users (chỉ hiện nếu là admin hoặc staff) -->
-<c:if test="${not empty sessionScope.user 
-             && (sessionScope.user.role eq 'admin' 
-             || sessionScope.user.role eq 'staff')}">
-    <li class="nav-item">
-        <a class="nav-link text-white px-3" href="MainController?txtAction=searchUser">User management</a>
-      
+            </c:if>
 
-    </li>
-</c:if>
+            <!-- PRODUCT MANAGEMENT (admin/staff) -->
+            <c:if test="${not empty sessionScope.user && (sessionScope.user.role eq 'admin' || sessionScope.user.role eq 'staff')}">
+                <li class="nav-item">
+                    <a class="nav-link text-white px-3" href="admin/listOfProduct.jsp">
+                        Quản lý sản phẩm
+                    </a>
+                </li>
+            </c:if>
 
         </ul>
     </div>
 </nav>
-
