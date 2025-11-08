@@ -1,3 +1,4 @@
+// src/java/controllers/CartController.java
 package controllers;
 
 import java.io.IOException;
@@ -12,11 +13,9 @@ import models.UserDTO;
 
 @WebServlet("/CartController")
 public class CartController extends HttpServlet {
-
     private final CartDAO cartDAO = new CartDAO();
     private final CartItemDAO cartItemDAO = new CartItemDAO();
 
-    // ================== DO GET ==================
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -37,7 +36,6 @@ public class CartController extends HttpServlet {
         }
     }
 
-    // ================== DO POST ==================
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -53,17 +51,31 @@ public class CartController extends HttpServlet {
         String userID = user.getUserID();
         String cartID = cartDAO.getOrCreateCartID(userID);
 
+        if (action == null) {
+            response.getWriter().write("INVALID_ACTION");
+            return;
+        }
+
         switch (action) {
-            case "addToCart" -> handleAddToCart(request, response, cartID, session);
-            case "updateCart" -> handleUpdateCart(request, response, cartID, session);
-            case "removeFromCart" -> handleRemoveFromCart(request, response, cartID, session);
-            case "addToCartFirst" -> handleAddToCartFirst(request, response, cartID, session);
-            default -> response.getWriter().write("INVALID_ACTION");
+            case "addToCart":
+                handleAddToCart(request, response, cartID, session);
+                break;
+            case "updateCart":
+                handleUpdateCart(request, response, cartID, session);
+                break;
+            case "removeFromCart":
+                handleRemoveFromCart(request, response, cartID, session);
+                break;
+            case "addToCartFirst":
+                handleAddToCartFirst(request, response, cartID, session);
+                break;
+            default:
+                response.getWriter().write("INVALID_ACTION");
+                break;
         }
     }
 
     // ================== HANDLE METHODS ==================
-
     private void handleViewCart(HttpServletRequest request, HttpServletResponse response,
                                 String cartID, HttpSession session)
             throws ServletException, IOException {
@@ -78,10 +90,8 @@ public class CartController extends HttpServlet {
             throws IOException {
         String variantID = request.getParameter("variantID");
         int quantity = parseIntSafely(request.getParameter("quantity"), 1);
-
         boolean success = cartItemDAO.addOrUpdateItem(cartID, variantID, quantity);
         response.getWriter().write(success ? "OK" : "OUT_OF_STOCK");
-
         if (success) {
             updateCartSession(session, cartID);
         }
@@ -92,7 +102,6 @@ public class CartController extends HttpServlet {
             throws IOException {
         String variantID = request.getParameter("variantID");
         int quantity = parseIntSafely(request.getParameter("quantity"), 1);
-
         cartItemDAO.updateQuantity(cartID, variantID, quantity);
         updateCartSession(session, cartID);
         response.sendRedirect("MainController?txtAction=viewCart");
@@ -112,23 +121,19 @@ public class CartController extends HttpServlet {
             throws IOException {
         String productID = request.getParameter("productID");
         int quantity = parseIntSafely(request.getParameter("quantity"), 1);
-
         String variantID = cartItemDAO.getFirstAvailableVariant(productID);
         if (variantID == null) {
             response.getWriter().write("OUT_OF_STOCK");
             return;
         }
-
         boolean added = cartItemDAO.addOrUpdateItem(cartID, variantID, quantity);
         response.getWriter().write(added ? "OK" : "FAILED");
-
         if (added) {
             updateCartSession(session, cartID);
         }
     }
 
-    // ================== UTILITY METHODS ==================
-
+    // ================== UTILITY ==================
     private void updateCartSession(HttpSession session, String cartID) {
         List<CartItemDTO> updated = cartItemDAO.getCartItemsByCartID(cartID);
         session.setAttribute("cart", updated);
