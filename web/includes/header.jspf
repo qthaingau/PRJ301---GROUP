@@ -13,32 +13,32 @@
             <span class="fw-bold text-warning">HTV Sport</span>
         </a>
 
-        <!-- Thanh tìm kiếm -->
+        <!-- Search Bar -->
         <form action="MainController" method="post" class="product-search-form mb-4">
             <input type="hidden" name="txtAction" value="filterProduct"/>
             <div class="row g-2 align-items-center">
                 <div class="col-md-6">
                     <div class="input-group">
-                        <span class="input-group-text bg-dark text-light">Tìm kiếm</span>
-                        <input type="text" class="form-control" name="keyword" placeholder="Tìm kiếm sản phẩm..." value="${keyword}" />
+                        <span class="input-group-text bg-dark text-light">Search</span>
+                        <input type="text" class="form-control" name="keyword" placeholder="Search products..." value="${keyword}" />
                     </div>
                 </div>
                 <div class="col-auto">
-                    <button type="submit" class="btn btn-outline-warning">Tìm kiếm</button>
+                    <button type="submit" class="btn btn-outline-warning">SEARCH</button>
                 </div>
             </div>
         </form>
 
-        <!-- Icon login + giỏ hàng -->
+        <!-- Login + Cart Icons -->
         <ul class="navbar-nav mb-2 mb-lg-0 d-flex align-items-center">
-            <!-- Nếu chưa đăng nhập -->
+            <!-- Not logged in -->
             <c:if test="${empty sessionScope.user}">
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="login.jsp">Đăng nhập</a>
+                    <a class="nav-link text-white" href="login.jsp">Login</a>
                 </li>
             </c:if>
 
-            <!-- Nếu đã đăng nhập -->
+            <!-- Logged in -->
             <c:if test="${not empty sessionScope.user}">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle text-white d-flex align-items-center" href="#" id="userMenu" data-bs-toggle="dropdown">
@@ -60,21 +60,21 @@
                         <span>Welcome, <strong>${sessionScope.user.fullName}</strong></span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="customer/profile.jsp">Trang cá nhân</a></li>
+                        <li><a class="dropdown-item" href="customer/profile.jsp">Profile</a></li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="MainController?txtAction=logout">Đăng xuất</a></li>
+                        <li><a class="dropdown-item text-danger" href="MainController?txtAction=logout">Logout</a></li>
                     </ul>
                 </li>
             </c:if>
 
-            <!-- GIỎ HÀNG -->
+            <!-- Cart with Badge -->
             <li class="nav-item position-relative">
                 <a class="nav-link" href="MainController?txtAction=viewCart">
-                    Giỏ hàng
+                    Cart
                     <c:if test="${not empty sessionScope.cart && sessionScope.cart.size() > 0}">
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                             ${sessionScope.cart.size()}
-                            <span class="visually-hidden">sản phẩm</span>
+                            <span class="visually-hidden">items</span>
                         </span>
                     </c:if>
                 </a>
@@ -83,18 +83,18 @@
     </div>
 </nav>
 
-<!-- Menu chính -->
+<!-- Main Menu -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-top border-secondary">
     <div class="container-fluid justify-content-center">
         <ul class="navbar-nav">
-            <!-- Trang chủ -->
+            <!-- Home -->
             <li class="nav-item">
-                <a class="nav-link text-white px-3" href="home.jsp">Trang chủ</a>
+                <a class="nav-link text-white px-3" href="home.jsp">Home</a>
             </li>
 
-            <!-- Thương hiệu -->
+            <!-- Brands -->
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle text-white px-3" href="#" data-bs-toggle="dropdown">Thương hiệu</a>
+                <a class="nav-link dropdown-toggle text-white px-3" href="#" data-bs-toggle="dropdown">Brands</a>
                 <ul class="dropdown-menu bg-dark">
                     <c:forEach var="brand" items="${listBrand}">
                         <li>
@@ -105,14 +105,14 @@
                         </li>
                     </c:forEach>
                     <c:if test="${empty listBrand}">
-                        <li><span class="dropdown-item text-muted">Không có thương hiệu nào</span></li>
+                        <li><span class="dropdown-item text-muted">No brands available</span></li>
                     </c:if>
                 </ul>
             </li>
 
-            <!-- Các loại giày -->
+            <!-- Categories -->
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle text-white px-3" href="#" data-bs-toggle="dropdown">Các loại giày</a>
+                <a class="nav-link dropdown-toggle text-white px-3" href="#" data-bs-toggle="dropdown">Categories</a>
                 <ul class="dropdown-menu bg-dark">
                     <c:forEach var="cat" items="${listCategory}">
                         <li>
@@ -123,47 +123,45 @@
                         </li>
                     </c:forEach>
                     <c:if test="${empty listCategory}">
-                        <li><span class="dropdown-item text-muted">Không có loại giày</span></li>
+                        <li><span class="dropdown-item text-muted">No categories available</span></li>
                     </c:if>
                 </ul>
             </li>
 
-            
-
-            <!-- QUẢN LÝ SẢN PHẨM – DROPDOWN (admin/staff) -->
+            <!-- PRODUCT MANAGEMENT – DROPDOWN (admin/staff) -->
             <c:if test="${not empty sessionScope.user && (sessionScope.user.role eq 'admin' || sessionScope.user.role eq 'staff')}">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle text-white px-3" href="#" data-bs-toggle="dropdown">
-                        Quản lý sản phẩm
+                        Product Management
                     </a>
                     <ul class="dropdown-menu bg-dark">
                         <li>
                             <a class="dropdown-item text-white" href="admin/listOfProduct.jsp">
-                                Danh sách sản phẩm
+                                Product List
                             </a>
                         </li>
                         <li>
                             <a class="dropdown-item text-white" href="admin/listOfBrand.jsp">
-                                Danh sách thương hiệu
+                                Brand List
                             </a>
                         </li>
                         <li>
                             <a class="dropdown-item text-white" href="admin/listOfCategory.jsp">
-                                Danh sách loại giày
+                                Category List
                             </a>
                         </li>
                     </ul>
                 </li>
             </c:if>
-                <!-- QUẢN LÝ USER (admin/staff) -->
-            <c:if test="${not empty sessionScope.user && (sessionScope.user.role eq 'admin')}">
+
+            <!-- USER MANAGEMENT (admin only) -->
+            <c:if test="${not empty sessionScope.user && sessionScope.user.role eq 'admin'}">
                 <li class="nav-item">
                     <a class="nav-link text-white px-3" href="MainController?txtAction=searchUser">
-                        Quản lý người dùng
+                        User Management
                     </a>
                 </li>
             </c:if>
-
         </ul>
     </div>
 </nav>
