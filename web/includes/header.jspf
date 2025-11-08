@@ -67,7 +67,7 @@
 
             <!-- GIỎ HÀNG CÓ BADGE -->
             <li class="nav-item position-relative">
-                <a class="nav-link" href="MainController?txtAction=viewCart">
+                <a class="nav-link" href="customer/cart.jsp">
                     Cart
                     <c:if test="${not empty sessionScope.cart && sessionScope.cart.size() > 0}">
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
