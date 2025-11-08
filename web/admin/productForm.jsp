@@ -5,265 +5,262 @@
     <head>
         <meta charset="UTF-8">
         <title>${update ? "Update Product" : "Add New Product"}</title>
-        <!-- Gọi JavaScript riêng -->
-        <!--<script src="assets/js/productImage.js"></script>-->
+        <style>
+            .form-container {
+                max-width: 600px;
+                margin: auto;
+                padding: 20px;
+            }
+            .mb-3 {
+                margin-bottom: 1rem;
+            }
+            .form-label {
+                font-weight: bold;
+            }
+            img.preview {
+                max-width: 150px;
+                max-height: 150px;
+                object-fit: cover;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                margin-top: 10px;
+            }
+            .error {
+                color: red;
+                font-size: 0.9em;
+            }
+        </style>
     </head>
     <body>
+        <div class="form-container">
+            <h2>${update ? "Update Product" : "Add New Product"}</h2>
 
-        <div>
-            <h2>${update ? "Update Product": "Add New Product"}</h2>
-
-            <!-- General error message -->
+            <!-- General error -->
             <c:if test="${not empty error}">
-                <p style="color:red">${error}</p>
+                <p class="error">${error}</p>
             </c:if>
 
-            <form action="MainController" method="post">
-                <!-- Action tuỳ theo add/update -->
+            <form action="MainController" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="txtAction"
                        value="${update ? 'updateProductWithVariant' : 'addProductWithVariant'}"/>
-
-                <!-- Gửi lại cờ update cho servlet -->
                 <input type="hidden" name="update" value="${update}" />
 
                 <!-- ================= PRODUCT ================= -->
                 <h3>Product</h3>
 
                 <!-- Product ID -->
-                Product ID (P***):
-                <input type="text"
-                       name="txtProductID"
-                       value="${p.productID}" ${update ? "readonly" : "required"}
-                       required
-                       pattern="[Pp][0-9]{3}"
-                       title="Product ID must follow the format P***, e.g., P001"
-                       ${update ? 'readonly="readonly"' : ''} /><br/>
-                <c:if test="${not empty error_productID}">
-                    <span style="color:red">${error_productID}</span><br/>
-                </c:if>
-                <br/>
+                <div class="mb-3">
+                    <label>Product ID (P***):</label>
+                    <input type="text" name="txtProductID" value="${p.productID}"
+                           pattern="[Pp][0-9]{3}" title="e.g., P001"
+                           ${update ? 'readonly' : 'required'} />
+                    <c:if test="${not empty error_productID}">
+                        <span class="error">${error_productID}</span>
+                    </c:if>
+                </div>
 
                 <!-- Product Name -->
-                Product Name:
-                <input type="text"
-                       name="txtProductName"
-                       value="${p.productName}"
-                       required/><br/>
-                <c:if test="${not empty error_productName}">
-                    <span style="color:red">${error_productName}</span><br/>
-                </c:if>
-                <br/>
+                <div class="mb-3">
+                    <label>Product Name:</label>
+                    <input type="text" name="txtProductName" value="${p.productName}" required />
+                    <c:if test="${not empty error_productName}">
+                        <span class="error">${error_productName}</span>
+                    </c:if>
+                </div>
 
                 <!-- Description -->
-                Description:<br/>
-                <textarea name="txtDescription" required>${p.description}</textarea><br/>
-                <c:if test="${not empty error_description}">
-                    <span style="color:red">${error_description}</span><br/>
-                </c:if>
-                <br/>
-
-                <!-- ================= CATEGORY (DROPDOWN) ================= -->
-                Category:
-                <select name="txtCategoryID" required>
-                    <option value="">-- Select Category --</option>
-
-                    <c:forEach var="c" items="${categoryList}">
-                        <%-- xác định selected bằng biến tạm cho dễ debug --%>
-                        <c:set var="selected" value=""/>
-
-                        <c:if test="${not empty p && p.categoryID eq c.categoryID}">
-                            <c:set var="selected" value="selected='selected'"/>
-                        </c:if>
-
-                        <option value="${c.categoryID}" ${selected}>
-                            ${c.categoryID} - ${c.categoryName}
-                        </option>
-                    </c:forEach>
-                </select><br/>
-                <c:if test="${not empty error_categoryID}">
-                    <span style="color:red">${error_categoryID}</span><br/>
-                </c:if>
-
-
-                <!-- ================= BRAND (DROPDOWN) ================= -->
-                Brand:
-                <select name="txtBrandID" required>
-                    <option value="">-- Select Brand --</option>
-
-                    <c:forEach var="b" items="${brandList}">
-                        <%-- xác định selected bằng biến tạm cho dễ debug --%>
-                        <c:set var="selected" value=""/>
-
-                        <c:if test="${not empty p && p.brandID eq b.brandID}">
-                            <c:set var="selected" value="selected='selected'"/>
-                        </c:if>
-
-                        <option value="${b.brandID}" ${selected}>
-                            ${b.brandID} - ${b.brandName}
-                            <c:if test="${not empty b.origin}"> (${b.origin})</c:if>
-                            </option>
-                    </c:forEach>
-                </select><br/>
-                <c:if test="${not empty error_brandID}">
-                    <span style="color:red">${error_brandID}</span><br/>
-                </c:if>
-                <br/>
-
-                <!-- Avatar Upload -->
                 <div class="mb-3">
-                    <label class="form-label">Avatar</label>
-                    <input type="file" id="productImageFile" accept="image/*" class="form-control" />
-                    <!-- Trường ẩn để lưu base64 gửi lên server -->
-                    <input type="hidden" name="txtProductImage" id="productImage" value="${p.productImage}" />
+                    <label>Description:</label>
+                    <textarea name="txtDescription" required>${p.description}</textarea>
+                    <c:if test="${not empty error_description}">
+                        <span class="error">${error_description}</span>
+                    </c:if>
+                </div>
 
-                    <!-- Xem trước ảnh -->
-                    <div class="mt-3">
-                        <img id="productPreview" 
-                             src="${not empty p.productImage ? p.productImage : ''}" 
-                             alt="Avatar Preview" 
-                             class="rounded border" 
-                             style="max-width: 150px; max-height: 150px; display: ${not empty p.productImage ? 'block' : 'none'};">
+                <!-- Category -->
+                <div class="mb-3">
+                    <label>Category:</label>
+                    <select name="txtCategoryID" required>
+                        <option value="">-- Select Category --</option>
+                        <c:forEach var="c" items="${categoryList}">
+                            <option value="${c.categoryID}" ${p.categoryID eq c.categoryID ? 'selected' : ''}>
+                                ${c.categoryID} - ${c.categoryName}
+                            </option>
+                        </c:forEach>
+                    </select>
+                    <c:if test="${not empty error_categoryID}">
+                        <span class="error">${error_categoryID}</span>
+                    </c:if>
+                </div>
+
+                <!-- Brand -->
+                <div class="mb-3">
+                    <label>Brand:</label>
+                    <select name="txtBrandID" required>
+                        <option value="">-- Select Brand --</option>
+                        <c:forEach var="b" items="${brandList}">
+                            <option value="${b.brandID}" ${p.brandID eq b.brandID ? 'selected' : ''}>
+                                ${b.brandID} - ${b.brandName} <c:if test="${not empty b.origin}">(${b.origin})</c:if>
+                                </option>
+                        </c:forEach>
+                    </select>
+                    <c:if test="${not empty error_brandID}">
+                        <span class="error">${error_brandID}</span>
+                    </c:if>
+                </div>
+
+                <!-- Product Image -->
+                <div class="mb-3">
+                    <label class="form-label">Product Image</label>
+                    <input type="file" id="productImageFile" accept="image/*" class="form-control" />
+                    <input type="hidden" name="txtProductImage" id="productImage" value="${p.productImage}" />
+                    <div class="mt-2">
+                        <img id="productPreview"
+                             src="${not empty p.productImage ? p.productImage : ''}"
+                             alt="Product Preview"
+                             class="preview"
+                             style="display: ${not empty p.productImage ? 'block' : 'none'};">
                     </div>
                 </div>
 
                 <!-- ================= VARIANT ================= -->
-
                 <h3>Variant</h3>
 
-                <h3>Variant</h3>
-Variant ID (V***):
-<input type="text"
-       name="txtVariantID"
-       value="${v.variantID}"
-       required
-       pattern="(?i)[Vv][0-9]{3}"
-       title="Variant ID must follow the format V***, e.g., V001"
-       ${update ? 'readonly="readonly"' : ''} />
-<br/>
+                <!-- Variant ID -->
+                <div class="mb-3">
+                    <label>Variant ID (V***):</label>
+                    <input type="text" name="txtVariantID" value="${v.variantID}"
+                           pattern="(?i)[Vv][0-9]{3}" title="e.g., V001"
+                           ${update ? 'readonly' : 'required'} />
+                    <c:if test="${not empty error_variantID}">
+                        <span class="error">${error_variantID}</span>
+                    </c:if>
+                </div>
 
-<c:if test="${not empty error_variantID}">
-    <span style="color:red">${error_variantID}</span><br/>
-</c:if>
-
-<br/>
-<div>
-    <strong>Variant ID đã tồn tại:</strong>
-    <c:forEach var="vItem" items="${variantList}" varStatus="loop">
-        <span>
-            ${vItem.variantID}<c:if test="${!loop.last}">, </c:if>
-        </span>
-    </c:forEach>
-    <c:if test="${empty variantList}">
-        <span>(Chưa có ID nào)</span>
-    </c:if>
-</div>
-<br/>
+                <!-- Existing Variant IDs -->
+                <div class="mb-3">
+                    <strong>Existing Variant IDs:</strong>
+                    <c:forEach var="vItem" items="${variantList}" varStatus="loop">
+                        <span class="badge bg-secondary">${vItem.variantID}</span><c:if test="${!loop.last}"> </c:if>
+                    </c:forEach>
+                    <c:if test="${empty variantList}">
+                        <em>(None)</em>
+                    </c:if>
+                </div>
 
                 <!-- Size -->
-                Size:
-                <input type="text"
-                       name="txtSize"
-                       value="${v.size}"
-                       required/><br/>
-                <c:if test="${not empty error_size}">
-                    <span style="color:red">${error_size}</span><br/>
-                </c:if>
-                <br/>
+                <div class="mb-3">
+                    <label>Size:</label>
+                    <input type="text" name="txtSize" value="${v.size}" required />
+                    <c:if test="${not empty error_size}">
+                        <span class="error">${error_size}</span>
+                    </c:if>
+                </div>
 
                 <!-- Color -->
-                Color:
-                <input type="text"
-                       name="txtColor"
-                       value="${v.color}"
-                       required/><br/>
-                <c:if test="${not empty error_color}">
-                    <span style="color:red">${error_color}</span><br/>
-                </c:if>
-                <br/>
+                <div class="mb-3">
+                    <label>Color:</label>
+                    <input type="text" name="txtColor" value="${v.color}" required />
+                    <c:if test="${not empty error_color}">
+                        <span class="error">${error_color}</span>
+                    </c:if>
+                </div>
 
                 <!-- Stock -->
-                Stock Quantity:
-                <input type="number"
-                       name="txtStock"
-                       value="${v.stock}"
-                       min="0"
-                       required/><br/>
-                <c:if test="${not empty error_stock}">
-                    <span style="color:red">${error_stock}</span><br/>
-                </c:if>
-                <br/>
+                <div class="mb-3">
+                    <label>Stock:</label>
+                    <input type="number" name="txtStock" value="${v.stock}" min="0" required />
+                    <c:if test="${not empty error_stock}">
+                        <span class="error">${error_stock}</span>
+                    </c:if>
+                </div>
 
                 <!-- Price -->
-                Price:
-                <input type="number"
-                       name="txtPrice"
-                       value="${v.price}"
-                       step="0.01"
-                       min="0"
-                       required/><br/>
-                <c:if test="${not empty error_price}">
-                    <span style="color:red">${error_price}</span><br/>
-                </c:if>
-                <br/>
+                <div class="mb-3">
+                    <label>Price:</label>
+                    <input type="number" name="txtPrice" value="${v.price}" step="0.01" min="0" required />
+                    <c:if test="${not empty error_price}">
+                        <span class="error">${error_price}</span>
+                    </c:if>
+                </div>
 
-                <button type="submit">
+                <!-- Variant Image (ĐÃ SỬA – ĐẸP, CHUẨN BOOTSTRAP) -->
+                <div class="mb-3">
+                    <label class="form-label">Variant Image</label>
+                    <input type="file" id="variantImageFile" accept="image/*" class="form-control" />
+                    <input type="hidden" name="txtVariantImage" id="variantImage" value="${v.avatarBase64}" />
+                    <div class="mt-2">
+                        <img id="variantPreview"
+                             src="${not empty v.avatarBase64 ? v.avatarBase64 : ''}"
+                             alt="Variant Preview"
+                             class="preview"
+                             style="display: ${not empty v.avatarBase64 ? 'block' : 'none'};">
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit" class="btn btn-primary">
                     ${update ? "Update Product" : "Add Product"}
                 </button>
             </form>
-
         </div>
-                 <!--JavaScript: convert ảnh sang base64--> 
-<script>
-document.getElementById('productImageFile').addEventListener('change', function() {
-    const file = this.files[0];
-    if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const base64String = e.target.result; // chứa cả header data:image/png;base64,...
-        document.getElementById('productImage').value = base64String;
+        <!-- ====================== JAVASCRIPT ====================== -->
+        <script>
+            // --- Product Image Preview ---
+            document.getElementById('productImageFile').addEventListener('change', function () {
+                const file = this.files[0];
+                if (!file)
+                    return;
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const base64 = e.target.result;
+                    document.getElementById('productImage').value = base64;
+                    const preview = document.getElementById('productPreview');
+                    preview.src = base64;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            });
 
-        // Hiển thị xem trước
-        const imgPreview = document.getElementById('productPreview');
-        imgPreview.src = base64String;
-        imgPreview.style.display = 'block';
-    };
-    reader.readAsDataURL(file); // đọc file dưới dạng Base64
-});
-</script>
-<script>
-    // 1. Convert the list of IDs from JSTL to a JavaScript array
-    const existingVariantIDs = [];
-    <c:forEach var="vItem" items="${variantList}">
-        // Ensure VariantID is in uppercase for comparison (or lowercase, as long as it's consistent)
-        existingVariantIDs.push("${vItem.variantID}".toUpperCase()); 
-    </c:forEach>
+            // --- Variant Image Preview ---
+            document.getElementById('variantImageFile').addEventListener('change', function () {
+                const file = this.files[0];
+                if (!file)
+                    return;
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const base64 = e.target.result;
+                    document.getElementById('variantImage').value = base64;
+                    const preview = document.getElementById('variantPreview');
+                    preview.src = base64;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            });
 
-    // 2. Validation function when the user enters data
-    document.addEventListener('DOMContentLoaded', function() {
-        const variantIDInput = document.querySelector('input[name="txtVariantID"]');
+            // --- Variant ID Duplication Check ---
+            const existingVariantIDs = [
+            <c:forEach var="vItem" items="${variantList}" varStatus="loop">
+            "${vItem.variantID.toUpperCase()}"<c:if test="${!loop.last}">,</c:if>
+            </c:forEach>
+            ];
 
-        if (variantIDInput) {
-            variantIDInput.addEventListener('input', function() {
-                // Only check if it's not in update mode (not readonly)
-                if (!variantIDInput.readOnly) {
-                    const enteredID = variantIDInput.value.trim().toUpperCase();
-
-                    // Check if the entered ID already exists in the array
-                    if (existingVariantIDs.includes(enteredID)) {
-                        // If duplicated, add an error (can show red) and prevent submission
-                        variantIDInput.setCustomValidity('This Variant ID already exists. Please enter a different ID.');
-                        variantIDInput.style.border = '2px solid red';
-                    } else {
-                        // If not duplicated, remove the error
-                        variantIDInput.setCustomValidity('');
-                        variantIDInput.style.border = '1px solid #ccc'; // Or default color
-                    }
+            document.addEventListener('DOMContentLoaded', function () {
+                const input = document.querySelector('input[name="txtVariantID"]');
+                if (input && !input.readOnly) {
+                    input.addEventListener('input', function () {
+                        const val = this.value.trim().toUpperCase();
+                        if (existingVariantIDs.includes(val)) {
+                            this.setCustomValidity('Variant ID already exists!');
+                            this.style.border = '2px solid red';
+                        } else {
+                            this.setCustomValidity('');
+                            this.style.border = '';
+                        }
+                    });
                 }
             });
-        }
-    });
-</script>
-
+        </script>
     </body>
 </html>
