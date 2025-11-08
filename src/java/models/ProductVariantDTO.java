@@ -10,12 +10,11 @@ public class ProductVariantDTO {
     private int stock;
     private double price;
     private int salesCount;
-    private ProductDTO product;
 
     // Constructor
     public ProductVariantDTO() {}
     public ProductVariantDTO(String variantID, String productID, String size, String color,
-                             int stock, double price, int salesCount, ProductDTO product) {
+                             int stock, double price, int salesCount) {
         this.variantID = variantID;
         this.productID = productID;
         this.size = size;
@@ -23,7 +22,6 @@ public class ProductVariantDTO {
         this.stock = stock;
         this.price = price;
         this.salesCount = salesCount;
-        this.product = product;
     }
 
     // Getters & Setters
@@ -48,6 +46,4 @@ public class ProductVariantDTO {
     public int getSalesCount() { return salesCount; }
     public void setSalesCount(int salesCount) { this.salesCount = salesCount; }
 
-    public ProductDTO getProduct() { return product; }
-    public void setProduct(ProductDTO product) { this.product = product; }
 }
