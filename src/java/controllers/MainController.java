@@ -33,6 +33,13 @@ public class MainController extends HttpServlet {
 
         String[] cartActions = {"viewCart", "addToCart", "updateCart", "removeFromCart"};
 
+        // Trong MainController.java, thêm vào đầu class:
+        String[] addressActions = {
+            "viewAddressList", "showAddAddressForm", "addAddress",
+            "deleteAddress", "setDefaultAddress"
+        };
+        // Trong try block, thêm:
+
         try {
             if (txtAction != null) {
                 if (Arrays.asList(userActions).contains(txtAction)) {
@@ -45,6 +52,8 @@ public class MainController extends HttpServlet {
                     url = "BrandController";
                 } else if (Arrays.asList(cartActions).contains(txtAction)) {
                     url = "CartController"; // Route qua CartController
+                } else if (Arrays.asList(addressActions).contains(txtAction)) {
+                    url = "AddressController";
                 } else if ("home".equals(txtAction)) {
                     url = "BrandController";
                 }

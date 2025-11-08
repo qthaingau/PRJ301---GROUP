@@ -52,10 +52,6 @@
                             <c:if test="${user.role eq 'admin'}">
                                 <th>Trạng thái</th>
                             </c:if>
-                            <!-- Customer: Hành động -->
-                            <c:if test="${user.role ne 'admin'}">
-                                <th class="text-center">Hành động</th>
-                            </c:if>
                         </tr>
                     </thead>
                     <tbody>
@@ -96,7 +92,7 @@
                                 </tr>
                             </c:if>
 
-                            <!-- CUSTOMER: Chỉ sản phẩm active + nút hành động -->
+                            <!-- CUSTOMER: Chỉ sản phẩm active -->
                             <c:if test="${user.role ne 'admin' and p.isActive}">
                                 <tr>
                                     <td><a href="${detailUrl}" class="product-link">${p.productID}</a></td>
@@ -104,20 +100,6 @@
                                     <td><a href="${detailUrl}" class="product-link">${p.description}</a></td>
                                     <td><a href="${categoryUrl}" class="product-link">${p.categoryID}</a></td>
                                     <td><a href="${brandUrl}" class="product-link">${p.brandID}</a></td>
-                                    <td class="text-center">
-                                        <!-- Thêm vào giỏ -->
-                                        <button class="btn btn-sm btn-outline-primary me-1"
-                                                onclick="addToCartFirst('${p.productID}', 1)"
-                                                title="Thêm vào giỏ hàng">
-                                            <i class="bi bi-cart-plus"></i>
-                                        </button>
-                                        <!-- Mua ngay -->
-                                        <button class="btn btn-sm btn-success"
-                                                onclick="buyNow('${p.productID}')"
-                                                title="Mua ngay">
-                                            <i class="bi bi-lightning-charge"></i>
-                                        </button>
-                                    </td>
                                 </tr>
                             </c:if>
                         </c:forEach>
@@ -128,20 +110,9 @@
     </c:choose>
 </div>
 
-<!-- Toast Container -->
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-    <div id="cartToast" class="toast align-items-center text-bg-success border-0" role="alert">
-        <div class="d-flex">
-            <div class="toast-body" id="toastMessage">
-                <!-- Nội dung động -->
-            </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-        </div>
-    </div>
-</div>
-
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 
 <!-- Custom JS -->
 <script src="${pageContext.request.contextPath}/assets/js/productList.js"></script>
