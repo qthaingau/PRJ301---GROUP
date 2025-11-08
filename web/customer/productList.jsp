@@ -59,7 +59,10 @@
                         <table class="table table-hover align-middle product-table">
                             <thead>
                                 <tr>
-                                    <th>Product ID</th>
+                                    <c:if test="${user.role eq 'admin'}">
+                                        <th>Product ID</th>
+                                    </c:if>
+                                    
                                     <th>Product Name</th>
                                     <th>Description</th>
                                     <th>Category ID</th>
@@ -93,7 +96,7 @@
                                     </c:url>
 
                                     <!-- ADMIN: thấy tất cả -->
-                                    <c:if test="${user.role eq 'admin'}">
+                                    <c:if test="${user.role eq 'admin' or 'staff'}">
                                         <tr>
                                             <td>
                                                 <a href="${detailUrl}" class="product-link">
@@ -145,13 +148,8 @@
                                     </c:if>
 
                                     <!-- USER: chỉ hiện isActive = true, không có Status/Action -->
-                                    <c:if test="${user.role ne 'admin' and p.isActive}">
+                                    <c:if test="${user.role ne ('admin' and 'staff') and p.isActive}">
                                         <tr>
-                                            <td>
-                                                <a href="${detailUrl}" class="product-link">
-                                                    ${p.productID}
-                                                </a>
-                                            </td>
                                             <td>
                                                 <a href="${detailUrl}" class="product-link">
                                                     ${p.productName}

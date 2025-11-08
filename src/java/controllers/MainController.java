@@ -31,6 +31,8 @@ public class MainController extends HttpServlet {
         String[] brandActions = {"viewBrandList", "updateBrand", "addBrand", "filterBrand", "callBrandForm", "deleteBrand"};
         String[] categoryActions = {"viewCategoryList", "updateCategory", "addCategory", "callCategoryForm", "filterCategory", "deleteCategory"};
 
+        String[] imageActics = {"viewImages"};
+
         try {
             if (txtAction != null) {
                 if (Arrays.asList(userActions).contains(txtAction)) {
@@ -41,9 +43,9 @@ public class MainController extends HttpServlet {
                     url = "CategoryController";
                 } else if (Arrays.asList(brandActions).contains(txtAction)) {
                     url = "BrandController";
-                } else if ("home".equals(txtAction)) {
-                    url = "BrandController"; // route qua BrandController để load menu + home
-                }
+                } else if (Arrays.asList(imageActics).contains(txtAction)) {
+                    url = "ProductImageController";
+                } 
             } else {
                 if (txtAction == null || "home".equals(txtAction)) {
                     request.getRequestDispatcher("home.jsp").forward(request, response);

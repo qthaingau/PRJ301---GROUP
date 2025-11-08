@@ -3,19 +3,17 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/D:/PRJ301/WebBanHang/web/admin/productForm.jsp</file>
+            <file>file:/D:/PRJ301/WebBanHang/web/assets/js/productImage.js</file>
             <file>file:/D:/PRJ301/WebBanHang/src/java/models/BrandDAO.java</file>
-            <file>file:/D:/PRJ301/WebBanHang/web/admin/categoryForm.jsp</file>
-            <file>file:/D:/PRJ301/WebBanHang/web/customer/categoryList.jsp</file>
-            <file>file:/D:/PRJ301/WebBanHang/web/customer/productList.jsp</file>
-            <file>file:/D:/PRJ301/WebBanHang/web/admin/brandForm.jsp</file>
-            <file>file:/D:/PRJ301/WebBanHang/src/java/controllers/MainController.java</file>
-            <file>file:/D:/PRJ301/WebBanHang/src/java/controllers/BrandController.java</file>
-            <file>file:/D:/PRJ301/WebBanHang/web/customer/brandList.jsp</file>
             <file>file:/D:/PRJ301/WebBanHang/src/java/controllers/ProductController.java</file>
+            <file>file:/D:/PRJ301/WebBanHang/web/admin/productImages.jsp</file>
             <file>file:/D:/PRJ301/WebBanHang/web/customer/productDetail.jsp</file>
-            <file>file:/D:/PRJ301/WebBanHang/src/java/controllers/CategoryController.java</file>
+            <file>file:/D:/PRJ301/WebBanHang/src/java/models/ProductDAO.java</file>
+            <file>file:/D:/PRJ301/WebBanHang/web/customer/productList.jsp</file>
+            <file>file:/D:/PRJ301/WebBanHang/src/java/models/ProductDTO.java</file>
             <file>file:/D:/PRJ301/WebBanHang/src/java/models/CategoryDAO.java</file>
-            <file>file:/D:/PRJ301/WebBanHang/src/java/models/BrandDTO.java</file>
+            <file>file:/D:/PRJ301/WebBanHang/web/home.jsp</file>
         </group>
     </open-files>
 </project-private>

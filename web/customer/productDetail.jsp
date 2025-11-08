@@ -24,6 +24,13 @@
                 Back to Products
             </a>
         </div>
+        
+         <!-- Thêm nút Add New Product -->
+        <div class="add-product-btn-wrapper">
+            <a href="MainController?txtAction=callSaveProduct&update=false" class="btn btn-success">
+                Add New Product
+            </a>
+        </div>
 
         <div class="product-page container">
             <h1 class="page-title">Product Detail</h1>

@@ -15,6 +15,7 @@ public class ProductImageDAO {
 
     public ProductImageDAO() {
     }
+    
 
     // -----------------------------------------------------------
     // 1. Lấy tất cả ảnh của một sản phẩm (để show gallery)
