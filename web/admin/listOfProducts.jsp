@@ -1,27 +1,29 @@
-<%-- 
-    Document   : ListOfProducts
-    Created on : Nov 3, 2025, 7:41:43 AM
-    Author     : TEST
---%>
-
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%--<%@ include file="includes/header.jspf" %>--%>
+
 <!DOCTYPE html>
 <html lang="vi">
     <head>
         <meta charset="UTF-8">
         <title>Product List</title>
 
-        <!-- Bootstrap có thể đã được load ở layout ngoài -->
-        <!-- <link rel="stylesheet" href="assets/css/bootstrap.min.css"> -->
-
         <!-- CSS theme đen – đỏ – trắng -->
         <link rel="stylesheet" href="assets/css/productList.css">
     </head>
     <body class="product-list-body">
+        <!-- ✅ Back to Home giống categoryList.jsp -->
+        <a href="MainController?txtAction=viewProducts" class="btn btn-secondary" style="margin-left: 10px;">
+            Back to Home
+        </a>
 
         <div class="container product-list-wrapper">
             <h3 class="product-list-title">Product List</h3>
+
+            <!-- Nút thêm sản phẩm -->
+            <div class="mb-3">
+                <a href="MainController?txtAction=callSaveProduct&update=false" class="btn btn-success">Add Product</a>
+            </div>
 
             <!-- Search + filter -->
             <form action="MainController" method="post" class="product-search-form mb-3">
@@ -59,19 +61,13 @@
                         <table class="table table-hover align-middle product-table">
                             <thead>
                                 <tr>
-                                    <c:if test="${user.role eq 'admin' or 'staff'}">
-                                        <th>Product ID</th>
-                                        </c:if>
                                     <th>Product Image</th>
+                                    <th>Product ID</th>
                                     <th>Product Name</th>
                                     <th>Description</th>
                                     <th>Category ID</th>
                                     <th>Brand ID</th>
-
-                                    <!-- Status + Action chỉ cho ADMIN -->
-                                    <c:if test="${user.role eq 'admin'}">
-                                        <th>Status</th>
-                                        </c:if>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
 
@@ -95,90 +91,48 @@
                                         <c:param name="categoryID" value="${p.categoryID}"/>
                                     </c:url>
 
-                                    <!-- ADMIN: thấy tất cả -->
-                                    <c:if test="${user.role eq 'admin'}">
-                                        <tr>
-                                            <td><img src="${p.productImage}" style="width: 50px"/></td>
+                                    <!-- Hiển thị thông tin sản phẩm -->
+                                    <tr>
+                                        <td><img src="${p.productImage}" style="width: 50px"/></td>
+                                        <td>
+                                            <a href="${detailUrl}" class="product-link">
+                                                ${p.productID}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="${detailUrl}" class="product-link">
+                                                ${p.productName}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a href="${detailUrl}" class="product-link">
+                                                ${p.description}
+                                            </a>
+                                        </td>
 
-                                            <td>
-                                                <a href="${detailUrl}" class="product-link">
-                                                    ${p.productID}
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="${detailUrl}" class="product-link">
-                                                    ${p.productName}
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="${detailUrl}" class="product-link">
-                                                    ${p.description}
-                                                </a>
-                                            </td>
+                                        <!-- Category ID clickable -->
+                                        <td>
+                                            <a href="${categoryUrl}" class="product-link">
+                                                ${p.categoryID}
+                                            </a>
+                                        </td>
 
-                                            <!-- Category ID clickable -->
-                                            <td>
-                                                <a href="${categoryUrl}" class="product-link">
-                                                    ${p.categoryID}
-                                                </a>
-                                            </td>
+                                        <!-- Brand ID clickable -->
+                                        <td>
+                                            <a href="${brandUrl}" class="product-link">
+                                                ${p.brandID}
+                                            </a>
+                                        </td>
 
-                                            <!-- Brand ID clickable -->
-                                            <td>
-                                                <a href="${brandUrl}" class="product-link">
-                                                    ${p.brandID}
-                                                </a>
-                                            </td>
-
-                                            <td>
-                                                <c:choose>
-                                                    <c:when test="${p.isActive}">
-                                                        <a href="MainController?txtAction=toggleProductStatus&productID=${p.productID}"
-                                                           class="status-badge status-active">
-                                                            Active
-                                                        </a>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <a href="MainController?txtAction=toggleProductStatus&productID=${p.productID}"
-                                                           class="status-badge status-inactive">
-                                                            Inactive
-                                                        </a>
-                                                    </c:otherwise>
-                                                </c:choose>
-                                            </td>
-                                        </tr>
-                                    </c:if>
-
-                                    <!-- USER: chỉ hiện isActive = true, không có Status/Action -->
-                                    <c:if test="${user.role ne ('admin' or 'staff') and p.isActive}">
-                                        <tr>
-                                            <td><img src="${p.productImage}" style="width: 50px"/></td>
-                                            <td>
-                                                <a href="${detailUrl}" class="product-link">
-                                                    ${p.productName}
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <a href="${detailUrl}" class="product-link">
-                                                    ${p.description}
-                                                </a>
-                                            </td>
-
-                                            <!-- Category ID clickable -->
-                                            <td>
-                                                <a href="${categoryUrl}" class="product-link">
-                                                    ${p.categoryID}
-                                                </a>
-                                            </td>
-
-                                            <!-- Brand ID clickable -->
-                                            <td>
-                                                <a href="${brandUrl}" class="product-link">
-                                                    ${p.brandID}
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    </c:if>
+                                        <td>
+                                            <!-- Update & Delete buttons -->
+                                            <a href="MainController?txtAction=callSaveProduct&update=true&productID=${p.productID}"
+                                               class="btn btn-warning btn-sm">Update</a>
+                                            <a href="MainController?txtAction=deleteProductWithVariant&productID=${p.productID}"
+                                               class="btn btn-danger btn-sm"
+                                               onclick="return confirm('Are you sure you want to delete this product?');">Delete</a>
+                                        </td>
+                                    </tr>
                                 </c:forEach>
                             </tbody>
                         </table>

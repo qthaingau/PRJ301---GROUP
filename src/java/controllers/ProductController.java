@@ -435,84 +435,41 @@ public class ProductController extends HttpServlet {
 
     private void processViewProducts(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
 
         // Lấy session hiện tại (nếu có)
         HttpSession session = request.getSession(false);
 
         // Nếu session đã tồn tại, xóa danh sách sản phẩm cũ
         if (session != null) {
-            session.removeAttribute("listProducts");
+            session.removeAttribute("listProducts");  // Xóa danh sách sản phẩm cũ trong session
         } else {
-            // Nếu không có session, tạo session mới
-            session = request.getSession(true);
+            session = request.getSession(true); // Nếu không có session, tạo session mới
         }
 
         try {
             // Lấy danh sách sản phẩm mới nhất từ ProductDAO
             ProductDAO productDAO = new ProductDAO();
             List<ProductDTO> listProducts = productDAO.getAllProduct();
+            String txtAction = request.getParameter("txtAction");
 
             // Đưa listProducts vào session
             session.setAttribute("listProducts", listProducts);
 
-            // Lấy đối tượng User từ session
-            UserDTO user = (UserDTO) session.getAttribute("user");
-
-            // Kiểm tra nếu user không null và lấy role của user
-            if (user != null) {
-                String userRole = user.getRole(); // Lấy role của user từ đối tượng User
-
-                // Chuyển hướng tới trang tương ứng tùy vào role
-                if ("admin".equals(userRole) || "staff".equals(userRole)) {
-                    // Nếu là admin hoặc staff, chuyển đến listOfProducts.jsp
-                    request.getRequestDispatcher("listOfProducts.jsp").forward(request, response);
-                } else {
-                    // Nếu là user, chuyển đến home.jsp
-                    request.getRequestDispatcher("home.jsp").forward(request, response);
-                }
-            } else {
-                // Nếu không có user trong session, chuyển đến trang login
-                request.getRequestDispatcher("login.jsp").forward(request, response);
+            // Chuyển hướng tới trang home.jsp
+            if (txtAction.equals("viewProducts")) {
+               request.getRequestDispatcher("home.jsp").forward(request, response); 
+            } else if (txtAction.equals("viewProductList")) {
+                request.getRequestDispatcher("/admin/listOfProducts.jsp").forward(request, response);
             }
-
+            
         } catch (Exception e) {
             e.printStackTrace();
-            // Nếu có lỗi, hiển thị thông báo lỗi
             request.setAttribute("msg", "Error loading product list!");
             request.getRequestDispatcher("home.jsp").forward(request, response);
         }
     }
 
-//private void processViewProducts(HttpServletRequest request, HttpServletResponse response)
-//        throws ServletException, IOException {
-//    response.setContentType("text/html;charset=UTF-8");
-//
-//    // Lấy session hiện tại (nếu có)
-//    HttpSession session = request.getSession(false);
-//
-//    // Nếu session đã tồn tại, xóa danh sách sản phẩm cũ
-//    if (session != null) {
-//        session.removeAttribute("listProducts");  // Xóa danh sách sản phẩm cũ trong session
-//    } else {
-//        session = request.getSession(true); // Nếu không có session, tạo session mới
-//    }
-//
-//    try {
-//        // Lấy danh sách sản phẩm mới nhất từ ProductDAO
-//        ProductDAO productDAO = new ProductDAO();
-//        List<ProductDTO> listProducts = productDAO.getAllProduct();
-//
-//        // Đưa listProducts vào session
-//        session.setAttribute("listProducts", listProducts);
-//
-//        // Chuyển hướng tới trang home.jsp
-//        request.getRequestDispatcher("home.jsp").forward(request, response);
-//    } catch (Exception e) {
-//        e.printStackTrace();
-//        request.setAttribute("msg", "Error loading product list!");
-//        request.getRequestDispatcher("home.jsp").forward(request, response);
-//    }
-//}
     private void processToggleProductStatus(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -557,6 +514,8 @@ public class ProductController extends HttpServlet {
                 processDeleteWithVariant(request, response);
             } else if (txtAction.equals("toggleProductStatus")) {
                 processToggleProductStatus(request, response);
+            } else if (txtAction.equals("viewProductList")) {
+                processViewProducts(request, response);
             }
         }
     }
