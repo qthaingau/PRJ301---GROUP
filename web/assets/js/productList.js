@@ -57,3 +57,39 @@ function updateCartBadge() {
             }
         });
 }
+$(document).ready(function() {
+    let page = 1;
+
+    // Detect scroll event and load more products when the user scrolls to the bottom
+    $(window).on('scroll', function() {
+        if ($(window).scrollTop() + $(window).height() == $(document).height()) {
+            page++;  // Increment page number
+            loadMoreProducts(page);
+        }
+    });
+
+    // Function to load more products dynamically
+    function loadMoreProducts(page) {
+        $.ajax({
+            url: 'MainController',
+            type: 'GET',
+            data: {
+                txtAction: 'loadMoreProducts',
+                page: page
+            },
+            success: function(response) {
+                // Append new products to the product grid
+                $('#product-grid').append(response);
+            },
+            error: function() {
+                console.log("Error loading more products.");
+            }
+        });
+    }
+
+    // Optional: Button to load more products manually
+    $('#load-more button').click(function() {
+        page++;  // Increment page number
+        loadMoreProducts(page);
+    });
+});
