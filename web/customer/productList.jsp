@@ -18,21 +18,6 @@
         <p class="lead fw-normal text-muted mb-0">SHOES WITH YOU</p>
     </div>
 
-    <!-- Search + filter -->
-    <form action="MainController" method="post" class="product-search-form mb-4">
-        <input type="hidden" name="txtAction" value="filterProduct"/>
-        <div class="row g-2 align-items-center">
-            <div class="col-md-6">
-                <div class="input-group">
-                    <span class="input-group-text bg-dark text-light">Search</span>
-                    <input type="text" class="form-control" name="keyword" value="${keyword}"/>
-                </div>
-            </div>
-            <div class="col-auto">
-                <button type="submit" class="btn btn-apply">Apply</button>
-            </div>
-        </div>
-    </form>
 
     <!-- Product Grid -->
     <c:choose>

@@ -106,7 +106,7 @@
                     </c:forEach>
                     <c:if test="${empty listBrand}">
                         <li><span class="dropdown-item text-muted">Không có thương hiệu nào</span></li>
-                    </c:if>
+                        </c:if>
                 </ul>
             </li>
 
@@ -124,13 +124,13 @@
                     </c:forEach>
                     <c:if test="${empty listCategory}">
                         <li><span class="dropdown-item text-muted">Không có loại giày</span></li>
-                    </c:if>
+                        </c:if>
                 </ul>
             </li>
 
-            
 
-            <!-- QUẢN LÝ SẢN PHẨM – DROPDOWN (admin/staff) -->
+
+            <!-- QUẢN LÝ SẢN PHẨM - DROPDOWN (admin/staff) -->
             <c:if test="${not empty sessionScope.user && (sessionScope.user.role eq 'admin' || sessionScope.user.role eq 'staff')}">
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle text-white px-3" href="#" data-bs-toggle="dropdown">
@@ -138,24 +138,25 @@
                     </a>
                     <ul class="dropdown-menu bg-dark">
                         <li>
-                            <a class="dropdown-item text-white" href="admin/listOfProduct.jsp">
+                            <a class="dropdown-item text-white" href="MainController?txtAction=viewProducts">
                                 Danh sách sản phẩm
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item text-white" href="admin/listOfBrand.jsp">
+                            <a class="dropdown-item text-white" href="MainController?txtAction=viewBrandList">
                                 Danh sách thương hiệu
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item text-white" href="admin/listOfCategory.jsp">
+                            <a class="dropdown-item text-white" href="MainController?txtAction=viewCategoryList">
                                 Danh sách loại giày
                             </a>
                         </li>
                     </ul>
                 </li>
             </c:if>
-                <!-- QUẢN LÝ USER (admin/staff) -->
+
+            <!-- QUẢN LÝ USER (admin/staff) -->
             <c:if test="${not empty sessionScope.user && (sessionScope.user.role eq 'admin')}">
                 <li class="nav-item">
                     <a class="nav-link text-white px-3" href="MainController?txtAction=searchUser">
