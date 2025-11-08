@@ -31,6 +31,15 @@ public class MainController extends HttpServlet {
         String[] brandActions = {"viewBrandList", "updateBrand", "addBrand", "filterBrand", "callBrandForm", "deleteBrand"};
         String[] categoryActions = {"viewCategoryList", "updateCategory", "addCategory", "callCategoryForm", "filterCategory", "deleteCategory"};
 
+        String[] cartActions = {"viewCart", "addToCart", "updateCart", "removeFromCart"};
+
+        // Trong MainController.java, thêm vào đầu class:
+        String[] addressActions = {
+            "viewAddressList", "showAddAddressForm", "addAddress",
+            "deleteAddress", "setDefaultAddress"
+        };
+        // Trong try block, thêm:
+
         try {
             if (txtAction != null) {
                 if (Arrays.asList(userActions).contains(txtAction)) {
@@ -41,14 +50,17 @@ public class MainController extends HttpServlet {
                     url = "CategoryController";
                 } else if (Arrays.asList(brandActions).contains(txtAction)) {
                     url = "BrandController";
+                } else if (Arrays.asList(cartActions).contains(txtAction)) {
+                    url = "CartController"; // Route qua CartController
+                } else if (Arrays.asList(addressActions).contains(txtAction)) {
+                    url = "AddressController";
                 } else if ("home".equals(txtAction)) {
-                    url = "BrandController"; // route qua BrandController để load menu + home
+                    url = "BrandController";
                 }
             } else {
-                if (txtAction == null || "home".equals(txtAction)) {
-                    request.getRequestDispatcher("home.jsp").forward(request, response);
-                    return;
-                }
+                // Nếu không có txtAction → về home
+                request.getRequestDispatcher("home.jsp").forward(request, response);
+                return;
             }
 
             request.getRequestDispatcher(url).forward(request, response);
