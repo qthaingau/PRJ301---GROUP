@@ -433,6 +433,36 @@ public class ProductController extends HttpServlet {
         }
     }
 
+    private void processViewProductsManager(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        // Lấy session hiện tại (nếu có)
+        HttpSession session = request.getSession(false);
+
+        // Nếu session đã tồn tại, xóa danh sách sản phẩm cũ
+        if (session != null) {
+            session.removeAttribute("listProducts");  // Xóa danh sách sản phẩm cũ trong session
+        } else {
+            session = request.getSession(true); // Nếu không có session, tạo session mới
+        }
+
+        try {
+            // Lấy danh sách sản phẩm mới nhất từ ProductDAO
+            ProductDAO productDAO = new ProductDAO();
+            List<ProductDTO> listProducts = productDAO.getAllProduct();
+
+            // Đưa listProducts vào session
+            session.setAttribute("listProducts", listProducts);
+
+            // Chuyển hướng tới trang home.jsp
+            request.getRequestDispatcher("admin/listOfProducts.jsp").forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("msg", "Error loading product list!");
+            request.getRequestDispatcher("home.jsp").forward(request, response);
+        }
+    }
+
     private void processViewProducts(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -459,10 +489,8 @@ public class ProductController extends HttpServlet {
             // Chuyển hướng tới trang home.jsp
             if (txtAction.equals("viewProducts")) {
                request.getRequestDispatcher("home.jsp").forward(request, response); 
-            } else if (txtAction.equals("viewProductList")) {
-                request.getRequestDispatcher("/admin/listOfProducts.jsp").forward(request, response);
             }
-            
+            request.getRequestDispatcher("home.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("msg", "Error loading product list!");
@@ -515,7 +543,7 @@ public class ProductController extends HttpServlet {
             } else if (txtAction.equals("toggleProductStatus")) {
                 processToggleProductStatus(request, response);
             } else if (txtAction.equals("viewProductList")) {
-                processViewProducts(request, response);
+                processViewProductsManager(request, response);
             }
         }
     }
