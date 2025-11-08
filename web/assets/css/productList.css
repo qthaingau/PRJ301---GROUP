@@ -1,274 +1,164 @@
-/* ===========================
-   BODY THEME CHO PRODUCT LIST
-   =========================== */
+/* General page styling */
 .product-list-body {
-    background: radial-gradient(circle at top, #2b2b2b 0, #000 55%, #000 100%);
-    color: #f5f5f5;
-    font-family: 'Poppins', sans-serif;
+    background-color: #121212;  /* Nền đen tối */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #fff; /* Màu chữ trắng */
 }
 
-/* ===========================
-   Product List Layout
-   =========================== */
-.product-list-wrapper {
-    background: #111111;
-    border-radius: 18px;
-    padding: 24px 28px 32px;
-    margin-top: 40px;
-    box-shadow: 0 22px 40px rgba(0, 0, 0, 0.9);
-    border: 2px solid #ff3b30;
-}
-
-/* Title */
+/* Title section */
 .product-list-title {
-    font-weight: 800;
-    font-size: 2rem;
-    margin-bottom: 20px;
-    color: #ffffff;
-    text-align: center;
+    font-family: 'Roboto', sans-serif;
+    color: #FF4C4C; /* Màu đỏ tươi */
     text-transform: uppercase;
-    letter-spacing: 1px;
-    position: relative;
+    letter-spacing: 2px;
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
 }
 
-.product-list-title::after {
-    content: "";
-    display: block;
-    width: 70px;
-    height: 3px;
-    background: #ff3b30;
-    margin: 8px auto 0;
-    border-radius: 999px;
+/* Product card styling */
+.card {
+    border: none;
+    transition: all 0.3s ease-in-out;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Thêm bóng đổ */
+    background-color: #1e1e1e; /* Màu nền thẻ sản phẩm */
+    overflow: hidden;
 }
 
-/* ===========================
-   Search Form
-   =========================== */
-.product-search-form .input-group-text {
-    font-weight: 500;
-    background-color: #1b1b1b;
-    border-right: none;
-    border-color: #ff3b30;
-    color: #f5f5f5;
+/* Hover effect on product card */
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+
+/* Zoom effect on image */
+.card-img-top {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    max-height: 250px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.card:hover .card-img-top {
+    transform: scale(1.1); /* Phóng to ảnh khi hover */
+}
+
+/* Product name and description */
+.card-body .fw-bolder {
+    font-size: 1.25rem;
+    color: #FF4C4C; /* Đỏ cho tên sản phẩm */
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.card-body p {
+    color: #ccc; /* Màu chữ mô tả sáng hơn */
+}
+
+/* Price styling */
+.card-body .text-muted {
+    text-decoration: line-through;
+}
+
+.card-body .text-success {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #28a745; /* Màu xanh cho giá gốc */
+}
+
+.card-body .text-danger {
+    color: #dc3545; /* Màu đỏ cho giá giảm */
+}
+
+/* Button styles */
+.btn-outline-danger {
+    border-color: #FF4C4C; /* Đỏ cho nút */
+    color: #FF4C4C;
+    font-weight: bold;
+    padding: 0.375rem 0.75rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.btn-outline-danger:hover {
+    background-color: #FF4C4C;
+    color: white;
+    transform: scale(1.05);  /* Hiệu ứng phóng to khi hover */
+}
+
+/* Badge for Sale */
+.badge {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.6rem;
+    font-weight: bold;
+    border-radius: 0.25rem;
+}
+
+.bg-dark {
+    background-color: #343a40 !important;
+}
+
+.text-white {
+    color: #ffffff !important;
+}
+
+/* Star rating */
+.bi-star-fill {
+    font-size: 1.2rem;
+    color: #f7b924;  /* Màu vàng cho sao */
+    transition: color 0.3s ease;
+}
+
+/* Hover effect for stars */
+.bi-star-fill:hover {
+    color: #ffcc00; /* Màu vàng sáng khi hover */
+}
+
+/* Layout for the product grid */
+.row-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.row-cols-md-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.row-cols-xl-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.product-empty-alert {
+    font-size: 1.25rem;
+    color: #dc3545;
+}
+
+/* Search form styling */
+.product-search-form {
+    margin-top: 2rem;
+    transition: opacity 0.3s ease;
 }
 
 .product-search-form .form-control {
-    border-left: none;
-    box-shadow: none;
-    background-color: #050505;
-    border-color: #ff3b30;
-    color: #f5f5f5;
-}
-
-.product-search-form .form-control::placeholder {
-    color: #9ca3af;
-}
-
-.product-search-form .form-control:focus {
-    box-shadow: 0 0 0 1px rgba(255, 59, 48, 0.6);
-    border-color: #ff3b30;
-}
-
-/* Nút Apply */
-.btn-apply {
-    background-color: #ff3b30;
-    border-color: #ff3b30;
-    font-weight: 600;
-    padding-inline: 20px;
-    color: #fff;
-}
-
-.btn-apply:hover {
-    background-color: #ff5b4c;
-    border-color: #ff5b4c;
-}
-
-/* ===========================
-   Empty State
-   =========================== */
-.product-empty-alert {
-    margin-top: 16px;
-    border-radius: 10px;
-}
-
-/* ===========================
-   Product Table
-   =========================== */
-.product-table-wrapper {
-    margin-top: 16px;
-    background: #fff;
-    border-radius: 16px;
-    border: 2px solid #ff3b30;
-    padding: 0;
-    overflow: hidden;
-    box-shadow: 0 18px 35px rgba(0, 0, 0, 0.7);
-}
-
-.product-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 0;
-}
-
-/* Header */
-.product-table thead {
-    background-color: #000;
-    color: #f9fafb;
-}
-
-.product-table thead th {
-    font-weight: 600;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border-bottom: 2px solid #ff3b30;
-    padding: 10px 12px;
-    text-align: center;
-}
-
-/* Body */
-.product-table tbody tr:nth-child(even) {
-    background-color: #fdf5f4;
-}
-
-.product-table tbody tr:nth-child(odd) {
-    background-color: #ffffff;
-}
-
-.product-table tbody tr:hover {
-    background-color: #ffecec;
-    transition: background-color 0.18s ease;
-}
-
-.product-table td {
-    font-size: 0.9rem;
-    vertical-align: middle;
-    color: #111827;
-    padding: 9px 12px;
-    text-align: center;
-}
-
-/* Status column (khi có) */
-.product-table td:nth-child(7) {
-    font-weight: 600;
-}
-
-/* ===========================
-   Product Link (ID / Name / Description)
-   =========================== */
-a.product-link,
-a.product-link:link,
-a.product-link:visited {
-    display: block;
-    width: 100%;
-    height: 100%;
-    color: #111827 !important;       /* không còn xanh */
-    text-decoration: none !important;
-    padding: 2px 0;
-    transition: all 0.15s ease;
-}
-
-a.product-link:hover {
-    text-decoration: underline !important;
-    color: #b91c1c !important;       /* hơi đỏ khi hover */
-    cursor: pointer;
-}
-
-a.product-link:active {
-    transform: scale(0.98);
-    opacity: 0.85;
-}
-
-/* ===========================
-   Nút View Detail (Action)
-   =========================== */
-.view-detail-btn {
-    display: inline-block;
-    color: #ff3b30;
-    border: 2px solid #ff3b30;
-    border-radius: 999px;
-    padding: 3px 12px;
-    font-weight: 600;
-    text-decoration: none;
-    font-size: 0.8rem;
-    transition: 0.22s ease;
-}
-
-.view-detail-btn:hover {
-    background-color: #ff3b30;
-    color: #ffffff;
-}
-
-/* ===========================
-   Responsive
-   =========================== */
-@media (max-width: 768px) {
-    .product-list-wrapper {
-        padding: 20px 18px 24px;
-        margin-top: 24px;
-    }
-
-    .product-list-title {
-        font-size: 1.4rem;
-    }
-
-    .product-table thead th,
-    .product-table td {
-        font-size: 0.78rem;
-        padding: 6px 4px;
-    }
-
-    .view-detail-btn {
-        padding: 2px 10px;
-        font-size: 0.75rem;
-    }
-}
-/* Badge chung cho status */
-.status-badge {
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-weight: 600;
-    font-size: 0.85rem;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-/* Active = xanh */
-.status-active {
-    color: #0f5132;
-    background-color: #d1e7dd;
-}
-
-/* Inactive = đỏ */
-.status-inactive {
-    color: #842029;
-    background-color: #f8d7da;
-}
-
-/* Hover nhẹ cho đẹp */
-.status-badge:hover {
-    opacity: 0.85;
-}
-
-.product-link {
-    color: #007bff;
-    text-decoration: none;
-}
-.product-link:hover {
-    text-decoration: underline;
-}
-.status-active {
-    background: #d4edda;
-    color: #155724;
-    padding: 4px 8px;
     border-radius: 4px;
-    font-size: 0.8rem;
+    border: 1px solid #FF4C4C;
 }
-.status-inactive {
-    background: #f8d7da;
-    color: #721c24;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.8rem;
+
+.product-search-form .input-group-text {
+    background-color: #FF4C4C;
+    color: white;
+}
+
+/* Footer styling */
+.card-footer {
+    background-color: transparent;
+}
+
+/* Transition effect for the whole page */
+.product-list-wrapper {
+    transition: transform 0.3s ease;
+}
+
+.product-list-wrapper:hover {
+    transform: scale(1.02);
 }

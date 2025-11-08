@@ -68,6 +68,7 @@ private void processCallSaveProduct(HttpServletRequest request, HttpServletRespo
 
         HttpSession session = request.getSession();
         // NEW: luôn load danh sách brand đang active cho dropdown
+        session.setAttribute("variantList", variantDAO.getAllVariants());
         session.setAttribute("brandList", brandDAO.getActiveBrands());
         session.setAttribute("categoryList", categoryDAO.getActiveCategories());
 

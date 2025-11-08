@@ -13,7 +13,7 @@
         </a>
 
         <!-- Thanh tìm kiếm -->
-        <form class="d-flex ms-auto me-3 search-bar" action="search" method="get" style="width: 350px;">
+        <form class="d-flex ms-auto me-3 search-bar" action="search" method="post" style="width: 350px;">
             <input class="form-control me-2" type="search" placeholder="Tìm kiếm sản phẩm..." name="keyword">
             <button class="btn btn-outline-warning" type="submit">
                 <i class="bi bi-search">🔍</i>

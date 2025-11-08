@@ -5,7 +5,6 @@
     <head>
         <meta charset="UTF-8">
         <title>${update ? "Update Product" : "Add New Product"}</title>
-
         <!-- Gọi JavaScript riêng -->
         <!--<script src="assets/js/productImage.js"></script>-->
     </head>
@@ -131,19 +130,34 @@
 
                 <h3>Variant</h3>
 
-                <!-- Variant ID -->
-                Variant ID (V***):
-                <input type="text"
-                       name="txtVariantID"
-                       value="${v.variantID}"
-                       required
-                       pattern="(?i)[Vv][0-9]{3}"
-                       title="Variant ID must follow the format V***, e.g., V001"
-                       ${update ? 'readonly="readonly"' : ''} /><br/>
-                <c:if test="${not empty error_variantID}">
-                    <span style="color:red">${error_variantID}</span><br/>
-                </c:if>
-                <br/>
+                <h3>Variant</h3>
+Variant ID (V***):
+<input type="text"
+       name="txtVariantID"
+       value="${v.variantID}"
+       required
+       pattern="(?i)[Vv][0-9]{3}"
+       title="Variant ID must follow the format V***, e.g., V001"
+       ${update ? 'readonly="readonly"' : ''} />
+<br/>
+
+<c:if test="${not empty error_variantID}">
+    <span style="color:red">${error_variantID}</span><br/>
+</c:if>
+
+<br/>
+<div>
+    <strong>Variant ID đã tồn tại:</strong>
+    <c:forEach var="vItem" items="${variantList}" varStatus="loop">
+        <span>
+            ${vItem.variantID}<c:if test="${!loop.last}">, </c:if>
+        </span>
+    </c:forEach>
+    <c:if test="${empty variantList}">
+        <span>(Chưa có ID nào)</span>
+    </c:if>
+</div>
+<br/>
 
                 <!-- Size -->
                 Size:
@@ -216,6 +230,39 @@ document.getElementById('productImageFile').addEventListener('change', function(
     };
     reader.readAsDataURL(file); // đọc file dưới dạng Base64
 });
+</script>
+<script>
+    // 1. Convert the list of IDs from JSTL to a JavaScript array
+    const existingVariantIDs = [];
+    <c:forEach var="vItem" items="${variantList}">
+        // Ensure VariantID is in uppercase for comparison (or lowercase, as long as it's consistent)
+        existingVariantIDs.push("${vItem.variantID}".toUpperCase()); 
+    </c:forEach>
+
+    // 2. Validation function when the user enters data
+    document.addEventListener('DOMContentLoaded', function() {
+        const variantIDInput = document.querySelector('input[name="txtVariantID"]');
+
+        if (variantIDInput) {
+            variantIDInput.addEventListener('input', function() {
+                // Only check if it's not in update mode (not readonly)
+                if (!variantIDInput.readOnly) {
+                    const enteredID = variantIDInput.value.trim().toUpperCase();
+
+                    // Check if the entered ID already exists in the array
+                    if (existingVariantIDs.includes(enteredID)) {
+                        // If duplicated, add an error (can show red) and prevent submission
+                        variantIDInput.setCustomValidity('This Variant ID already exists. Please enter a different ID.');
+                        variantIDInput.style.border = '2px solid red';
+                    } else {
+                        // If not duplicated, remove the error
+                        variantIDInput.setCustomValidity('');
+                        variantIDInput.style.border = '1px solid #ccc'; // Or default color
+                    }
+                }
+            });
+        }
+    });
 </script>
 
     </body>

@@ -24,13 +24,15 @@
                 Back to Products
             </a>
         </div>
-        
-         <!-- Thêm nút Add New Product -->
-        <div class="add-product-btn-wrapper">
-            <a href="MainController?txtAction=callSaveProduct&update=false" class="btn btn-success">
-                Add New Product
-            </a>
-        </div>
+        <c:if test="${isAdmin}">
+            <!-- Thêm nút Add New Product -->
+            <div class="add-product-btn-wrapper">
+                <a href="MainController?txtAction=callSaveProduct&update=false" class="btn btn-success">
+                    Add New Product
+                </a>
+            </div>
+        </c:if>
+
 
         <div class="product-page container">
             <h1 class="page-title">Product Detail</h1>
@@ -42,7 +44,7 @@
                         <c:when test="${not empty productDetail}">
                             <!-- TÊN SẢN PHẨM -->
                             <h2 class="product-name">${product.productName}</h2>
-
+                            <p><img src="${p.productImage}" style="width: 50px"/></p>
                             <!-- THÔNG TIN CHUNG CỦA PRODUCT -->
                             <div class="product-info mb-3 p-3 border rounded">
                                 <p>
