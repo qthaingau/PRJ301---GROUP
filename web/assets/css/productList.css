@@ -5,8 +5,6 @@
     background: radial-gradient(circle at top, #2b2b2b 0, #000 55%, #000 100%);
     color: #f5f5f5;
     font-family: 'Poppins', sans-serif;
-    height: 100vh;  /* Full screen height */
-    overflow: hidden; /* Prevent scrolling */
 }
 
 /* ===========================
@@ -94,77 +92,91 @@
 }
 
 /* ===========================
-   Product Grid (Flex Layout)
+   Product Table
    =========================== */
-.product-list-wrapper .row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;  /* Adjust spacing between cards */
-}
-
-/* ===========================
-   Product Card Styles
-   =========================== */
-.card {
-    background-color: #1e1e1e;
-    border-radius: 12px;
+.product-table-wrapper {
+    margin-top: 16px;
+    background: #fff;
+    border-radius: 16px;
+    border: 2px solid #ff3b30;
+    padding: 0;
     overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-    height: 100%;
-    display: flex;
-    flex-direction: column;
+    box-shadow: 0 18px 35px rgba(0, 0, 0, 0.7);
 }
 
-.card-img-top {
-    height: 200px;
-    object-fit: cover;
-    transition: transform 0.3s ease;
+.product-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0;
 }
 
-.card-body {
-    padding: 16px;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+/* Header */
+.product-table thead {
+    background-color: #000;
+    color: #f9fafb;
 }
 
-.card-body .fw-bolder {
-    color: #ffffff;
-    font-size: 1.1rem;
+.product-table thead th {
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #ff3b30;
+    padding: 10px 12px;
     text-align: center;
 }
 
-.card-body p {
-    color: #bdbdbd;
+/* Body */
+.product-table tbody tr:nth-child(even) {
+    background-color: #fdf5f4;
+}
+
+.product-table tbody tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+.product-table tbody tr:hover {
+    background-color: #ffecec;
+    transition: background-color 0.18s ease;
+}
+
+.product-table td {
     font-size: 0.9rem;
-    text-align: center;
-    margin-bottom: 16px;
-}
-
-.card-footer {
-    padding: 12px;
-    background: transparent;
+    vertical-align: middle;
+    color: #111827;
+    padding: 9px 12px;
     text-align: center;
 }
 
-/* Hover effect for card */
-.card:hover .card-img-top {
-    transform: scale(1.1);
+/* Status column (khi có) */
+.product-table td:nth-child(7) {
+    font-weight: 600;
 }
 
 /* ===========================
    Product Link (ID / Name / Description)
    =========================== */
-a.product-link {
-    text-decoration: none;
-    color: inherit;
-    transition: color 0.2s ease, text-decoration 0.2s ease;
+a.product-link,
+a.product-link:link,
+a.product-link:visited {
+    display: block;
+    width: 100%;
+    height: 100%;
+    color: #111827 !important;       /* không còn xanh */
+    text-decoration: none !important;
+    padding: 2px 0;
+    transition: all 0.15s ease;
 }
 
 a.product-link:hover {
-    text-decoration: underline;
-    color: #ff3b30;
+    text-decoration: underline !important;
+    color: #b91c1c !important;       /* hơi đỏ khi hover */
+    cursor: pointer;
+}
+
+a.product-link:active {
+    transform: scale(0.98);
+    opacity: 0.85;
 }
 
 /* ===========================
@@ -175,47 +187,96 @@ a.product-link:hover {
     color: #ff3b30;
     border: 2px solid #ff3b30;
     border-radius: 999px;
-    padding: 8px 16px;
+    padding: 3px 12px;
     font-weight: 600;
     text-decoration: none;
-    font-size: 1rem;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    font-size: 0.8rem;
+    transition: 0.22s ease;
 }
 
 .view-detail-btn:hover {
     background-color: #ff3b30;
-    color: #fff;
+    color: #ffffff;
 }
 
 /* ===========================
-   Responsive Design
+   Responsive
    =========================== */
 @media (max-width: 768px) {
-    .product-list-title {
-        font-size: 1.4rem;
+    .product-list-wrapper {
+        padding: 20px 18px 24px;
+        margin-top: 24px;
     }
 
-    .product-search-form .form-control,
-    .product-search-form .input-group-text {
-        font-size: 0.9rem;
+    .product-list-title {
+        font-size: 1.4rem;
     }
 
     .product-table thead th,
     .product-table td {
         font-size: 0.78rem;
+        padding: 6px 4px;
     }
 
     .view-detail-btn {
-        padding: 6px 12px;
-        font-size: 0.9rem;
+        padding: 2px 10px;
+        font-size: 0.75rem;
     }
 }
+/* Badge chung cho status */
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-decoration: none;
+    cursor: pointer;
+}
 
+/* Active = xanh */
+.status-active {
+    color: #0f5132;
+    background-color: #d1e7dd;
+}
+
+/* Inactive = đỏ */
+.status-inactive {
+    color: #842029;
+    background-color: #f8d7da;
+}
+
+/* Hover nhẹ cho đẹp */
+.status-badge:hover {
+    opacity: 0.85;
+}
+
+.product-link {
+    color: #007bff;
+    text-decoration: none;
+}
+.product-link:hover {
+    text-decoration: underline;
+}
+.status-active {
+    background: #d4edda;
+    color: #155724;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+.status-inactive {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
 /* ===========================
    Animated Background Gradient
    =========================== */
 body {
-    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background: linear-gradient(-45deg, #ff0000, #000000, #ffffff);
     background-size: 400% 400%;
     animation: gradient 15s ease infinite;
     height: 100vh;

@@ -19,26 +19,22 @@
             <div class="row g-2 align-items-center">
                 <div class="col-md-6">
                     <div class="input-group">
-                        <span class="input-group-text bg-dark text-light">Search</span>
+                        <span class="input-group-text bg-dark text-light">Tìm kiếm</span>
                         <input type="text" class="form-control" name="keyword" placeholder="Tìm kiếm sản phẩm..." value="${keyword}" />
                     </div>
                 </div>
                 <div class="col-auto">
-                    <button type="submit" class="btn btn-outline-warning">SEARCH</button>
+                    <button type="submit" class="btn btn-outline-warning">Tìm kiếm</button>
                 </div>
             </div>
         </form>
-
-
 
         <!-- Icon login + giỏ hàng -->
         <ul class="navbar-nav mb-2 mb-lg-0 d-flex align-items-center">
             <!-- Nếu chưa đăng nhập -->
             <c:if test="${empty sessionScope.user}">
                 <li class="nav-item">
-                    <a class="nav-link text-white" href="login.jsp">
-                        Đăng nhập
-                    </a>
+                    <a class="nav-link text-white" href="login.jsp">Đăng nhập</a>
                 </li>
             </c:if>
 
@@ -61,7 +57,6 @@
                                      style="width: 35px; height: 35px; object-fit: cover; border: 2px solid #ffc107;">
                             </c:otherwise>
                         </c:choose>
-                        <!-- Tên người dùng -->
                         <span>Welcome, <strong>${sessionScope.user.fullName}</strong></span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
@@ -72,7 +67,7 @@
                 </li>
             </c:if>
 
-            <!-- GIỎ HÀNG CÓ BADGE -->
+            <!-- GIỎ HÀNG -->
             <li class="nav-item position-relative">
                 <a class="nav-link" href="MainController?txtAction=viewCart">
                     Giỏ hàng
@@ -111,15 +106,13 @@
                     </c:forEach>
                     <c:if test="${empty listBrand}">
                         <li><span class="dropdown-item text-muted">Không có thương hiệu nào</span></li>
-                        </c:if>
+                    </c:if>
                 </ul>
             </li>
 
             <!-- Các loại giày -->
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle text-white px-3" href="#" data-bs-toggle="dropdown">
-                    Các loại giày
-                </a>
+                <a class="nav-link dropdown-toggle text-white px-3" href="#" data-bs-toggle="dropdown">Các loại giày</a>
                 <ul class="dropdown-menu bg-dark">
                     <c:forEach var="cat" items="${listCategory}">
                         <li>
@@ -131,24 +124,42 @@
                     </c:forEach>
                     <c:if test="${empty listCategory}">
                         <li><span class="dropdown-item text-muted">Không có loại giày</span></li>
-                        </c:if>
+                    </c:if>
                 </ul>
             </li>
 
-            <!-- QUẢN LÝ USER (admin/staff) -->
+            
+
+            <!-- QUẢN LÝ SẢN PHẨM – DROPDOWN (admin/staff) -->
             <c:if test="${not empty sessionScope.user && (sessionScope.user.role eq 'admin' || sessionScope.user.role eq 'staff')}">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-white px-3" href="#" data-bs-toggle="dropdown">
+                        Quản lý sản phẩm
+                    </a>
+                    <ul class="dropdown-menu bg-dark">
+                        <li>
+                            <a class="dropdown-item text-white" href="admin/listOfProduct.jsp">
+                                Danh sách sản phẩm
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item text-white" href="admin/listOfBrand.jsp">
+                                Danh sách thương hiệu
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item text-white" href="admin/listOfCategory.jsp">
+                                Danh sách loại giày
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </c:if>
+                <!-- QUẢN LÝ USER (admin/staff) -->
+            <c:if test="${not empty sessionScope.user && (sessionScope.user.role eq 'admin')}">
                 <li class="nav-item">
                     <a class="nav-link text-white px-3" href="MainController?txtAction=searchUser">
                         Quản lý người dùng
-                    </a>
-                </li>
-            </c:if>
-
-            <!-- PRODUCT MANAGEMENT (admin/staff) -->
-            <c:if test="${not empty sessionScope.user && (sessionScope.user.role eq 'admin' || sessionScope.user.role eq 'staff')}">
-                <li class="nav-item">
-                    <a class="nav-link text-white px-3" href="admin/listOfProduct.jsp">
-                        Quản lý sản phẩm
                     </a>
                 </li>
             </c:if>
