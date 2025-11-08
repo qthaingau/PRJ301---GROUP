@@ -1,0 +1,51 @@
+/* cart.css - Responsive & Modern Cart UI */
+.cart-item-img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.quantity-input {
+    width: 70px;
+}
+
+.cart-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.cart-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+/* Responsive: Table vs Card */
+.table-desktop { display: table; }
+.card-mobile { display: none; }
+
+@media (max-width: 768px) {
+    .table-desktop { display: none; }
+    .card-mobile { display: block; }
+}
+
+@media (min-width: 769px) {
+    .table-desktop { display: table; }
+    .card-mobile { display: none; }
+}
+
+/* Toast position */
+.toast-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1055;
+}
+
+/* Empty cart icon */
+.empty-cart-icon {
+    font-size: 4rem;
+    opacity: 0.5;
+}
