@@ -126,7 +126,7 @@
     <body class="bg-light">
 
         <div class="container">
-            <a href="MainController?txtAction=viewProducts" class="back-btn">Quay lại danh sách</a>
+            <a href="home.jsp" class="back-btn">Quay lại danh sách</a>
             <h1 class="text-center mb-4 fw-bold">${product.productName}</h1>
             <p class="text-center text-muted mb-5">${product.description}</p>
 
