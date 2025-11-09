@@ -4,21 +4,17 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/D:/PRJ301/WebBanHang/web/admin/productForm.jsp</file>
-            <file>file:/D:/PRJ301/WebBanHang/web/admin/categoryForm.jsp</file>
-            <file>file:/D:/PRJ301/WebBanHang/src/java/utils/DBUtils.java</file>
+            <file>file:/D:/PRJ301/WebBanHang/web/admin/variantForm.jsp</file>
             <file>file:/D:/PRJ301/WebBanHang/src/java/models/ProductDAO.java</file>
             <file>file:/D:/PRJ301/WebBanHang/web/customer/categoryList.jsp</file>
-            <file>file:/D:/PRJ301/WebBanHang/web/admin/brandForm.jsp</file>
-            <file>file:/D:/PRJ301/WebBanHang/src/java/models/ProductDTO.java</file>
+            <file>file:/D:/PRJ301/WebBanHang/src/java/controllers/VariantController.java</file>
             <file>file:/D:/PRJ301/WebBanHang/src/java/controllers/MainController.java</file>
-            <file>file:/D:/PRJ301/WebBanHang/src/java/controllers/BrandController.java</file>
             <file>file:/D:/PRJ301/WebBanHang/src/java/models/ProductVariantDAO.java</file>
+            <file>file:/D:/PRJ301/WebBanHang/web/admin/productWithVariantForm.jsp</file>
             <file>file:/D:/PRJ301/WebBanHang/web/admin/listOfProducts.jsp</file>
             <file>file:/D:/PRJ301/WebBanHang/web/assets/css/adminTable.css</file>
             <file>file:/D:/PRJ301/WebBanHang/web/customer/brandList.jsp</file>
             <file>file:/D:/PRJ301/WebBanHang/src/java/controllers/ProductController.java</file>
-            <file>file:/D:/PRJ301/WebBanHang/web/assets/css/header.css</file>
-            <file>file:/D:/PRJ301/WebBanHang/web/includes/header.jspf</file>
             <file>file:/D:/PRJ301/WebBanHang/src/java/models/ProductVariantDTO.java</file>
         </group>
     </open-files>

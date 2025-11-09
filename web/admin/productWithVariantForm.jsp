@@ -29,6 +29,8 @@
                 <input type="hidden" name="txtAction"
                        value="${update ? 'updateProductWithVariant' : 'addProductWithVariant'}"/>
                 <input type="hidden" name="update" value="${update}" />
+                <input type="hidden" name="fromVariant" value="true" />
+
 
                 <!-- ================= PRODUCT ================= -->
                 <h4 class="mb-3">Product</h4>
@@ -131,7 +133,7 @@
                            name="txtVariantID"
                            class="form-control"
                            value="${v.variantID}"
-                           pattern="(?i)[Vv][0-9]{3}"
+                           pattern="([Pp][Vv])[0-9]{3}"
                            title="e.g., V001"
                            ${update ? 'readonly' : 'required'} />
                     <c:if test="${not empty error_variantID}">
@@ -207,18 +209,21 @@
                 </div>
 
                 <!-- Variant Image -->
-                <div class="mb-3">
-                    <label class="form-label">Variant Image</label>
-                    <input type="file" id="variantImageFile" accept="image/*" class="form-control" />
-                    <input type="hidden" name="txtVariantImage" id="variantImage" value="${v.avatarBase64}" />
-                    <div class="mt-2">
-                        <img id="variantPreview"
-                             src="${not empty v.avatarBase64 ? v.avatarBase64 : ''}"
-                             alt="Variant Preview"
-                             class="preview"
-                             style="max-width:150px; max-height:150px; object-fit:cover; border-radius:6px; border:1px solid #ddd; display:${not empty v.avatarBase64 ? 'block' : 'none'};">
-                    </div>
-                </div>
+<div class="mb-3">
+    <label class="form-label">Variant Image</label>
+    <input type="file" id="variantImageFile" accept="image/*" class="form-control" />
+    <!-- hidden lưu base64/URL gửi lên server -->
+    <input type="hidden" name="txtVariantImage" id="variantImage" value="${v.variantImage}" />
+    <div class="mt-2">
+        <img id="variantPreview"
+             src="${not empty v.variantImage ? v.variantImage : ''}"
+             alt="Variant Preview"
+             class="preview"
+             style="max-width:150px; max-height:150px; object-fit:cover;
+                    border-radius:6px; border:1px solid #ddd;
+                    display:${not empty v.variantImage ? 'block' : 'none'};">
+    </div>
+</div>
                 <%--</c:if>--%>
                 
 

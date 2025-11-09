@@ -8,11 +8,12 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 @WebServlet(name = "MainController", urlPatterns = {"/MainController"})
 @MultipartConfig(
-    fileSizeThreshold = 1024 * 1024 * 1, // 1 MB
-    maxFileSize = 1024 * 1024 * 10,      // 10 MB
-    maxRequestSize = 1024 * 1024 * 50    // 50 MB
+        fileSizeThreshold = 1024 * 1024 * 1, // 1 MB
+        maxFileSize = 1024 * 1024 * 10, // 10 MB
+        maxRequestSize = 1024 * 1024 * 50 // 50 MB
 )
 
 public class MainController extends HttpServlet {
@@ -24,7 +25,6 @@ public class MainController extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html; charset=UTF-8");
 
-        
         String txtAction = request.getParameter("txtAction");
         System.out.println(txtAction);
         String url = "home.jsp"; // default
@@ -39,7 +39,7 @@ public class MainController extends HttpServlet {
         String[] brandActions = {"viewBrandList", "updateBrand", "addBrand", "filterBrand", "callBrandForm", "deleteBrand"};
         String[] categoryActions = {"viewCategoryList", "updateCategory", "addCategory", "callCategoryForm", "filterCategory", "deleteCategory"};
 
-
+        String[] variantActions = {"viewVariantList", "callSaveVariant", "updateVariant", "addVariant", "deleteVariant", "filterVariant"};
         String[] cartActions = {"viewCart", "addToCart", "updateCart", "removeFromCart"};
 
         // Trong MainController.java, thêm vào đầu class:
@@ -48,7 +48,6 @@ public class MainController extends HttpServlet {
             "deleteAddress", "setDefaultAddress"
         };
         // Trong try block, thêm:
-
 
         try {
             if (txtAction != null) {
@@ -66,6 +65,8 @@ public class MainController extends HttpServlet {
                     url = "AddressController";
                 } else if ("home".equals(txtAction)) {
                     url = "BrandController";
+                } else if (Arrays.asList(variantActions).contains(txtAction)) {
+                    url = "VariantController";
                 }
             } else {
                 // Nếu không có txtAction → về home

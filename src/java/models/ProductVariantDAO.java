@@ -28,7 +28,7 @@ public class ProductVariantDAO {
                 variant.setStock(rs.getInt("stock"));
                 variant.setPrice(rs.getDouble("price"));
                 variant.setSalesCount(rs.getInt("salesCount"));
-                variant.setVariantImage(rs.getString("avatarBase64"));  // THÊM
+                variant.setVariantImage(rs.getString("variantImage"));  // THÊM
                 listVariant.add(variant);
             }
         } catch (Exception e) {
@@ -151,6 +151,49 @@ public class ProductVariantDAO {
         }
         return list;
     }
+    
+// Trong ProductVariantDAO
+
+public List<ProductVariantDTO> filterVariant(String keyword) throws Exception {
+    List<ProductVariantDTO> list = new ArrayList<>();
+
+    // Tìm theo: variantID, productID, size, color
+    String sql = "SELECT variantID, productID, size, color, stock, price, variantImage "
+               + "FROM ProductVariant "
+               + "WHERE variantID LIKE ? "
+               + "   OR productID LIKE ? "
+               + "   OR size LIKE ? "
+               + "   OR color LIKE ?";
+
+    try (Connection conn = DBUtils.getConnection();
+         PreparedStatement stm = conn.prepareStatement(sql)) {
+
+        String search = "%" + keyword + "%";
+
+        stm.setString(1, search); // variantID
+        stm.setString(2, search); // productID
+        stm.setString(3, search); // size
+        stm.setString(4, search); // color
+
+        try (ResultSet rs = stm.executeQuery()) {
+            while (rs.next()) {
+                ProductVariantDTO v = new ProductVariantDTO();
+                v.setVariantID(rs.getString("variantID"));
+                v.setProductID(rs.getString("productID"));
+                v.setSize(rs.getString("size"));
+                v.setColor(rs.getString("color"));
+                v.setStock(rs.getInt("stock"));
+                v.setPrice(rs.getDouble("price"));
+                v.setVariantImage(rs.getString("variantImage"));
+                // KHÔNG set isActive vì bảng/DTO không có
+                list.add(v);
+            }
+        }
+    }
+
+    return list;
+}
+
 
     // ---------------------- INSERT ----------------------
     public boolean insert(ProductVariantDTO v) {

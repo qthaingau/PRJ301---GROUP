@@ -102,6 +102,31 @@ public class ProductDAO {
         }
         return listProduct;
     }
+    
+    // Lấy sản phẩm đang active (dành cho customer / khách chưa login)
+    public List<ProductDTO> getActiveProducts() throws Exception {
+        List<ProductDTO> list = new ArrayList<>();
+        String sql = "SELECT * FROM Product WHERE isActive = 1";
+
+        try (Connection conn = DBUtils.getConnection();
+             PreparedStatement stm = conn.prepareStatement(sql);
+             ResultSet rs = stm.executeQuery()) {
+
+            while (rs.next()) {
+                ProductDTO p = new ProductDTO();
+                p.setProductID(rs.getString("productID"));
+                p.setProductName(rs.getString("productName"));
+                p.setDescription(rs.getString("description"));
+                p.setCategoryID(rs.getString("categoryID"));
+                p.setBrandID(rs.getString("brandID"));
+                p.setCreatedAt(rs.getDate("createdAT").toLocalDate());
+                p.setIsActive(rs.getBoolean("isActive"));
+                p.setProductImage(rs.getString("productImage"));
+                list.add(p);
+            }
+        }
+        return list;
+    }
 
     public ProductDTO getProductByID(String productID) {
         try {

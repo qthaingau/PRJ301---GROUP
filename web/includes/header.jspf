@@ -149,6 +149,11 @@
                                 Category List
                             </a>
                         </li>
+                        <li>
+                            <a class="dropdown-item text-white" href="MainController?txtAction=viewVariantList">
+                                Variant of product list
+                            </a>
+                        </li>
                     </ul>
                 </li>
             </c:if>
