@@ -6,7 +6,10 @@ package controllers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -102,6 +105,7 @@ public class ProductController extends HttpServlet {
         String color = request.getParameter("txtColor");
         String stockStr = request.getParameter("txtStock");
         String priceStr = request.getParameter("txtPrice");
+        String variantImage = request.getParameter("txtVariantImage");
 
         // --- Prepare DAOs ---
         ProductDAO productDAO = new ProductDAO();
@@ -287,7 +291,8 @@ public class ProductController extends HttpServlet {
                 color,
                 stock,
                 price,
-                salesCount
+                salesCount,
+                variantImage
         );
 
         String error = "";
@@ -383,55 +388,40 @@ public class ProductController extends HttpServlet {
     }
 
     private void processViewProductDetail(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
 
-        // Get params
-        String productID = request.getParameter("productID");
-        String productName = request.getParameter("productName");
-        ProductDAO productDAO = new ProductDAO();
-        ProductDTO product = productDAO.getProductByID(productID);
-
-        ProductVariantDAO variantDAO = new ProductVariantDAO();
-
-        // Get role from session
-        HttpSession session = request.getSession();
-        UserDTO user = (UserDTO) session.getAttribute("user");
-        String role = null;
-        if (user != null) {
-            role = user.getRole();
-        }
-        boolean isAdmin = "admin".equalsIgnoreCase(role);
-
-        try {
-            // Choose correct DAO method
-            List<ProductVariantDTO> variants;
-            if (isAdmin) {
-                variants = variantDAO.getAllVariantsByProductID(productID); // include stock = 0
-            } else {
-                variants = variantDAO.getActiveVariantsByProductID(productID); // only stock > 0
-            }
-
-            // Set attributes
-            request.setAttribute("product", product);
-            request.setAttribute("productID", productID);
-            request.setAttribute("productName", productName);
-            request.setAttribute("variants", variants);
-            request.setAttribute("isAdmin", isAdmin);
-
-            if (!variants.isEmpty()) {
-                request.setAttribute("productDetail", variants.get(0));
-            }
-
-            // Forward
-            request.getRequestDispatcher("/customer/productDetail.jsp")
-                    .forward(request, response);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("msg", "Error viewing product detail!");
-            request.getRequestDispatcher("error.jsp").forward(request, response);
-        }
+    String productID = request.getParameter("productID");
+    if (productID == null || productID.trim().isEmpty()) {
+        response.sendRedirect("MainController?txtAction=viewProducts");
+        return;
     }
+
+    ProductDAO productDAO = new ProductDAO();
+    ProductVariantDAO variantDAO = new ProductVariantDAO();
+
+    ProductDTO product = productDAO.getProductByID(productID);
+    if (product == null) {
+        request.setAttribute("msg", "Sản phẩm không tồn tại!");
+        request.getRequestDispatcher("error.jsp").forward(request, response);
+        return;
+    }
+
+    // Lấy tất cả variant
+    List<ProductVariantDTO> allVariants = variantDAO.getAllVariantsByProductID(productID);
+
+    // GỘP THEO COLOR + PRICE + IMAGE (dùng Map)
+    Map<String, List<ProductVariantDTO>> grouped = new LinkedHashMap<>();
+    for (ProductVariantDTO v : allVariants) {
+        String key = v.getColor() + "|" + v.getPrice() + "|" + (v.getVariantImage() != null ? v.getVariantImage() : "");
+        grouped.computeIfAbsent(key, k -> new ArrayList<>()).add(v);
+    }
+
+    // Gửi Map trực tiếp vào JSP
+    request.setAttribute("product", product);
+    request.setAttribute("groupedVariants", grouped);
+
+    request.getRequestDispatcher("/customer/productDetail.jsp").forward(request, response);
+}
 
     private void processViewProductsManager(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

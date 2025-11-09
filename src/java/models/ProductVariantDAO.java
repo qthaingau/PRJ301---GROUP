@@ -16,7 +16,7 @@ public class ProductVariantDAO {
     // ---------------------- GET ALL VARIANTS ----------------------
     public ArrayList<ProductVariantDTO> getAllVariants() {
         ArrayList<ProductVariantDTO> listVariant = new ArrayList<>();
-        String sql = "SELECT *, avatarBase64 FROM ProductVariant";  // THÊM CỘT
+        String sql = "SELECT * FROM ProductVariant";  // THÊM CỘT
         try ( Connection conn = DBUtils.getConnection();  PreparedStatement pst = conn.prepareStatement(sql);  ResultSet rs = pst.executeQuery()) {
 
             while (rs.next()) {
@@ -28,7 +28,7 @@ public class ProductVariantDAO {
                 variant.setStock(rs.getInt("stock"));
                 variant.setPrice(rs.getDouble("price"));
                 variant.setSalesCount(rs.getInt("salesCount"));
-                variant.setAvatarBase64(rs.getString("avatarBase64"));  // THÊM
+                variant.setVariantImage(rs.getString("avatarBase64"));  // THÊM
                 listVariant.add(variant);
             }
         } catch (Exception e) {
@@ -39,7 +39,7 @@ public class ProductVariantDAO {
 
     // ---------------------- GET VARIANT BY ID ----------------------
     public ProductVariantDTO getVariantByID(String variantID) {
-        String sql = "SELECT *, avatarBase64 FROM ProductVariant WHERE variantID = ?";
+        String sql = "SELECT * FROM ProductVariant WHERE variantID = ?";
         try ( Connection conn = DBUtils.getConnection();  PreparedStatement pst = conn.prepareStatement(sql)) {
 
             pst.setString(1, variantID);
@@ -53,7 +53,7 @@ public class ProductVariantDAO {
                     variant.setStock(rs.getInt("stock"));
                     variant.setPrice(rs.getDouble("price"));
                     variant.setSalesCount(rs.getInt("salesCount"));
-                    variant.setAvatarBase64(rs.getString("avatarBase64"));  // THÊM
+                    variant.setVariantImage(rs.getString("variantImage"));  // THÊM
                     return variant;
                 }
             }
@@ -66,7 +66,7 @@ public class ProductVariantDAO {
     // ---------------------- GET BY PRODUCT ID (Customer & Admin) ----------------------
     public List<ProductVariantDTO> getActiveVariantsByProductID(String productID) {
         List<ProductVariantDTO> list = new ArrayList<>();
-        String sql = "SELECT *, avatarBase64 FROM ProductVariant WHERE productID = ? AND stock > 0";
+        String sql = "SELECT * FROM ProductVariant WHERE productID = ? AND stock > 0";
         try ( Connection conn = DBUtils.getConnection();  PreparedStatement pst = conn.prepareStatement(sql)) {
 
             pst.setString(1, productID);
@@ -80,7 +80,7 @@ public class ProductVariantDAO {
                     v.setStock(rs.getInt("stock"));
                     v.setPrice(rs.getDouble("price"));
                     v.setSalesCount(rs.getInt("salesCount"));
-                    v.setAvatarBase64(rs.getString("avatarBase64"));  // THÊM
+                    v.setVariantImage(rs.getString("variantImage"));  // THÊM
                     list.add(v);
                 }
             }
@@ -92,7 +92,7 @@ public class ProductVariantDAO {
 
     public List<ProductVariantDTO> getAllVariantsByProductID(String productID) {
         List<ProductVariantDTO> list = new ArrayList<>();
-        String sql = "SELECT variantID, productID, size, color, stock, price, salesCount, avatarBase64 "
+        String sql = "SELECT variantID, productID, size, color, stock, price, salesCount, variantImage "
                 + "FROM ProductVariant WHERE productID = ?";
 
         Connection con = null;
@@ -119,7 +119,7 @@ public class ProductVariantDAO {
                         rs.getInt("stock"),
                         rs.getDouble("price"),
                         rs.getInt("salesCount"),
-                        rs.getString("avatarBase64")
+                        rs.getString("variantImage")
                 );
                 list.add(v);
             }
@@ -154,7 +154,7 @@ public class ProductVariantDAO {
 
     // ---------------------- INSERT ----------------------
     public boolean insert(ProductVariantDTO v) {
-        String sql = "INSERT INTO ProductVariant(variantID, productID, size, color, stock, price, salesCount, avatarBase64) "
+        String sql = "INSERT INTO ProductVariant(variantID, productID, size, color, stock, price, salesCount, variantImage) "
                 + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try ( Connection conn = DBUtils.getConnection();  PreparedStatement pst = conn.prepareStatement(sql)) {
 
@@ -165,7 +165,7 @@ public class ProductVariantDAO {
             pst.setInt(5, v.getStock());
             pst.setDouble(6, v.getPrice());
             pst.setInt(7, v.getSalesCount());
-            pst.setString(8, v.getAvatarBase64());  // THÊM
+            pst.setString(8, v.getVariantImage());  // THÊM
 
             int rows = pst.executeUpdate();
             if (rows > 0) {
@@ -181,7 +181,7 @@ public class ProductVariantDAO {
     // ---------------------- UPDATE ----------------------
     public boolean update(ProductVariantDTO v) {
         String sql = "UPDATE ProductVariant "
-                + "SET size = ?, color = ?, stock = ?, price = ?, salesCount = ?, avatarBase64 = ? "
+                + "SET size = ?, color = ?, stock = ?, price = ?, salesCount = ?, variantImage = ? "
                 + "WHERE variantID = ?";
         try ( Connection conn = DBUtils.getConnection();  PreparedStatement pst = conn.prepareStatement(sql)) {
 
@@ -190,7 +190,7 @@ public class ProductVariantDAO {
             pst.setInt(3, v.getStock());
             pst.setDouble(4, v.getPrice());
             pst.setInt(5, v.getSalesCount());
-            pst.setString(6, v.getAvatarBase64());  // THÊM
+            pst.setString(6, v.getVariantImage());  // THÊM
             pst.setString(7, v.getVariantID());
 
             int rows = pst.executeUpdate();

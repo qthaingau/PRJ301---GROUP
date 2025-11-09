@@ -1,255 +1,221 @@
-<%-- 
-    Document   : productDetail
-    Created on : Nov 3, 2025, 8:09:57 AM
-    Author     : TEST
---%>
-
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="java.util.Map, java.util.List, models.ProductVariantDTO" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
         <meta charset="UTF-8">
-        <title>PRODUCT ${productDetail.productID} DETAIL</title>
-
-        <%-- nếu đã link bootstrap + css chung ở layout khác thì bỏ 2 dòng dưới --%>
+        <title>${product.productName}</title>
         <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-        <link rel="stylesheet" href="assets/css/productDetail.css">
+        <style>
+            .back-btn {
+                display: inline-block;
+                margin: 20px 0;
+                padding: 10px 20px;
+                background: #333;
+                color: white;
+                border-radius: 8px;
+                text-decoration: none;
+                font-weight: 500;
+            }
+            .back-btn:hover {
+                background: #555;
+            }
+
+            .product-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 30px;
+                margin-top: 30px;
+            }
+            .variant-card {
+                background: #fff;
+                border-radius: 12px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+                transition: 0.3s;
+                text-align: center;
+                padding: 15px;
+                position: relative;
+            }
+            .variant-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            }
+
+            .variant-img-wrapper {
+                height: 200px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #f8f9fa;
+                border-radius: 12px;
+                overflow: hidden;
+                margin-bottom: 15px;
+            }
+            .variant-img {
+                max-width: 100%;
+                max-height: 100%;
+                object-fit: contain;
+            }
+
+            .old-price {
+                text-decoration: line-through;
+                color: #999;
+                font-size: 0.9em;
+            }
+            .new-price {
+                color: #e74c3c;
+                font-weight: bold;
+                font-size: 1.3em;
+            }
+            .product-title {
+                font-size: 0.95em;
+                font-weight: bold;
+                color: #333;
+                margin: 10px 0 5px;
+                line-height: 1.3;
+            }
+            .color-code {
+                font-size: 0.85em;
+                color: #555;
+                margin-bottom: 10px;
+            }
+
+            .size-select {
+                margin: 10px 0;
+                font-size: 0.9em;
+            }
+            .btn-cart, .btn-buy {
+                width: 100%;
+                margin: 5px 0;
+                font-size: 0.9em;
+                padding: 8px;
+                border-radius: 6px;
+            }
+            .btn-cart {
+                background: #f8f9fa;
+                border: 1px solid #007bff;
+                color: #007bff;
+            }
+            .btn-cart:hover {
+                background: #007bff;
+                color: white;
+            }
+            .btn-buy {
+                background: #dc3545;
+                color: white;
+                border: none;
+            }
+            .btn-buy:hover {
+                background: #c82333;
+            }
+
+            .out-of-stock {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background: rgba(220,53,69,0.9);
+                color: white;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 0.8em;
+                font-weight: bold;
+            }
+        </style>
     </head>
-    <body class="product-detail-body">   
+    <body class="bg-light">
 
-        <!-- Nút trở lại -->
-        <div class="back-btn-wrapper">
-            <a href="MainController?txtAction=viewProducts" class="back-btn">
-                Back to Products
-            </a>
-        </div>
-        <c:if test="${isAdmin}">
-            <!-- Thêm nút Add New Product -->
-            <div class="add-product-btn-wrapper">
-                <a href="MainController?txtAction=callSaveProduct&update=false" class="btn btn-success">
-                    Add New Product
-                </a>
-            </div>
-        </c:if>
+        <div class="container">
+            <a href="MainController?txtAction=viewProducts" class="back-btn">Quay lại danh sách</a>
+            <h1 class="text-center mb-4 fw-bold">${product.productName}</h1>
+            <p class="text-center text-muted mb-5">${product.description}</p>
 
+            <c:choose>
+                <c:when test="${empty groupedVariants}">
+                    <div class="text-center py-5">
+                        <div class="alert alert-light border">
+                            <h5>Sản phẩm hiện tại không có sẵn</h5>
+                            <p class="text-muted">Vui lòng quay lại sau!</p>
+                        </div>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <div class="product-grid">
+                        <!-- LẶP QUA MAP -->
+                        <c:forEach var="entry" items="${groupedVariants}">
+                            <c:set var="group" value="${entry.value}" />
+                            <c:set var="first" value="${group[0]}" />
 
-        <div class="product-page container">
-            <h1 class="page-title">Product Detail</h1>
+                            <div class="variant-card">
+                                <!-- Hết hàng? -->
+                                <c:set var="inStock" value="false" />
+                                <c:forEach var="v" items="${group}">
+                                    <c:if test="${v.stock > 0}"><c:set var="inStock" value="true" /></c:if>
+                                </c:forEach>
+                                <c:if test="${!inStock}"><div class="out-of-stock">Hết hàng</div></c:if>
 
-            <div class="product-layout">
-                <!-- ==== LEFT: PRODUCT + VARIANT DETAIL CARD ==== -->
-                <section class="product-detail-card">
-                    <c:choose>
-                        <c:when test="${not empty productDetail}">
-                            <!-- TÊN SẢN PHẨM -->
-                            <h2 class="product-name">${product.productName}</h2>
-                            <p><img src="${p.productImage}" style="width: 50px"/></p>
-                            <!-- THÔNG TIN CHUNG CỦA PRODUCT -->
-                            <div class="product-info mb-3 p-3 border rounded">
-                                <p>
-                                    <span class="label">Product ID:</span>
-                                    <span class="value">${product.productID}</span>
-                                </p>
+                                    <!-- ẢNH -->
+                                    <div class="variant-img-wrapper">
+                                        <img src="${not empty first.variantImage ? first.variantImage : 'assets/img/no-image.png'}"
+                                         alt="${first.color}"
+                                         class="variant-img">
+                                </div>
 
-                                <!-- CATEGORY: click để sang categoryList (filterCategory) -->
-                                <p>
-                                    <span class="label">Category ID:</span>
-                                    <span class="value">
-                                        <a class="product-link"
-                                           href="MainController?txtAction=filterCategory&keyword=${product.categoryID}">
-                                            ${product.categoryID}
-                                        </a>
-                                    </span>
-                                </p>
+                                <!-- GIÁ -->
+                                <div>
+                                    <span class="old-price">₫${first.price * 1.3}</span>
+                                    <span class="new-price">₫${first.price}</span>
+                                </div>
 
-                                <!-- BRAND: click để sang brandList (filterBrand) -->
-                                <p>
-                                    <span class="label">Brand ID:</span>
-                                    <span class="value">
-                                        <a class="product-link"
-                                           href="MainController?txtAction=filterBrand&keyword=${product.brandID}">
-                                            ${product.brandID}
-                                        </a>
-                                    </span>
-                                </p>
+                                <!-- TÊN + MÀU -->
+                                <div class="product-title">${product.productName}</div>
+                                <div class="color-code">${first.color}</div>
 
-                                <p>
-                                    <span class="label">Description:</span>
-                                    <span class="value">${product.description}</span>
-                                </p>
+                                <!-- FORM CHỌN SIZE -->
+                                <form action="MainController" method="post" onsubmit="return validateSize(this)">
+                                    <input type="hidden" name="txtAction" value="addToCart">
+                                    <input type="hidden" name="quantity" value="1">
 
-                                <!-- Status chỉ cho admin -->
-                                <c:if test="${isAdmin}">
-                                    <p>
-                                        <span class="label">Status:</span>
-                                        <span class="value">
+                                    <select name="size" class="form-select size-select" required onchange="updateVariantID(this)">
+                                        <option value="">Chọn size</option>
+                                        <c:forEach var="v" items="${group}">
                                             <c:choose>
-                                                <c:when test="${product.isActive}">
-                                                    Active
+                                                <c:when test="${v.stock > 0}">
+                                                    <option value="${v.size}" data-variant-id="${v.variantID}">${v.size} (Còn ${v.stock})</option>
                                                 </c:when>
                                                 <c:otherwise>
-                                                    Inactive
+                                                    <option value="${v.size}" disabled>${v.size} (Hết)</option>
                                                 </c:otherwise>
                                             </c:choose>
-                                        </span>
-                                    </p>
-                                </c:if>
-                            </div>
-
-                            <!-- NẾU KHÔNG CÓ VARIANT -->
-                            <c:if test="${empty variants}">
-                                <p class="text-muted">This product is currently out of stock.</p>
-                            </c:if>
-
-                            <!-- DANH SÁCH VARIANT -->
-                            <c:forEach var="v" items="${variants}">
-                                <!-- Admin thấy hết, user chỉ thấy variant có stock > 0 -->
-                                <c:if test="${isAdmin or v.stock > 0}">
-                                    <div class="product-detail-card mb-3 p-3 border rounded">
-                                        <p>
-                                            <span class="label">Variant ID:</span>
-                                            <span class="value">${v.variantID}</span>
-                                        </p>
-                                        <p>
-                                            <span class="label">Size:</span>
-                                            <span class="value">${v.size}</span>
-                                        </p>
-                                        <p>
-                                            <span class="label">Color:</span>
-                                            <span class="value">${v.color}</span>
-                                        </p>
-                                        <p>
-                                            <span class="label">Price:</span>
-                                            <span class="value">${v.price}</span>
-                                        </p>
-
-
-                                        <p>
-                                            <span class="label">Stock:</span>
-                                            <span class="value">${v.stock}</span>
-                                        </p>
-                                        <p>
-                                            <span class="label">Sales Count:</span>
-                                            <span class="value">${v.salesCount}</span>
-                                        </p>
-                                        <!-- Chỉ admin mới thấy stock, sales và nút chỉnh sửa -->
-                                        <c:if test="${isAdmin}">
-                                            <div class="mt-2 d-flex gap-2">
-                                                <!-- UPDATE VARIANT -->
-                                                <a href="MainController?txtAction=callSaveProduct&productID=${v.productID}&variantID=${v.variantID}&update=true"
-                                                   class="btn btn-primary btn-sm">
-                                                    Update Variant
-                                                </a>
-
-                                                <!-- DELETE VARIANT -->
-                                                <a href="MainController?txtAction=deleteProductWithVariant&productID=${v.productID}&variantID=${v.variantID}"
-                                                   class="btn btn-danger btn-sm"
-                                                   onclick="return confirm('Are you sure you want to delete this variant?');">
-                                                    Delete Variant
-                                                </a>
-                                            </div>
-                                        </c:if>
-                                    </div>
-                                </c:if>
-                            </c:forEach>
-                        </c:when>
-
-                        <c:otherwise>
-                            <p class="product-not-found">Product not found.</p>
-                        </c:otherwise>
-                    </c:choose>
-                </section>
-
-
-                <!-- ==== RIGHT: OTHER PRODUCTS LIST ==== -->
-                <section class="product-list-section">
-                    <h2 class="section-title">Other Products</h2>
-
-                    <c:choose>
-                        <c:when test="${empty listProducts}">
-                            <div class="alert alert-warning text-center product-empty-alert">
-                                <h5 class="mb-1">No products found</h5>
-                                <p class="mb-0">Please enter another keyword to find products.</p>
-                            </div>
-                        </c:when>
-
-                        <c:otherwise>
-                            <div class="table-responsive product-table-wrapper">
-                                <table class="table table-hover align-middle product-table">
-                                    <thead>
-                                        <tr>
-                                            <c:if test="${isAdmin}">
-                                                <th>Product ID</th>
-                                                </c:if>
-                                            <th>Product Name</th>
-                                            <th>Description</th>
-                                            <th>Category ID</th>
-                                            <th>Brand ID</th>
-                                            <!-- Chỉ hiện cột Status cho Admin -->
-                                            <c:if test="${isAdmin}">
-                                                <th>Status</th>
-                                                </c:if>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <c:forEach var="p" items="${listProducts}">
-                                            <!-- Chỉ hiển thị nếu khác sản phẩm đang xem -->
-                                            <c:if test="${p.productID ne productID}">
-
-                                                <!-- Trường hợp ADMIN: hiển thị tất cả -->
-                                                <c:if test="${isAdmin}">
-                                                    <tr>
-                                                        <td>${p.productID}</td>
-                                                        <td class="text-center">
-                                                            <a href="MainController?txtAction=viewProductDetail&productID=${p.productID}&productName=${p.productName}">
-                                                                ${p.productName}
-                                                            </a>
-                                                        </td>
-
-                                                        <td>${p.description}</td>
-                                                        <td>${p.categoryID}</td>
-                                                        <td>${p.brandID}</td>
-                                                        <td>
-                                                            <c:choose>
-                                                                <c:when test="${p.isActive}">
-                                                                    Active
-                                                                </c:when>
-                                                                <c:otherwise>
-                                                                    Inactive
-                                                                </c:otherwise>
-                                                            </c:choose>
-                                                        </td>
-
-
-                                                    </tr>
-                                                </c:if>
-
-                                                <!-- Trường hợp USER: chỉ hiển thị khi isActive = true -->
-                                                <c:if test="${not isAdmin and p.isActive}">
-                                                    <tr>
-                                                        <td class="text-center">
-                                                            <a href="MainController?txtAction=viewProductDetail&productID=${p.productID}&productName=${p.productName}">
-                                                                ${p.productName}
-                                                            </a>
-                                                        </td>
-
-                                                        <td>${p.description}</td>
-                                                        <td>${p.categoryID}</td>
-                                                        <td>${p.brandID}</td>
-
-                                                    </tr>
-                                                </c:if>
-
-                                            </c:if>
                                         </c:forEach>
-                                    </tbody>
-                                </table>
+                                    </select>
+                                    <input type="hidden" name="variantID" value="">
+
+                                    <button type="submit" name="action" value="add" class="btn btn-cart">Thêm vào giỏ</button>
+                                    <button type="submit" name="action" value="buy" class="btn btn-buy">Mua ngay</button>
+                                </form>
                             </div>
-                        </c:otherwise>
-                    </c:choose>
-                </section>
-            </div>
+                        </c:forEach>
+                    </div>
+                </c:otherwise>
+            </c:choose>
         </div>
+
+        <script>
+            function updateVariantID(select) {
+                const variantID = select.selectedOptions[0].getAttribute('data-variant-id');
+                select.closest('form').querySelector('input[name="variantID"]').value = variantID || '';
+            }
+
+            function validateSize(form) {
+                const variantID = form.querySelector('input[name="variantID"]').value;
+                if (!variantID) {
+                    alert("Vui lòng chọn size còn hàng!");
+                    return false;
+                }
+                return true;
+            }
+        </script>
+
     </body>
 </html>

@@ -10,14 +10,14 @@ public class ProductVariantDTO {
     private int stock;
     private double price;
     private int salesCount;
-    private String avatarBase64;  // THÊM MỚI
+    private String variantImage;  // THÊM MỚI
 
     // Constructor
     public ProductVariantDTO() {
     }
 
     public ProductVariantDTO(String variantID, String productID, String size, String color,
-            int stock, double price, int salesCount, String avatarBase64) {
+            int stock, double price, int salesCount, String variantImage) {
         this.variantID = variantID;
         this.productID = productID;
         this.size = size;
@@ -25,7 +25,7 @@ public class ProductVariantDTO {
         this.stock = stock;
         this.price = price;
         this.salesCount = salesCount;
-        this.avatarBase64 = avatarBase64;
+        this.variantImage = variantImage;
     }
 
     // Getters & Setters
@@ -85,12 +85,13 @@ public class ProductVariantDTO {
         this.salesCount = salesCount;
     }
 
-    // THÊM MỚI
-    public String getAvatarBase64() {
-        return avatarBase64;
+    public String getVariantImage() {
+        return variantImage;
     }
 
-    public void setAvatarBase64(String avatarBase64) {
-        this.avatarBase64 = avatarBase64;
+    public void setVariantImage(String variantImage) {
+        this.variantImage = variantImage;
     }
+
+    
 }
