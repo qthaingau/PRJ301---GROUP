@@ -1,6 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%--<%@ include file="includes/header.jspf" %>--%>
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -9,45 +8,29 @@
         <title>Product List</title>
 
         <!-- CSS theme đen – đỏ – trắng -->
-        <link rel="stylesheet" href="assets/css/productList.css">
+        <link rel="stylesheet" href="assets/css/listOfProducts.css">
     </head>
     <body class="product-list-body">
-        <!-- ✅ Back to Home giống categoryList.jsp -->
-        <a href="MainController?txtAction=viewProducts" class="btn btn-secondary" style="margin-left: 10px;">
-            Back to Home
-        </a>
+
+        <!-- Nút quay về trang Home -->
+        <div class="text-start mt-3 ms-4">
+            <a href="MainController?txtAction=viewProducts" class="btn btn-outline-light">
+                ← Back to Home
+            </a>
+        </div>
 
         <div class="container product-list-wrapper">
+            <!-- Tiêu đề -->
             <h3 class="product-list-title">Product List</h3>
 
             <!-- Nút thêm sản phẩm -->
-            <div class="mb-3">
-                <a href="MainController?txtAction=callSaveProduct&update=false" class="btn btn-success">Add Product</a>
+            <div class="mb-4 text-end">
+                <a href="MainController?txtAction=callSaveProduct&update=false" class="btn btn-success fw-bold">
+                    + Add Product
+                </a>
             </div>
 
-            <!-- Search + filter -->
-            <form action="MainController" method="post" class="product-search-form mb-3">
-                <input type="hidden" name="txtAction" value="filterProduct"/>
-
-                <div class="row g-2 align-items-center">
-                    <div class="col-md-6">
-                        <div class="input-group">
-                            <span class="input-group-text bg-dark text-light">Search</span>
-                            <input type="text"
-                                   class="form-control"
-                                   name="keyword"
-                                   value="${keyword}"/>
-                        </div>
-                    </div>
-                    <div class="col-auto">
-                        <button type="submit" class="btn btn-apply">
-                            Apply
-                        </button>
-                    </div>
-                </div>
-            </form>
-
-            <!-- viewProducts -->
+            <!-- Danh sách sản phẩm -->
             <c:choose>
                 <c:when test="${empty listProducts}">
                     <div class="alert alert-warning text-center product-empty-alert">
@@ -61,12 +44,13 @@
                         <table class="table table-hover align-middle product-table">
                             <thead>
                                 <tr>
-                                    <th>Product Image</th>
-                                    <th>Product ID</th>
-                                    <th>Product Name</th>
+                                    <th>Image</th>
+                                    <th>ID</th>
+                                    <th>Name</th>
                                     <th>Description</th>
-                                    <th>Category ID</th>
-                                    <th>Brand ID</th>
+                                    <th>Category</th>
+                                    <th>Brand</th>
+                                    <th>Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -76,61 +60,45 @@
                                     <c:url var="detailUrl" value="MainController">
                                         <c:param name="txtAction" value="viewProductDetail"/>
                                         <c:param name="productID" value="${p.productID}"/>
-                                        <c:param name="productName" value="${p.productName}"/>
                                     </c:url>
 
-                                    <!-- URL tới Brand form -->
                                     <c:url var="brandUrl" value="MainController">
                                         <c:param name="txtAction" value="viewBrandList"/>
                                         <c:param name="brandID" value="${p.brandID}"/>
                                     </c:url>
 
-                                    <!-- URL tới Category form -->
                                     <c:url var="categoryUrl" value="MainController">
                                         <c:param name="txtAction" value="viewCategoryList"/>
                                         <c:param name="categoryID" value="${p.categoryID}"/>
                                     </c:url>
+                                    
+                                    <c:url var="statusUrl" value="MainController">
+                                        <c:param name="txtAction" value="toggleProductStatus"/>
+                                        <c:param name="isActive" value="${p.isActive}"/>
+                                    </c:url>
 
-                                    <!-- Hiển thị thông tin sản phẩm -->
+
                                     <tr>
-                                        <td><img src="${p.productImage}" style="width: 50px"/></td>
                                         <td>
-                                            <a href="${detailUrl}" class="product-link">
-                                                ${p.productID}
-                                            </a>
+                                            <img src="${p.productImage}" alt="${p.productName}" 
+                                                 style="width: 55px; border-radius: 5px; border: 1px solid #ff3b30;">
                                         </td>
-                                        <td>
-                                            <a href="${detailUrl}" class="product-link">
-                                                ${p.productName}
-                                            </a>
-                                        </td>
-                                        <td>
-                                            <a href="${detailUrl}" class="product-link">
-                                                ${p.description}
-                                            </a>
-                                        </td>
+                                        <td><a href="${detailUrl}" class="product-link">${p.productID}</a></td>
+                                        <td><a href="${detailUrl}" class="product-link">${p.productName}</a></td>
+                                        <td><a href="${detailUrl}" class="product-link">${p.description}</a></td>
+                                        <td><a href="${categoryUrl}" class="product-link">${p.categoryID}</a></td>
+                                        <td><a href="${brandUrl}" class="product-link">${p.brandID}</a></td>
+                                        <td><a href="${statusUrl}" class="product-link">${p.isActive}</a></td>
 
-                                        <!-- Category ID clickable -->
-                                        <td>
-                                            <a href="${categoryUrl}" class="product-link">
-                                                ${p.categoryID}
-                                            </a>
-                                        </td>
-
-                                        <!-- Brand ID clickable -->
-                                        <td>
-                                            <a href="${brandUrl}" class="product-link">
-                                                ${p.brandID}
-                                            </a>
-                                        </td>
 
                                         <td>
-                                            <!-- Update & Delete buttons -->
-                                            <a href="MainController?txtAction=callSaveProduct&update=true&productID=${p.productID}"
-                                               class="btn btn-warning btn-sm">Update</a>
-                                            <a href="MainController?txtAction=deleteProductWithVariant&productID=${p.productID}"
-                                               class="btn btn-danger btn-sm"
-                                               onclick="return confirm('Are you sure you want to delete this product?');">Delete</a>
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <a href="MainController?txtAction=callSaveProduct&update=true&productID=${p.productID}"
+                                                   class="btn btn-warning btn-sm fw-bold text-dark">Update</a>
+                                                <a href="MainController?txtAction=deleteProductWithVariant&productID=${p.productID}"
+                                                   class="btn btn-danger btn-sm fw-bold"
+                                                   onclick="return confirm('Are you sure you want to delete this product?');">Delete</a>
+                                            </div>
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -140,6 +108,5 @@
                 </c:otherwise>
             </c:choose>
         </div>
-
     </body>
 </html>

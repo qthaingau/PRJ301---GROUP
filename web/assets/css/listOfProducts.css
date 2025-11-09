@@ -1,0 +1,270 @@
+/* ===========================
+   NỀN TOÀN TRANG (gradient + kính)
+   =========================== */
+.product-list-body {
+    background: linear-gradient(-45deg, #330000, #000000, #aa0000);
+    background-size: 400% 400%;
+    animation: gradient 20s ease infinite;
+    color: #f5f5f5;
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+@keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ===========================
+   KÍNH MỜ CHUNG (Glass effect)
+   =========================== */
+.glass-box {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+/* Header kính mờ */
+.glass-header {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(20px);
+    border-bottom: 2px solid rgba(255, 59, 48, 0.8);
+}
+
+/* Footer kính mờ */
+.glass-footer {
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(15px);
+    border-top: 1px solid rgba(255, 59, 48, 0.5);
+    color: #ccc;
+}
+
+/* ===========================
+   NÚT VÀ SEARCH BAR
+   =========================== */
+.btn-gradient {
+    background: linear-gradient(90deg, #ff3b30, #a10000);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+.btn-gradient:hover {
+    background: linear-gradient(90deg, #ff5b4c, #c40000);
+}
+
+.product-search-form .input-group-text {
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    border: 1px solid #ff3b30;
+}
+.product-search-form .form-control {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    border: 1px solid #ff3b30;
+    border-left: none;
+}
+.product-search-form .form-control:focus {
+    box-shadow: 0 0 6px rgba(255, 59, 48, 0.6);
+    border-color: #ff3b30;
+}
+
+/* Apply button */
+.btn-apply {
+    background-color: #ff3b30;
+    border: none;
+    font-weight: 600;
+    color: #fff;
+    transition: 0.3s;
+}
+.btn-apply:hover {
+    background-color: #ff5b4c;
+}
+
+/* ===========================
+   TIÊU ĐỀ
+   =========================== */
+.product-list-title {
+    font-weight: 800;
+    font-size: 2rem;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #fff;
+    position: relative;
+}
+.product-list-title::after {
+    content: "";
+    display: block;
+    width: 70px;
+    height: 3px;
+    background: #ff3b30;
+    margin: 8px auto 0;
+    border-radius: 999px;
+}
+
+/* ===========================
+   BẢNG SẢN PHẨM
+   =========================== */
+.product-table {
+    width: 100%;
+    color: #fff;
+}
+.product-table thead {
+    background: rgba(0, 0, 0, 0.65);
+    color: #ff3b30;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.product-table th, .product-table td {
+    padding: 12px;
+    text-align: center;
+    vertical-align: middle;
+}
+.product-table tbody tr {
+    transition: all 0.25s ease;
+}
+.product-table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.07);
+    box-shadow: 0 0 12px rgba(255, 59, 48, 0.3);
+    transform: scale(1.01);
+}
+.product-table tbody tr:hover img {
+    box-shadow: 0 0 10px rgba(255, 59, 48, 0.6);
+    transition: 0.25s;
+}
+
+/* ===========================
+   LINK
+   =========================== */
+a.product-link {
+    color: #fff !important;
+    text-decoration: none !important;
+    transition: 0.25s;
+}
+a.product-link:hover {
+    color: #ff3b30 !important;
+    text-decoration: underline !important;
+}
+
+/* ===========================
+   BUTTONS TRONG BẢNG
+   =========================== */
+.btn-warning.btn-sm {
+    background-color: #ffc107;
+    border: none;
+    font-weight: 600;
+}
+.btn-warning.btn-sm:hover {
+    background-color: #ffda6a;
+}
+.btn-danger.btn-sm {
+    background-color: #dc3545;
+    border: none;
+    font-weight: 600;
+}
+.btn-danger.btn-sm:hover {
+    background-color: #ff4b5c;
+}
+/* ===========================
+   NÚT CHUNG (Modern button base)
+   =========================== */
+.btn {
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.25s ease-in-out;
+    letter-spacing: 0.3px;
+}
+
+/* ===========================
+   BACK HOME BUTTON
+   =========================== */
+.btn-outline-light {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(6px);
+}
+.btn-outline-light:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ff3b30;
+    border-color: #ff3b30;
+    box-shadow: 0 0 10px rgba(255, 59, 48, 0.5);
+}
+
+/* ===========================
+   ADD PRODUCT BUTTON (Gradient Red)
+   =========================== */
+.btn-gradient {
+    background: linear-gradient(90deg, #ff3b30, #a10000);
+    color: #fff;
+    border: none;
+    box-shadow: 0 0 10px rgba(255, 59, 48, 0.5);
+}
+.btn-gradient:hover {
+    background: linear-gradient(90deg, #ff5b4c, #c40000);
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255, 59, 48, 0.7);
+}
+.btn-gradient:active {
+    transform: scale(0.98);
+    box-shadow: 0 0 5px rgba(255, 59, 48, 0.4);
+}
+
+/* ===========================
+   UPDATE BUTTON (Amber Glow)
+   =========================== */
+.btn-warning.btn-sm {
+    background: linear-gradient(90deg, #ffb703, #ff9800);
+    border: none;
+    color: #000;
+    font-weight: 600;
+    box-shadow: 0 0 6px rgba(255, 200, 80, 0.5);
+}
+.btn-warning.btn-sm:hover {
+    background: linear-gradient(90deg, #ffd166, #ffad1f);
+    box-shadow: 0 0 10px rgba(255, 200, 80, 0.8);
+    transform: scale(1.05);
+}
+
+/* ===========================
+   DELETE BUTTON (Red Glow)
+   =========================== */
+.btn-danger.btn-sm {
+    background: linear-gradient(90deg, #dc3545, #a10000);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 0 6px rgba(255, 59, 48, 0.4);
+}
+.btn-danger.btn-sm:hover {
+    background: linear-gradient(90deg, #ff3b30, #c40000);
+    box-shadow: 0 0 12px rgba(255, 59, 48, 0.7);
+    transform: scale(1.05);
+}
+.btn-danger.btn-sm:active {
+    transform: scale(0.95);
+    box-shadow: 0 0 5px rgba(255, 59, 48, 0.5);
+}
+
+
+/* ===========================
+   SCROLLBAR
+   =========================== */
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.5);
+}
+::-webkit-scrollbar-thumb {
+    background: #ff3b30;
+    border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #ff5b4c;
+}

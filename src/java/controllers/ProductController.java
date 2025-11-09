@@ -501,7 +501,7 @@ public class ProductController extends HttpServlet {
         }
 
         // quay lại list qua MainController (để dùng lại group router)
-        response.sendRedirect("MainController?txtAction=viewProducts");
+        response.sendRedirect("MainController?txtAction=viewProductList");
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)

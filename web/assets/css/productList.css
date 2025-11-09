@@ -1,27 +1,50 @@
 /* ===========================
-   BODY THEME CHO PRODUCT LIST
+   NỀN TRANG PRODUCT LIST
    =========================== */
 .product-list-body {
-    background: radial-gradient(circle at top, #2b2b2b 0, #000 55%, #000 100%);
+    /* Gradient đỏ - đen */
+    background: linear-gradient(-45deg, #660000, #000000, #aa0000);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+
     color: #f5f5f5;
     font-family: 'Poppins', sans-serif;
-    overflow-y: scroll;  /* Cho phép cuộn dọc */
-    height: 100vh;  /* Đảm bảo chiều cao của body để cuộn trang */
+
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+/* Gradient chuyển động */
+@keyframes gradient {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 /* ===========================
-   Product List Layout
+   KHUNG NGOÀI TRÊN HOME.JSP
+   (chính là container mt-4 bọc productList.jsp)
    =========================== */
-.product-list-wrapper {
-    background: #111111;
+.product-page-container {
+    /* ✅ Để trong suốt, nhìn xuyên ra gradient body */
+    background: transparent !important;
     border-radius: 18px;
     padding: 24px 28px 32px;
-    margin-top: 40px;
-    box-shadow: 0 22px 40px rgba(0, 0, 0, 0.9);
-    border: 2px solid #ff3b30;
+    margin-bottom: 60px;
+    box-shadow: 0 22px 40px rgba(0, 0, 0, 0.6);
 }
 
-/* Title */
+/* ĐẢM BẢO KHÔNG CÓ SCROLL RIÊNG BÊN TRONG */
+.product-page-container {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+}
+
+/* ===========================
+   TIÊU ĐỀ (NẾU DÙNG .product-list-title)
+   =========================== */
 .product-list-title {
     font-weight: 800;
     font-size: 2rem;
@@ -44,49 +67,53 @@
 }
 
 /* ===========================
-   Search Form
+   THẺ SẢN PHẨM (CARD)
    =========================== */
-.product-search-form .input-group-text {
-    font-weight: 500;
-    background-color: #1b1b1b;
-    border-right: none;
-    border-color: #ff3b30;
-    color: #f5f5f5;
+.card {
+    background-color: #111111;
+    border: 1px solid #ff3b30;
+    border-radius: 12px;
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
 }
 
-.product-search-form .form-control {
-    border-left: none;
-    box-shadow: none;
-    background-color: #050505;
-    border-color: #ff3b30;
-    color: #f5f5f5;
-}
-
-.product-search-form .form-control::placeholder {
-    color: #9ca3af;
-}
-
-.product-search-form .form-control:focus {
-    box-shadow: 0 0 0 1px rgba(255, 59, 48, 0.6);
-    border-color: #ff3b30;
-}
-
-/* Nút Apply */
-.btn-apply {
-    background-color: #ff3b30;
-    border-color: #ff3b30;
-    font-weight: 600;
-    padding-inline: 20px;
-    color: #fff;
-}
-
-.btn-apply:hover {
-    background-color: #ff5b4c;
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 25px rgba(255, 59, 48, 0.45);
     border-color: #ff5b4c;
 }
 
+/* Ảnh sản phẩm */
+.card-img-top {
+    height: 240px;
+    object-fit: cover;
+    border-bottom: 2px solid #ff3b30;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+/* Nội dung sản phẩm */
+.card-body p {
+    color: #cccccc;
+    font-size: 0.9rem;
+}
+
 /* ===========================
-   Empty State
+   NÚT XEM CHI TIẾT
+   =========================== */
+.btn-outline-dark {
+    border: 2px solid #ff3b30;
+    color: #ff3b30;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-dark:hover {
+    background-color: #ff3b30;
+    color: #ffffff;
+}
+
+/* ===========================
+   TRẠNG THÁI TRỐNG
    =========================== */
 .product-empty-alert {
     margin-top: 16px;
@@ -94,162 +121,72 @@
 }
 
 /* ===========================
-   Product Table
+   LINK SẢN PHẨM
    =========================== */
-.product-table-wrapper {
-    margin-top: 16px;
-    background: #fff;
-    border-radius: 16px;
-    border: 2px solid #ff3b30;
-    padding: 0;
-    overflow: hidden;
-    box-shadow: 0 18px 35px rgba(0, 0, 0, 0.7);
-}
-
-.product-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 0;
-}
-
-/* Header */
-.product-table thead {
-    background-color: #000;
-    color: #f9fafb;
-}
-
-.product-table thead th {
-    font-weight: 600;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border-bottom: 2px solid #ff3b30;
-    padding: 10px 12px;
-    text-align: center;
-}
-
-/* Body */
-.product-table tbody tr:nth-child(even) {
-    background-color: #fdf5f4;
-}
-
-.product-table tbody tr:nth-child(odd) {
-    background-color: #ffffff;
-}
-
-.product-table tbody tr:hover {
-    background-color: #ffecec;
-    transition: background-color 0.18s ease;
-}
-
-.product-table td {
-    font-size: 0.9rem;
-    vertical-align: middle;
-    color: #111827;
-    padding: 9px 12px;
-    text-align: center;
-}
-
-/* Status column (khi có) */
-.product-table td:nth-child(7) {
-    font-weight: 600;
-}
-
-/* ===========================
-   Product Link (ID / Name / Description)
-   =========================== */
-a.product-link,
-a.product-link:link,
-a.product-link:visited {
-    display: block;
-    width: 100%;
-    height: 100%;
-    color: #111827 !important;       /* không còn xanh */
+a.product-link {
+    color: #ffffff !important;
     text-decoration: none !important;
-    padding: 2px 0;
-    transition: all 0.15s ease;
+    transition: color 0.3s;
 }
 
 a.product-link:hover {
+    color: #ff3b30 !important;
     text-decoration: underline !important;
-    color: #b91c1c !important;       /* hơi đỏ khi hover */
-    cursor: pointer;
-}
-
-a.product-link:active {
-    transform: scale(0.98);
-    opacity: 0.85;
 }
 
 /* ===========================
-   Nút View Detail (Action)
+   RESPONSIVE
    =========================== */
-.view-detail-btn {
-    display: inline-block;
-    color: #ff3b30;
-    border: 2px solid #ff3b30;
-    border-radius: 999px;
-    padding: 3px 12px;
-    font-weight: 600;
-    text-decoration: none;
-    font-size: 0.8rem;
-    transition: 0.22s ease;
+@media (max-width: 992px) {
+    .card-img-top {
+        height: 200px;
+    }
 }
 
-.view-detail-btn:hover {
-    background-color: #ff3b30;
-    color: #ffffff;
+@media (max-width: 768px) {
+    .product-page-container {
+        padding: 16px;
+        margin: 20px auto 40px;
+    }
 }
 
 /* ===========================
-   Infinite Scroll Styles
+   FORCE FIX PHÒNG TRƯỜNG HỢP CSS KHÁC ĐÈ
    =========================== */
-.product-list-wrapper {
-    height: 100vh;
-    overflow-y: auto;
-    padding-bottom: 5rem; /* Đảm bảo có không gian để cuộn */
+
+/* Body của trang product list phải được phép cuộn */
+body.product-list-body {
+    overflow-y: auto !important;
 }
 
-#load-more {
-    text-align: center;
-    margin-top: 20px;
+/* Nếu trong productList.jsp bạn có thêm .product-list-wrapper thì ép nó trong suốt luôn */
+.product-page-container .product-list-wrapper {
+    background: transparent !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
 }
-
-#load-more button {
-    background-color: #ff3b30;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    font-size: 1rem;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-}
-
-#load-more button:hover {
-    background-color: #ff5b4c;
-}
-
 /* ===========================
-   Animated Background Gradient
+   HIỆU ỨNG HOVER CHO HÀNG SẢN PHẨM
    =========================== */
-body {
-    background: linear-gradient(-45deg, #ff0000, #000000, #ffffff);
-    background-size: 400% 400%;
-    animation: gradient 15s ease infinite;
-    height: 100vh;
-    margin: 0;
-    overflow: hidden;
+
+/* Mỗi hàng có viền ẩn mặc định để khi hover mượt mà */
+.product-table tbody tr {
+    border: 1px solid transparent;
+    transition: all 0.25s ease-in-out;
 }
 
-@keyframes gradient {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
+/* Khi rê chuột vào: hàng sáng lên, viền đỏ nhẹ + bóng mờ */
+.product-table tbody tr:hover {
+    border-color: rgba(255, 59, 48, 0.8);
+    box-shadow: 0 0 12px rgba(255, 59, 48, 0.35);
+    transform: scale(1.01);
+    background-color: rgba(255, 255, 255, 0.03); /* giữ độ tương phản nhẹ */
+}
+
+/* Ảnh trong hàng cũng sáng viền nhẹ khi hover */
+.product-table tbody tr:hover img {
+    border-color: #ff5b4c;
+    box-shadow: 0 0 8px rgba(255, 91, 76, 0.4);
+    transition: 0.25s ease;
 }
