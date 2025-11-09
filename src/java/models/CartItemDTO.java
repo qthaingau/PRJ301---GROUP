@@ -11,11 +11,12 @@ public class CartItemDTO {
     private double price;
     private String imageUrl;
 
-    // Constructor
     public CartItemDTO() {
     }
 
-    public CartItemDTO(String variantID, String productName, String size, String color, int quantity, double price, String imageUrl) {
+    public CartItemDTO( String cartItemID, String variantID, String productName, String size, String color,
+            int quantity, double price, String imageUrl) {
+        this.cartItemID = cartItemID;
         this.variantID = variantID;
         this.productName = productName;
         this.size = size;
@@ -25,12 +26,6 @@ public class CartItemDTO {
         this.imageUrl = imageUrl;
     }
 
-    // Tính thành tiền
-    public double getTotal() {
-        return quantity * price;
-    }
-
-    // Getters & Setters
     public String getCartItemID() {
         return cartItemID;
     }
@@ -39,6 +34,12 @@ public class CartItemDTO {
         this.cartItemID = cartItemID;
     }
 
+    
+    public double getTotal() {
+        return quantity * price;
+    }
+
+    // Getters & Setters
     public String getVariantID() {
         return variantID;
     }

@@ -1,28 +1,24 @@
 package models;
 
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import models.CartItemDTO;
 import utils.DBUtils;
 
 public class CartItemDAO {
-     
 
     // Lấy danh sách CartItem theo cartID
     public List<CartItemDTO> getCartItemsByCartID(String cartID) {
         List<CartItemDTO> items = new ArrayList<>();
-        String sql = "SELECT ci.cartItemID, ci.variantID, ci.quantity,"
-               +" pv.size, pv.color, pv.price, p.productName, pi.imageUrl"
-            +"FROM CartItem ci"
-            +"JOIN ProductVariant pv ON ci.variantID = pv.variantID"
-            +"JOIN Product p ON pv.productID = p.productID"
-            +"LEFT JOIN ProductImage pi ON p.productID = pi.productID AND pi.isMain = 1"
-            +"WHERE ci.cartID = ?"
-            ;
+        String sql = "SELECT ci.cartItemID, ci.variantID, ci.quantity, "
+                + "pv.size, pv.color, pv.price, p.productName, p.productImage "
+                + "FROM CartItem ci "
+                + "JOIN ProductVariant pv ON ci.variantID = pv.variantID "
+                + "JOIN Product p ON pv.productID = p.productID "
+                + "WHERE ci.cartID = ?";
 
-        try ( Connection conn = DBUtils.getConnection();PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtils.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, cartID);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -34,7 +30,7 @@ public class CartItemDAO {
                 item.setColor(rs.getString("color"));
                 item.setQuantity(rs.getInt("quantity"));
                 item.setPrice(rs.getDouble("price"));
-                item.setImageUrl(rs.getString("imageUrl"));
+                item.setImageUrl(rs.getString("productImage"));
                 items.add(item);
             }
         } catch (Exception e) {
@@ -45,53 +41,101 @@ public class CartItemDAO {
 
     // Thêm hoặc cập nhật số lượng
     public boolean addOrUpdateItem(String cartID, String variantID, int quantity) {
-        String checkSql = "SELECT quantity FROM CartItem WHERE cartID = ? AND variantID = ?";
-        String updateSql = "UPDATE CartItem SET quantity = ? WHERE cartID = ? AND variantID = ?";
-        String insertSql = "INSERT INTO CartItem (cartItemID, cartID, variantID, quantity) VALUES (?, ?, ?, ?)";
+        Connection conn = null;
+        PreparedStatement checkStmt = null;
+        PreparedStatement stockStmt = null;
+        PreparedStatement updateStmt = null;
+        PreparedStatement insertStmt = null;
+        ResultSet rs = null;
 
         try {
-            // Kiểm tra tồn kho
+            conn = DBUtils.getConnection();
+            
+            // 1. Kiểm tra tồn kho
             String stockSql = "SELECT stock FROM ProductVariant WHERE variantID = ?";
-            Connection conn = DBUtils.getConnection();
-            PreparedStatement ps = conn.prepareStatement(stockSql);
-            ps.setString(1, variantID);
-            ResultSet rs = ps.executeQuery();
-            if (!rs.next() || rs.getInt("stock") < quantity) return false;
+            stockStmt = conn.prepareStatement(stockSql);
+            stockStmt.setString(1, variantID);
+            rs = stockStmt.executeQuery();
+            
+            if (!rs.next()) {
+                System.out.println("Variant not found: " + variantID);
+                return false;
+            }
+            
+            int availableStock = rs.getInt("stock");
+            rs.close();
+            
+            if (availableStock < quantity) {
+                System.out.println("Insufficient stock. Available: " + availableStock + ", Requested: " + quantity);
+                return false;
+            }
 
-            // Kiểm tra đã có trong giỏ chưa
-            ps = conn.prepareStatement(checkSql);
-            ps.setString(1, cartID);
-            ps.setString(2, variantID);
-            rs = ps.executeQuery();
+            // 2. Kiểm tra đã có trong giỏ chưa
+            String checkSql = "SELECT quantity FROM CartItem WHERE cartID = ? AND variantID = ?";
+            checkStmt = conn.prepareStatement(checkSql);
+            checkStmt.setString(1, cartID);
+            checkStmt.setString(2, variantID);
+            rs = checkStmt.executeQuery();
 
             if (rs.next()) {
-                int newQty = rs.getInt("quantity") + quantity;
-                ps = conn.prepareStatement(updateSql);
-                ps.setInt(1, newQty);
-                ps.setString(2, cartID);
-                ps.setString(3, variantID);
-                ps.executeUpdate();
+                // Đã có -> cập nhật số lượng
+                int currentQty = rs.getInt("quantity");
+                int newQty = currentQty + quantity;
+                
+                // Check if new total exceeds stock
+                if (newQty > availableStock) {
+                    System.out.println("Total quantity would exceed stock. Available: " + availableStock + ", Would be: " + newQty);
+                    return false;
+                }
+                
+                String updateSql = "UPDATE CartItem SET quantity = ? WHERE cartID = ? AND variantID = ?";
+                updateStmt = conn.prepareStatement(updateSql);
+                updateStmt.setInt(1, newQty);
+                updateStmt.setString(2, cartID);
+                updateStmt.setString(3, variantID);
+                int updated = updateStmt.executeUpdate();
+                
+                System.out.println("Updated cart item. Rows affected: " + updated);
+                return updated > 0;
             } else {
+                // Chưa có -> thêm mới
                 String itemID = "CI" + System.currentTimeMillis();
-                ps = conn.prepareStatement(insertSql);
-                ps.setString(1, itemID);
-                ps.setString(2, cartID);
-                ps.setString(3, variantID);
-                ps.setInt(4, quantity);
-                ps.executeUpdate();
+                String insertSql = "INSERT INTO CartItem (cartItemID, cartID, variantID, quantity) VALUES (?, ?, ?, ?)";
+                insertStmt = conn.prepareStatement(insertSql);
+                insertStmt.setString(1, itemID);
+                insertStmt.setString(2, cartID);
+                insertStmt.setString(3, variantID);
+                insertStmt.setInt(4, quantity);
+                int inserted = insertStmt.executeUpdate();
+                
+                System.out.println("Inserted new cart item. Rows affected: " + inserted);
+                return inserted > 0;
             }
-            return true;
         } catch (Exception e) {
+            System.err.println("Error in addOrUpdateItem:");
             e.printStackTrace();
             return false;
+        } finally {
+            // Close resources
+            try { if (rs != null) rs.close(); } catch (Exception e) { }
+            try { if (checkStmt != null) checkStmt.close(); } catch (Exception e) { }
+            try { if (stockStmt != null) stockStmt.close(); } catch (Exception e) { }
+            try { if (updateStmt != null) updateStmt.close(); } catch (Exception e) { }
+            try { if (insertStmt != null) insertStmt.close(); } catch (Exception e) { }
+            try { if (conn != null) conn.close(); } catch (Exception e) { }
         }
     }
 
     // Cập nhật số lượng
     public boolean updateQuantity(String cartID, String variantID, int quantity) {
+        if (quantity <= 0) {
+            return removeItem(cartID, variantID);
+        }
+        
         String sql = "UPDATE CartItem SET quantity = ? WHERE cartID = ? AND variantID = ?";
         
-        try (Connection conn = DBUtils.getConnection();PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtils.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, quantity);
             ps.setString(2, cartID);
             ps.setString(3, variantID);
@@ -105,7 +149,8 @@ public class CartItemDAO {
     // Xóa item
     public boolean removeItem(String cartID, String variantID) {
         String sql = "DELETE FROM CartItem WHERE cartID = ? AND variantID = ?";
-        try (Connection conn = DBUtils.getConnection();PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtils.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, cartID);
             ps.setString(2, variantID);
             return ps.executeUpdate() > 0;
@@ -118,7 +163,8 @@ public class CartItemDAO {
     // Xóa toàn bộ giỏ
     public boolean clearCart(String cartID) {
         String sql = "DELETE FROM CartItem WHERE cartID = ?";
-        try (Connection conn = DBUtils.getConnection();PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtils.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, cartID);
             ps.executeUpdate();
             return true;
@@ -127,18 +173,20 @@ public class CartItemDAO {
             return false;
         }
     }
-    
+
+    // Lấy variant đầu tiên còn hàng
     public String getFirstAvailableVariant(String productID) {
-    String sql = "SELECT TOP 1 variantID FROM ProductVariant WHERE productID = ? AND stock > 0 ORDER BY variantID";
-    try (Connection conn = DBUtils.getConnection();PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setString(1, productID);
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            return rs.getString("variantID");
+        String sql = "SELECT TOP 1 variantID FROM ProductVariant WHERE productID = ? AND stock > 0 ORDER BY variantID";
+        try (Connection conn = DBUtils.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, productID);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getString("variantID");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    } catch (Exception e) {
-        e.printStackTrace();
+        return null;
     }
-    return null;
-}
 }

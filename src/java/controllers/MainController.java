@@ -20,34 +20,27 @@ public class MainController extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html; charset=UTF-8");
-
         String txtAction = request.getParameter("txtAction");
         System.out.println(txtAction);
         String url = "home.jsp"; // default
-
         String[] userActions = {"login", "logout", "searchUser", "addUser",
             "callUpdateUser", "updateUser", "deleteUser", "registerUser", "showRegister", "changePassword", "uploadAvatar"};
 
         String[] productActions = {"viewProducts", "addProduct", "deleteProduct", "updateProduct",
             "viewProductDetail", "filterProduct", "filterProductList", "callSaveOnlyProduct",
-            "callSaveProduct", "addProductWithVariant", "updateProductWithVariant", "deleteProductWithVariant", "toggleProductStatus", "viewProductList"};
 
+            "callSaveProduct", "addProductWithVariant", "updateProductWithVariant", "deleteProductWithVariant", "toggleProductStatus", "viewProductList"};
         String[] brandActions = {"viewBrandList", "updateBrand", "addBrand", "filterBrand", "callBrandForm", "deleteBrand"};
         String[] categoryActions = {"viewCategoryList", "updateCategory", "addCategory", "callCategoryForm", "filterCategory", "deleteCategory"};
-
         String[] variantActions = {"viewVariantList", "callSaveVariant", "updateVariant", "addVariant", "deleteVariant", "filterVariant"};
         String[] cartActions = {"viewCart", "addToCart", "updateCart", "removeFromCart"};
-
-        // Trong MainController.java, thêm vào đầu class:
         String[] addressActions = {
             "viewAddressList", "showAddAddressForm", "addAddress",
             "deleteAddress", "setDefaultAddress"
         };
-        // Trong try block, thêm:
 
         try {
             if (txtAction != null) {
@@ -60,7 +53,7 @@ public class MainController extends HttpServlet {
                 } else if (Arrays.asList(brandActions).contains(txtAction)) {
                     url = "BrandController";
                 } else if (Arrays.asList(cartActions).contains(txtAction)) {
-                    url = "CartController"; // Route qua CartController
+                    url = "CartController";
                 } else if (Arrays.asList(addressActions).contains(txtAction)) {
                     url = "AddressController";
                 } else if ("home".equals(txtAction)) {
@@ -73,9 +66,7 @@ public class MainController extends HttpServlet {
                 request.getRequestDispatcher("home.jsp").forward(request, response);
                 return;
             }
-
             request.getRequestDispatcher(url).forward(request, response);
-
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("msg", "Error in MainController!");
