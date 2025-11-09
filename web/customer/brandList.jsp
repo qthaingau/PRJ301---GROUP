@@ -6,20 +6,24 @@
         <meta charset="UTF-8">
         <title>Brand List</title>
 
-        <!-- CSS theme đen – đỏ – trắng -->
-        <link rel="stylesheet" href="assets/css/productList.css">
+        <!-- CSS layout admin -->
+        <link rel="stylesheet" href="assets/css/adminTable.css">
     </head>
-    <body class="product-list-body">
+    <body class="brand-list-body">
 
-        <!-- ✅ Back to Home giống categoryList.jsp -->
-        <a href="MainController?txtAction=viewProducts" class="btn btn-secondary" style="margin-left: 10px;">
-            Back to Home
-        </a>
+        <!-- Back to Home -->
+        <div class="text-start">
+            <a href="MainController?txtAction=viewProducts" class="btn btn-back">
+                ← Back to Home
+            </a>
+        </div>
 
-        <div class="container product-list-wrapper">
-            <h3 class="product-list-title">Brand List</h3>
+        <!-- Khung chính -->
+        <div class="container brand-list-wrapper">
 
-            <!-- Thông báo chung (dùng alert cho đồng bộ) -->
+            <h3 class="brand-list-title">Brand List</h3>
+
+            <!-- Messages -->
             <c:if test="${not empty message}">
                 <div class="alert alert-success text-center">
                     ${message}
@@ -31,16 +35,15 @@
                 </div>
             </c:if>
 
-            <!-- Search bar -->
+            <!-- Search bar + Add -->
             <form action="MainController" method="post" class="product-search-form mb-3">
-                <!-- Action cho brand -->
                 <input type="hidden" name="txtAction" value="filterBrand"/>
 
-                <div class="row g-2 align-items-center">
+                <div class="row g-2 align-items-center justify-content-center">
                     <!-- Ô search -->
                     <div class="col-md-6">
                         <div class="input-group">
-                            <span class="input-group-text bg-dark text-light">Search</span>
+                            <span class="input-group-text">Search</span>
                             <input type="text"
                                    class="form-control"
                                    name="keyword"
@@ -58,7 +61,7 @@
                     <c:if test="${not empty user and user.role eq 'admin'}">
                         <div class="col-auto">
                             <a href="MainController?txtAction=callBrandForm&update=false" class="btn btn-add">
-                                + Add New Brand
+                                Add New Brand
                             </a>
                         </div>
                     </c:if>
@@ -83,53 +86,38 @@
                                     <th>Brand Name</th>
                                     <th>Origin</th>
 
-                                    <!-- Chỉ admin mới thấy cột Status + Action -->
                                     <c:if test="${not empty user and user.role eq 'admin'}">
                                         <th>Status</th>
                                         <th>Actions</th>
-                                        </c:if>
+                                    </c:if>
                                 </tr>
                             </thead>
 
                             <tbody>
                                 <c:forEach var="b" items="${brandList}">
-                                    <!--
-                                        Admin: thấy tất cả brand.
-                                        User: chỉ thấy brand đang active (b.isActive == true).
-                                    -->
                                     <c:if test="${(not empty user and user.role eq 'admin') or b.isActive}">
                                         <tr>
                                             <td>${b.brandID}</td>
                                             <td>${b.brandName}</td>
                                             <td>${b.origin}</td>
 
-                                            <!-- STATUS + ACTION chỉ hiện cho admin -->
                                             <c:if test="${not empty user and user.role eq 'admin'}">
-                                                <!-- Status -->
                                                 <td>
                                                     <c:choose>
                                                         <c:when test="${b.isActive}">
-                                                            <span class="status-badge status-active">
-                                                                Active
-                                                            </span>
+                                                            <span class="status-badge status-active">Active</span>
                                                         </c:when>
                                                         <c:otherwise>
-                                                            <span class="status-badge status-inactive">
-                                                                Inactive
-                                                            </span>
+                                                            <span class="status-badge status-inactive">Inactive</span>
                                                         </c:otherwise>
                                                     </c:choose>
                                                 </td>
 
-                                                <!-- Actions -->
                                                 <td>
-                                                    <!-- UPDATE -->
                                                     <a href="MainController?txtAction=callBrandForm&brandID=${b.brandID}&update=true"
                                                        class="btn btn-update">
                                                         Update
                                                     </a>
-
-                                                    <!-- DELETE (soft delete: isActive = 0) -->
                                                     <a href="MainController?txtAction=deleteBrand&brandID=${b.brandID}"
                                                        class="btn btn-delete"
                                                        onclick="return confirm('Are you sure you want to deactivate this brand?');">
@@ -146,6 +134,5 @@
                 </c:otherwise>
             </c:choose>
         </div>
-
     </body>
 </html>

@@ -5,82 +5,78 @@
     <head>
         <meta charset="UTF-8">
         <title>${update ? "Update Product" : "Add New Product"}</title>
-        <style>
-            .form-container {
-                max-width: 600px;
-                margin: auto;
-                padding: 20px;
-            }
-            .mb-3 {
-                margin-bottom: 1rem;
-            }
-            .form-label {
-                font-weight: bold;
-            }
-            img.preview {
-                max-width: 150px;
-                max-height: 150px;
-                object-fit: cover;
-                border: 1px solid #ddd;
-                border-radius: 5px;
-                margin-top: 10px;
-            }
-            .error {
-                color: red;
-                font-size: 0.9em;
-            }
-        </style>
+
+        <!-- Dùng chung layout admin gradient -->
+        <link rel="stylesheet" href="assets/css/adminTable.css">
     </head>
-    <body>
-        <div class="form-container">
-            <h2>${update ? "Update Product" : "Add New Product"}</h2>
+    <!-- body dùng nền gradient giống các trang admin -->
+    <body class="brand-list-body">
+
+        <!-- Khung form kính mờ ở giữa -->
+        <div class="container brand-form-wrapper">
+            <h3 class="product-list-title">
+                ${update ? "Update Product" : "Add New Product"}
+            </h3>
 
             <!-- General error -->
             <c:if test="${not empty error}">
-                <p class="error">${error}</p>
+                <div class="alert alert-danger text-center">
+                    ${error}
+                </div>
             </c:if>
 
-            <form action="MainController" method="post" enctype="multipart/form-data">
+            <form action="MainController" method="post" enctype="multipart/form-data" class="category-form">
                 <input type="hidden" name="txtAction"
                        value="${update ? 'updateProductWithVariant' : 'addProductWithVariant'}"/>
                 <input type="hidden" name="update" value="${update}" />
 
                 <!-- ================= PRODUCT ================= -->
-                <h3>Product</h3>
+                <h4 class="mb-3">Product</h4>
 
                 <!-- Product ID -->
                 <div class="mb-3">
-                    <label>Product ID (P***):</label>
-                    <input type="text" name="txtProductID" value="${p.productID}"
-                           pattern="[Pp][0-9]{3}" title="e.g., P001"
+                    <label class="form-label">Product ID (P***):</label>
+                    <input type="text"
+                           name="txtProductID"
+                           class="form-control"
+                           value="${p.productID}"
+                           pattern="[Pp][0-9]{3}"
+                           title="e.g., P001"
                            ${update ? 'readonly' : 'required'} />
                     <c:if test="${not empty error_productID}">
-                        <span class="error">${error_productID}</span>
+                        <small class="text-danger">${error_productID}</small>
                     </c:if>
                 </div>
 
                 <!-- Product Name -->
                 <div class="mb-3">
-                    <label>Product Name:</label>
-                    <input type="text" name="txtProductName" value="${p.productName}" required />
+                    <label class="form-label">Product Name:</label>
+                    <input type="text"
+                           name="txtProductName"
+                           class="form-control"
+                           value="${p.productName}"
+                           required />
                     <c:if test="${not empty error_productName}">
-                        <span class="error">${error_productName}</span>
+                        <small class="text-danger">${error_productName}</small>
                     </c:if>
                 </div>
 
                 <!-- Description -->
                 <div class="mb-3">
-                    <label>Description:</label>
-                    <textarea name="txtDescription" required>${p.description}</textarea>
+                    <label class="form-label">Description:</label>
+                    <textarea name="txtDescription"
+                              class="form-control"
+                              rows="3"
+                              required>${p.description}</textarea>
                     <c:if test="${not empty error_description}">
-                        <span class="error">${error_description}</span>
+                        <small class="text-danger">${error_description}</small>
                     </c:if>
                 </div>
 
                 <!-- Category -->
                 <div class="mb-3">
-                    <label>Category:</label>
-                    <select name="txtCategoryID" required>
+                    <label class="form-label">Category:</label>
+                    <select name="txtCategoryID" class="form-control" required>
                         <option value="">-- Select Category --</option>
                         <c:forEach var="c" items="${categoryList}">
                             <option value="${c.categoryID}" ${p.categoryID eq c.categoryID ? 'selected' : ''}>
@@ -89,23 +85,24 @@
                         </c:forEach>
                     </select>
                     <c:if test="${not empty error_categoryID}">
-                        <span class="error">${error_categoryID}</span>
+                        <small class="text-danger">${error_categoryID}</small>
                     </c:if>
                 </div>
 
                 <!-- Brand -->
                 <div class="mb-3">
-                    <label>Brand:</label>
-                    <select name="txtBrandID" required>
+                    <label class="form-label">Brand:</label>
+                    <select name="txtBrandID" class="form-control" required>
                         <option value="">-- Select Brand --</option>
                         <c:forEach var="b" items="${brandList}">
                             <option value="${b.brandID}" ${p.brandID eq b.brandID ? 'selected' : ''}>
-                                ${b.brandID} - ${b.brandName} <c:if test="${not empty b.origin}">(${b.origin})</c:if>
-                                </option>
+                                ${b.brandID} - ${b.brandName}
+                                <c:if test="${not empty b.origin}">(${b.origin})</c:if>
+                            </option>
                         </c:forEach>
                     </select>
                     <c:if test="${not empty error_brandID}">
-                        <span class="error">${error_brandID}</span>
+                        <small class="text-danger">${error_brandID}</small>
                     </c:if>
                 </div>
 
@@ -119,72 +116,96 @@
                              src="${not empty p.productImage ? p.productImage : ''}"
                              alt="Product Preview"
                              class="preview"
-                             style="display: ${not empty p.productImage ? 'block' : 'none'};">
+                             style="max-width:150px; max-height:150px; object-fit:cover; border-radius:6px; border:1px solid #ddd; display:${not empty p.productImage ? 'block' : 'none'};">
                     </div>
                 </div>
 
                 <!-- ================= VARIANT ================= -->
-                <h3>Variant</h3>
+                <h4 class="mb-3 mt-4">Variant</h4>
 
                 <!-- Variant ID -->
                 <div class="mb-3">
-                    <label>Variant ID (V***):</label>
-                    <input type="text" name="txtVariantID" value="${v.variantID}"
-                           pattern="(?i)[Vv][0-9]{3}" title="e.g., V001"
+                    <label class="form-label">Variant ID (V***):</label>
+                    <input type="text"
+                           name="txtVariantID"
+                           class="form-control"
+                           value="${v.variantID}"
+                           pattern="(?i)[Vv][0-9]{3}"
+                           title="e.g., V001"
                            ${update ? 'readonly' : 'required'} />
                     <c:if test="${not empty error_variantID}">
-                        <span class="error">${error_variantID}</span>
+                        <small class="text-danger">${error_variantID}</small>
                     </c:if>
                 </div>
 
                 <!-- Existing Variant IDs -->
                 <div class="mb-3">
-                    <strong>Existing Variant IDs:</strong>
+                    <label class="form-label">Existing Variant IDs:</label><br/>
                     <c:forEach var="vItem" items="${variantList}" varStatus="loop">
-                        <span class="badge bg-secondary">${vItem.variantID}</span><c:if test="${!loop.last}"> </c:if>
+                        <span class="badge bg-secondary">${vItem.variantID}</span>
+                        <c:if test="${!loop.last}"> </c:if>
                     </c:forEach>
                     <c:if test="${empty variantList}">
-                        <em>(None)</em>
+                        <em class="text-muted">(None)</em>
                     </c:if>
                 </div>
 
                 <!-- Size -->
                 <div class="mb-3">
-                    <label>Size:</label>
-                    <input type="text" name="txtSize" value="${v.size}" required />
+                    <label class="form-label">Size:</label>
+                    <input type="text"
+                           name="txtSize"
+                           class="form-control"
+                           value="${v.size}"
+                           required />
                     <c:if test="${not empty error_size}">
-                        <span class="error">${error_size}</span>
+                        <small class="text-danger">${error_size}</small>
                     </c:if>
                 </div>
 
                 <!-- Color -->
                 <div class="mb-3">
-                    <label>Color:</label>
-                    <input type="text" name="txtColor" value="${v.color}" required />
+                    <label class="form-label">Color:</label>
+                    <input type="text"
+                           name="txtColor"
+                           class="form-control"
+                           value="${v.color}"
+                           required />
                     <c:if test="${not empty error_color}">
-                        <span class="error">${error_color}</span>
+                        <small class="text-danger">${error_color}</small>
                     </c:if>
                 </div>
 
                 <!-- Stock -->
                 <div class="mb-3">
-                    <label>Stock:</label>
-                    <input type="number" name="txtStock" value="${v.stock}" min="0" required />
+                    <label class="form-label">Stock:</label>
+                    <input type="number"
+                           name="txtStock"
+                           class="form-control"
+                           value="${v.stock}"
+                           min="0"
+                           required />
                     <c:if test="${not empty error_stock}">
-                        <span class="error">${error_stock}</span>
+                        <small class="text-danger">${error_stock}</small>
                     </c:if>
                 </div>
 
                 <!-- Price -->
                 <div class="mb-3">
-                    <label>Price:</label>
-                    <input type="number" name="txtPrice" value="${v.price}" step="0.01" min="0" required />
+                    <label class="form-label">Price:</label>
+                    <input type="number"
+                           name="txtPrice"
+                           class="form-control"
+                           value="${v.price}"
+                           step="0.01"
+                           min="0"
+                           required />
                     <c:if test="${not empty error_price}">
-                        <span class="error">${error_price}</span>
+                        <small class="text-danger">${error_price}</small>
                     </c:if>
                 </div>
 
-                <!-- Variant Image (ĐÃ SỬA – ĐẸP, CHUẨN BOOTSTRAP) -->
+                <!-- Variant Image -->
                 <div class="mb-3">
                     <label class="form-label">Variant Image</label>
                     <input type="file" id="variantImageFile" accept="image/*" class="form-control" />
@@ -194,14 +215,20 @@
                              src="${not empty v.avatarBase64 ? v.avatarBase64 : ''}"
                              alt="Variant Preview"
                              class="preview"
-                             style="display: ${not empty v.avatarBase64 ? 'block' : 'none'};">
+                             style="max-width:150px; max-height:150px; object-fit:cover; border-radius:6px; border:1px solid #ddd; display:${not empty v.avatarBase64 ? 'block' : 'none'};">
                     </div>
                 </div>
 
-                <!-- Submit -->
-                <button type="submit" class="btn btn-primary">
-                    ${update ? "Update Product" : "Add Product"}
-                </button>
+                <!-- Submit + Back -->
+                <div class="mt-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-apply">
+                        ${update ? "Update Product" : "Add Product"}
+                    </button>
+
+                    <a href="MainController?txtAction=viewProductList" class="btn btn-cancel">
+                        Back to List
+                    </a>
+                </div>
             </form>
         </div>
 
@@ -210,8 +237,7 @@
             // --- Product Image Preview ---
             document.getElementById('productImageFile').addEventListener('change', function () {
                 const file = this.files[0];
-                if (!file)
-                    return;
+                if (!file) return;
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     const base64 = e.target.result;
@@ -226,8 +252,7 @@
             // --- Variant Image Preview ---
             document.getElementById('variantImageFile').addEventListener('change', function () {
                 const file = this.files[0];
-                if (!file)
-                    return;
+                if (!file) return;
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     const base64 = e.target.result;
@@ -242,7 +267,7 @@
             // --- Variant ID Duplication Check ---
             const existingVariantIDs = [
             <c:forEach var="vItem" items="${variantList}" varStatus="loop">
-            "${vItem.variantID.toUpperCase()}"<c:if test="${!loop.last}">,</c:if>
+                "${vItem.variantID.toUpperCase()}"<c:if test="${!loop.last}">,</c:if>
             </c:forEach>
             ];
 

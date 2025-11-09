@@ -6,13 +6,15 @@
         <meta charset="UTF-8">
         <title>${update ? "Update Category" : "Add New Category"}</title>
 
-        <!-- CSS theme đen – đỏ – trắng -->
-        <link rel="stylesheet" href="assets/css/productList.css">
+        <!-- Dùng chung layout admin gradient -->
+        <link rel="stylesheet" href="assets/css/adminTable.css">
     </head>
 
-    <body class="product-list-body">
+    <!-- body dùng chung với các trang admin (gradient + căn giữa) -->
+    <body class="brand-list-body">
 
-        <div class="container product-list-wrapper">
+        <!-- Khung form ở giữa giống Brand Form -->
+        <div class="container brand-form-wrapper">
             <h3 class="product-list-title">
                 ${update ? "Update Category" : "Add New Category"}
             </h3>
@@ -93,15 +95,12 @@
                     </div>
                 </c:if>
 
-
-
-                <!-- Submit Button -->
-                <div class="mt-4">
+                <!-- Submit + Back -->
+                <div class="mt-4 d-flex gap-2">
                     <button type="submit" class="btn btn-apply">
                         ${update ? "Update Category" : "Add Category"}
                     </button>
 
-                    <!-- Back -->
                     <a href="MainController?txtAction=viewCategoryList" class="btn btn-cancel">
                         Back to List
                     </a>

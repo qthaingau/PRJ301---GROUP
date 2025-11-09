@@ -368,6 +368,7 @@ public class ProductController extends HttpServlet {
     private void processFilterProduct(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String keyword = request.getParameter("keyword");
+        String txtAction = request.getParameter("txtAction");
         ProductDAO productDAO = new ProductDAO();
         List<ProductDTO> list;
 
@@ -379,7 +380,11 @@ public class ProductController extends HttpServlet {
             }
             request.setAttribute("listProducts", list);
             request.setAttribute("keyword", keyword);
+            if (txtAction.equals("filterProductList")) {
+                request.getRequestDispatcher("admin/listOfProducts.jsp").forward(request, response);
+            } else {
             request.getRequestDispatcher("home.jsp").forward(request, response);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("msg", "Error searching product!");
@@ -518,7 +523,7 @@ public class ProductController extends HttpServlet {
 
             if (txtAction.equals("viewProducts")) {
                 processViewProducts(request, response);
-            } else if (txtAction.equals("filterProduct")) {
+            } else if (txtAction.equals("filterProduct") || txtAction.equals("filterProductList")) {
                 processFilterProduct(request, response);
             } else if (txtAction.equals("viewProductDetail")) {
                 processViewProductDetail(request, response);

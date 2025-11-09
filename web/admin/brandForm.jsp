@@ -6,12 +6,15 @@
         <meta charset="UTF-8">
         <title>${b != null ? "Update Brand" : "Add New Brand"}</title>
 
-        <!-- CSS theme đen – đỏ – trắng -->
-        <link rel="stylesheet" href="assets/css/productList.css">
+        <!-- Dùng chung layout admin gradient -->
+        <link rel="stylesheet" href="assets/css/adminTable.css">
     </head>
 
-    <body class="product-list-body">
-        <div class="container product-list-wrapper">
+    <!-- dùng body giống các trang admin -->
+    <body class="brand-list-body">
+
+        <!-- Khung form nằm giữa -->
+        <div class="container brand-form-wrapper">
             <h3 class="product-list-title">
                 ${b != null ? "Update Brand" : "Add New Brand"}
             </h3>

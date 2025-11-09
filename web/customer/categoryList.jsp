@@ -6,24 +6,31 @@
         <meta charset="UTF-8">
         <title>Category List</title>
 
-        <!-- CSS theme đen – đỏ – trắng -->
-        <link rel="stylesheet" href="assets/css/productList.css">
+        <!-- Dùng layout admin -->
+        <link rel="stylesheet" href="assets/css/adminTable.css">
     </head>
-    <body class="product-list-body">
-        <!-- ✅ NEW: Back to Home -->
-        <a href="MainController?txtAction=viewProducts" class="btn btn-secondary" style="margin-left: 10px;">
-            Back to Home
-        </a>
-        <div class="container product-list-wrapper">
-            <h3 class="product-list-title">Category List</h3>
+    <!-- dùng chung class body với brandList -->
+    <body class="brand-list-body">
+
+        <!-- Back to Home -->
+        <div class="text-start">
+            <a href="MainController?txtAction=viewProducts" class="btn btn-back">
+                ← Back to Home
+            </a>
+        </div>
+
+        <!-- Khung chính ở giữa -->
+        <div class="container brand-list-wrapper">
+            <h3 class="brand-list-title">Category List</h3>
 
             <!-- Search bar -->
             <form action="MainController" method="post" class="product-search-form mb-3">
                 <input type="hidden" name="txtAction" value="filterCategory"/>
-                <div class="row g-2 align-items-center">
+
+                <div class="row g-2 align-items-center justify-content-center">
                     <div class="col-md-6">
                         <div class="input-group">
-                            <span class="input-group-text bg-dark text-light">Search</span>
+                            <span class="input-group-text">Search</span>
                             <input type="text"
                                    class="form-control"
                                    name="keyword"
@@ -31,15 +38,17 @@
                                    placeholder="Enter category name..."/>
                         </div>
                     </div>
+
                     <div class="col-auto">
                         <button type="submit" class="btn btn-apply">Apply</button>
                     </div>
 
                     <!-- Chỉ admin mới có thể thêm -->
-                    <c:if test="${user.role eq 'admin'}">
+                    <c:if test="${not empty user and user.role eq 'admin'}">
                         <div class="col-auto">
-                            <a href="MainController?txtAction=callCategoryForm&update=false" class="btn btn-add">
-                                + Add Category
+                            <a href="MainController?txtAction=callCategoryForm&update=false"
+                               class="btn btn-add">
+                                Add New Category
                             </a>
                         </div>
                     </c:if>
@@ -63,17 +72,17 @@
                                     <th>Category ID</th>
                                     <th>Category Name</th>
                                     <th>Sport Type</th>
-                                        <c:if test="${user.role eq 'admin'}">
+                                    <c:if test="${not empty user and user.role eq 'admin'}">
                                         <th>Status</th>
                                         <th>Actions</th>
-                                        </c:if>
+                                    </c:if>
                                 </tr>
                             </thead>
 
                             <tbody>
                                 <c:forEach var="c" items="${listCategories}">
                                     <!-- USER: chỉ thấy isActive = true -->
-                                    <c:if test="${user.role ne 'admin' and c.isActive}">
+                                    <c:if test="${(empty user or user.role ne 'admin') and c.isActive}">
                                         <tr>
                                             <td>${c.categoryID}</td>
                                             <td>${c.categoryName}</td>
@@ -82,7 +91,7 @@
                                     </c:if>
 
                                     <!-- ADMIN: thấy tất cả -->
-                                    <c:if test="${user.role eq 'admin'}">
+                                    <c:if test="${not empty user and user.role eq 'admin'}">
                                         <tr>
                                             <td>${c.categoryID}</td>
                                             <td>${c.categoryName}</td>
@@ -100,7 +109,9 @@
                                             <td>
                                                 <!-- Update -->
                                                 <a href="MainController?txtAction=callCategoryForm&update=true&categoryID=${c.categoryID}"
-                                                   class="btn btn-update">Update</a>
+                                                   class="btn btn-update">
+                                                    Update
+                                                </a>
 
                                                 <!-- Delete -->
                                                 <a href="MainController?txtAction=deleteCategory&categoryID=${c.categoryID}"

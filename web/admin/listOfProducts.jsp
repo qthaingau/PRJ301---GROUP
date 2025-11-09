@@ -8,7 +8,7 @@
         <title>Product List</title>
 
         <!-- CSS theme đen – đỏ – trắng -->
-        <link rel="stylesheet" href="assets/css/listOfProducts.css">
+        <link rel="stylesheet" href="assets/css/adminTable.css">
     </head>
     <body class="product-list-body">
 
@@ -23,6 +23,26 @@
             <!-- Tiêu đề -->
             <h3 class="product-list-title">Product List</h3>
 
+            <form action="MainController" method="post" class="product-search-form mb-3">
+                <input type="hidden" name="txtAction" value="filterProductList"/>
+
+                <div class="row g-2 align-items-center justify-content-center">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text">Search</span>
+                            <input type="text"
+                                   class="form-control"
+                                   name="keyword"
+                                   value="${keyword}"
+                                   placeholder="Search products...""/>
+                        </div>
+                    </div>
+
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-apply">Apply</button>
+                    </div>
+                </div>
+            </form>
             <!-- Nút thêm sản phẩm -->
             <div class="mb-4 text-end">
                 <a href="MainController?txtAction=callSaveProduct&update=false" class="btn btn-success fw-bold">
