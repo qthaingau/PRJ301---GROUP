@@ -8,8 +8,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Giỏ hàng - HTV Sport</title>
-
-    <!-- Bootstrap 5 + Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
 
@@ -54,10 +52,8 @@
 </head>
 <body>
 
-    <!-- HEADER -->
     <%@ include file="../includes/header.jspf" %>
 
-    <!-- MAIN CONTENT -->
     <div class="container my-5">
         <div class="row">
             <div class="col-lg-10 mx-auto">
@@ -65,16 +61,6 @@
                 <h2 class="mb-4 text-center">
                     <i class="bi bi-cart3"></i> Giỏ hàng của bạn
                 </h2>
-
-                <!-- Debug Info (remove in production) -->
-                <c:if test="${pageContext.request.getParameter('debug') == 'true'}">
-                    <div class="alert alert-info">
-                        <strong>Debug Info:</strong><br>
-                        Cart Items Count: ${cartItems != null ? cartItems.size() : 'null'}<br>
-                        Session Cart Count: ${sessionScope.cart != null ? sessionScope.cart.size() : 'null'}<br>
-                        User ID: ${sessionScope.user != null ? sessionScope.user.userID : 'not logged in'}
-                    </div>
-                </c:if>
 
                 <!-- EMPTY CART -->
                 <c:if test="${empty cartItems and empty sessionScope.cart}">
@@ -97,38 +83,36 @@
                             <thead class="table-dark">
                                 <tr>
                                     <th style="width: 100px;">Hình ảnh</th>
-                                    <th>Sản phẩm</th>
+                                    <th>Tên sản phẩm</th>
+                                    <th style="width: 100px;">Màu sắc</th>
+                                    <th style="width: 80px;">Size</th>
                                     <th style="width: 120px;">Giá</th>
                                     <th style="width: 100px;">Số lượng</th>
-                                    <th style="width: 120px;">Thành tiền</th>
-                                    <th style="width: 80px;">Thao tác</th>
+                                    <th style="width: 120px;">Tổng tiền</th>
+                                    <th style="width: 80px;">Xóa</th>
                                 </tr>
                             </thead>
-                            <tbody id="cartTableBody">
+                            <tbody>
                                 <c:set var="total" value="0" />
                                 <c:forEach var="item" items="${displayCart}">
                                     <c:set var="itemTotal" value="${item.price * item.quantity}" />
                                     <c:set var="total" value="${total + itemTotal}" />
                                     
-                                    <tr data-variant-id="${item.variantID}">
+                                    <tr>
                                         <td>
-                                            <c:choose>
-                                                <c:when test="${not empty item.imageUrl}">
-                                                    <img src="${item.imageUrl}" 
-                                                         class="cart-item-img" 
-                                                         alt="${item.productName}"
-                                                         onerror="this.src='assets/img/no-image.png'">
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <img src="assets/img/no-image.png" 
-                                                         class="cart-item-img" 
-                                                         alt="No image">
-                                                </c:otherwise>
-                                            </c:choose>
+                                            <img src="${not empty item.imageUrl ? item.imageUrl : 'assets/img/no-image.png'}" 
+                                                 class="cart-item-img" 
+                                                 alt="${item.productName}"
+                                                 onerror="this.src='assets/img/no-image.png'">
                                         </td>
                                         <td>
-                                            <strong>${item.productName}</strong><br>
-                                            <small class="text-muted">Size: ${item.size} | Màu: ${item.color}</small>
+                                            <strong>${item.productName}</strong>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-info text-dark">${item.color}</span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-secondary">${item.size}</span>
                                         </td>
                                         <td>
                                             <fmt:formatNumber value="${item.price}" type="number" maxFractionDigits="0"/>₫
@@ -165,7 +149,7 @@
                             </tbody>
                             <tfoot>
                                 <tr class="total-row">
-                                    <th colspan="4" class="text-end">Tổng cộng:</th>
+                                    <th colspan="6" class="text-end">Tổng cộng:</th>
                                     <th class="text-danger">
                                         <fmt:formatNumber value="${total}" type="number" maxFractionDigits="0"/>₫
                                     </th>
@@ -182,30 +166,21 @@
                             <c:set var="itemTotal" value="${item.price * item.quantity}" />
                             <c:set var="total" value="${total + itemTotal}" />
                             
-                            <div class="card mb-3" data-variant-id="${item.variantID}">
+                            <div class="card mb-3">
                                 <div class="row g-0">
                                     <div class="col-4">
-                                        <c:choose>
-                                            <c:when test="${not empty item.imageUrl}">
-                                                <img src="${item.imageUrl}" 
-                                                     class="img-fluid rounded-start h-100" 
-                                                     alt="${item.productName}"
-                                                     style="object-fit: cover;"
-                                                     onerror="this.src='assets/img/no-image.png'">
-                                            </c:when>
-                                            <c:otherwise>
-                                                <img src="assets/img/no-image.png" 
-                                                     class="img-fluid rounded-start h-100" 
-                                                     alt="No image"
-                                                     style="object-fit: cover;">
-                                            </c:otherwise>
-                                        </c:choose>
+                                        <img src="${not empty item.imageUrl ? item.imageUrl : 'assets/img/no-image.png'}" 
+                                             class="img-fluid rounded-start h-100" 
+                                             alt="${item.productName}"
+                                             style="object-fit: cover;"
+                                             onerror="this.src='assets/img/no-image.png'">
                                     </div>
                                     <div class="col-8">
                                         <div class="card-body py-2">
                                             <h6 class="card-title mb-1">${item.productName}</h6>
-                                            <p class="card-text small text-muted mb-2">
-                                                Size: ${item.size} | Màu: ${item.color}
+                                            <p class="card-text small mb-2">
+                                                <span class="badge bg-secondary">Size: ${item.size}</span>
+                                                <span class="badge bg-info text-dark">Màu: ${item.color}</span>
                                             </p>
                                             <p class="card-text">
                                                 <small>Giá: <fmt:formatNumber value="${item.price}" type="number" maxFractionDigits="0"/>₫</small>
@@ -271,10 +246,8 @@
         </div>
     </div>
 
-    <!-- FOOTER -->
     <%@ include file="../includes/footer.jspf" %>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
