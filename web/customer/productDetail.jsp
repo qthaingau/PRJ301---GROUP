@@ -1,12 +1,16 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page import="java.util.Map, java.util.List, models.ProductVariantDTO" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ page import="java.util.Map, java.util.List, models.ProductVariantDTO" %>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
         <meta charset="UTF-8">
         <title>${product.productName}</title>
         <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+        <!-- Bootstrap Icons -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
         <style>
             .back-btn {
                 display: inline-block;
@@ -85,12 +89,12 @@
                 margin: 10px 0;
                 font-size: 0.9em;
             }
-            
+
             .quantity-input {
                 width: 100%;
                 text-align: center;
             }
-            
+
             .quantity-label {
                 font-size: 0.85em;
                 color: #666;
@@ -98,7 +102,7 @@
                 margin-bottom: 5px;
                 font-weight: 500;
             }
-            
+
             .btn-cart, .btn-buy {
                 width: 100%;
                 margin: 5px 0;
@@ -135,7 +139,7 @@
                 font-size: 0.8em;
                 font-weight: bold;
             }
-            
+
             .alert {
                 padding: 12px 20px;
                 margin: 15px 0;
@@ -158,17 +162,17 @@
 
         <div class="container">
             <a href="home.jsp" class="back-btn">← Quay lại danh sách</a>
-            
+
             <!-- Alert messages -->
             <div id="alertMessage" class="alert"></div>
-            
+
             <h1 class="text-center mb-4 fw-bold">${product.productName}</h1>
             <p class="text-center text-muted mb-5">${product.description}</p>
 
             <c:choose>
                 <c:when test="${empty groupedVariants}">
                     <div class="text-center py-5">
-                        <div class="alert alert-light border">
+                        <div class="alert alert-light border" style="display:block;">
                             <h5>Sản phẩm hiện tại không có sẵn</h5>
                             <p class="text-muted">Vui lòng quay lại sau!</p>
                         </div>
@@ -193,7 +197,9 @@
                                         </c:if>
                                     </c:if>
                                 </c:forEach>
-                                <c:if test="${!inStock}"><div class="out-of-stock">Hết hàng</div></c:if>
+                                <c:if test="${!inStock}">
+                                    <div class="out-of-stock">Hết hàng</div>
+                                </c:if>
 
                                 <!-- ẢNH -->
                                 <div class="variant-img-wrapper">
@@ -205,8 +211,12 @@
 
                                 <!-- GIÁ -->
                                 <div>
-                                    <span class="old-price">₫<fmt:formatNumber value="${first.price * 1.3}" type="number" maxFractionDigits="0"/></span>
-                                    <span class="new-price">₫<fmt:formatNumber value="${first.price}" type="number" maxFractionDigits="0"/></span>
+                                    <span class="old-price">
+                                        ₫<fmt:formatNumber value="${first.price * 1.3}" type="number" maxFractionDigits="0"/>
+                                    </span>
+                                    <span class="new-price">
+                                        ₫<fmt:formatNumber value="${first.price}" type="number" maxFractionDigits="0"/>
+                                    </span>
                                 </div>
 
                                 <!-- TÊN + MÀU -->
@@ -221,7 +231,7 @@
                                         <c:forEach var="v" items="${group}">
                                             <c:choose>
                                                 <c:when test="${v.stock > 0}">
-                                                    <option value="${v.size}" 
+                                                    <option value="${v.size}"
                                                             data-variant-id="${v.variantID}"
                                                             data-stock="${v.stock}">
                                                         ${v.size} (Còn ${v.stock})
@@ -233,17 +243,17 @@
                                             </c:choose>
                                         </c:forEach>
                                     </select>
-                                    
+
                                     <!-- QUANTITY INPUT -->
                                     <div class="quantity-label">Số lượng:</div>
-                                    <input type="number" 
-                                           name="quantity" 
-                                           class="form-control quantity-input" 
-                                           value="1" 
-                                           min="1" 
+                                    <input type="number"
+                                           name="quantity"
+                                           class="form-control quantity-input"
+                                           value="1"
+                                           min="1"
                                            max="${maxStock > 0 ? maxStock : 1}"
                                            required>
-                                    
+
                                     <input type="hidden" name="variantID" value="">
                                     <input type="hidden" name="maxStock" value="${maxStock}">
 
@@ -266,22 +276,20 @@
                 const option = select.selectedOptions[0];
                 const variantID = option.getAttribute('data-variant-id');
                 const stock = parseInt(option.getAttribute('data-stock')) || 1;
-                
+
                 const form = select.closest('form');
                 const quantityInput = form.querySelector('input[name="quantity"]');
                 const variantIDInput = form.querySelector('input[name="variantID"]');
-                
+
                 // Update hidden inputs
                 variantIDInput.value = variantID || '';
                 form.querySelector('input[name="maxStock"]').value = stock;
-                
+
                 // Update quantity constraints
                 quantityInput.max = stock;
                 if (parseInt(quantityInput.value) > stock) {
                     quantityInput.value = stock;
                 }
-                
-                console.log('Updated variant:', variantID, 'Stock:', stock);
             }
 
             function showAlert(message, type) {
@@ -289,70 +297,58 @@
                 alertDiv.textContent = message;
                 alertDiv.className = 'alert alert-' + type;
                 alertDiv.style.display = 'block';
-                
-                // Auto hide after 4 seconds
+
                 setTimeout(() => {
                     alertDiv.style.display = 'none';
                 }, 4000);
-                
-                // Scroll to top to show alert
+
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
 
             function handleAddToCart(event, form) {
                 event.preventDefault();
-                
+
                 const variantID = form.querySelector('input[name="variantID"]').value;
                 const quantity = parseInt(form.querySelector('input[name="quantity"]').value);
                 const maxStock = parseInt(form.querySelector('input[name="maxStock"]').value);
-                
-                // Validation
+
                 if (!variantID) {
                     showAlert('Vui lòng chọn size còn hàng!', 'danger');
                     return false;
                 }
-                
+
                 if (quantity < 1) {
                     showAlert('Số lượng phải lớn hơn 0!', 'danger');
                     return false;
                 }
-                
+
                 if (quantity > maxStock) {
                     showAlert('Số lượng vượt quá tồn kho (còn ' + maxStock + ')!', 'danger');
                     return false;
                 }
-                
-                // Disable button to prevent double submission
+
                 const submitBtn = form.querySelector('button[type="submit"]');
                 const originalHTML = submitBtn.innerHTML;
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Đang thêm...';
-                
-                console.log('Sending to cart:', { variantID, quantity });
-                
-                // Send AJAX request
+
                 fetch('MainController', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: 'txtAction=addToCart&variantID=' + encodeURIComponent(variantID) + 
+                    body: 'txtAction=addToCart&variantID=' + encodeURIComponent(variantID) +
                           '&quantity=' + encodeURIComponent(quantity)
                 })
-                .then(response => {
-                    console.log('Response status:', response.status);
-                    return response.text();
-                })
+                .then(response => response.text())
                 .then(data => {
-                    console.log('Response data:', data);
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = originalHTML;
-                    
+
                     const trimmedData = data.trim();
-                    
+
                     if (trimmedData === 'OK') {
                         showAlert('Đã thêm ' + quantity + ' sản phẩm vào giỏ hàng!', 'success');
-                        // Reset quantity to 1
                         form.querySelector('input[name="quantity"]').value = 1;
                     } else if (trimmedData === 'OUT_OF_STOCK') {
                         showAlert('Sản phẩm đã hết hàng hoặc không đủ số lượng!', 'danger');
@@ -362,7 +358,6 @@
                             window.location.href = 'login.jsp';
                         }, 1500);
                     } else {
-                        console.error('Unexpected response:', trimmedData);
                         showAlert('Có lỗi xảy ra: ' + trimmedData, 'danger');
                     }
                 })
@@ -372,48 +367,45 @@
                     submitBtn.innerHTML = originalHTML;
                     showAlert('Có lỗi xảy ra, vui lòng thử lại!', 'danger');
                 });
-                
+
                 return false;
             }
-            
+
             function buyNow(form) {
                 const variantID = form.querySelector('input[name="variantID"]').value;
                 const quantity = parseInt(form.querySelector('input[name="quantity"]').value);
                 const maxStock = parseInt(form.querySelector('input[name="maxStock"]').value);
-                
+
                 if (!variantID) {
                     showAlert('Vui lòng chọn size còn hàng!', 'danger');
                     return;
                 }
-                
+
                 if (quantity < 1 || quantity > maxStock) {
                     showAlert('Số lượng không hợp lệ!', 'danger');
                     return;
                 }
-                
-                console.log('Buy now:', { variantID, quantity });
-                
-                // First add to cart, then redirect to cart page
+
                 fetch('MainController', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: 'txtAction=addToCart&variantID=' + encodeURIComponent(variantID) + 
+                    body: 'txtAction=addToCart&variantID=' + encodeURIComponent(variantID) +
                           '&quantity=' + encodeURIComponent(quantity)
                 })
                 .then(response => response.text())
                 .then(data => {
-                    console.log('Buy now response:', data);
-                    if (data.trim() === 'OK') {
+                    const trimmed = data.trim();
+                    if (trimmed === 'OK') {
                         window.location.href = 'MainController?txtAction=viewCart';
-                    } else if (data.trim() === 'LOGIN_REQUIRED') {
+                    } else if (trimmed === 'LOGIN_REQUIRED') {
                         showAlert('Vui lòng đăng nhập!', 'danger');
                         setTimeout(() => {
                             window.location.href = 'login.jsp';
                         }, 1500);
                     } else {
-                        showAlert('Có lỗi xảy ra: ' + data.trim(), 'danger');
+                        showAlert('Có lỗi xảy ra: ' + trimmed, 'danger');
                     }
                 })
                 .catch(error => {
@@ -422,10 +414,6 @@
                 });
             }
         </script>
-        
-        <!-- Bootstrap Icons -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-        <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
     </body>
 </html>

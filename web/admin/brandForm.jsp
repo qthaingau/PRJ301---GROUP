@@ -12,6 +12,9 @@
 
     <!-- dùng body giống các trang admin -->
     <body class="brand-list-body">
+  <a href="MainController?txtAction=viewProducts" class="btn btn-secondary" style="margin-left: 10px;">
+            Back to Home
+        </a>
 
         <!-- Khung form nằm giữa -->
         <div class="container brand-form-wrapper">

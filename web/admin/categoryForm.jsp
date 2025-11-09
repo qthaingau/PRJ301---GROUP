@@ -12,7 +12,9 @@
 
     <!-- body dùng chung với các trang admin (gradient + căn giữa) -->
     <body class="brand-list-body">
-
+<a href="MainController?txtAction=viewProducts" class="btn btn-secondary" style="margin-left: 10px;">
+            Back to Home
+        </a>
         <!-- Khung form ở giữa giống Brand Form -->
         <div class="container brand-form-wrapper">
             <h3 class="product-list-title">

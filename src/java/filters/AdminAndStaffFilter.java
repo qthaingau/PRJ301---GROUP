@@ -24,8 +24,8 @@
 // *
 // * @author TEST
 // */
-//@WebFilter(filterName = "AdminFilter", urlPatterns = {"admin/productForm.jsp", "admin/categoryForm.jsp", "admin/brandForm.jsp", "admin/variantForm.jsp", "admin/productWithVariantForm.jsp", "admin/listOfOrders.jsp", "admin/listOfProducts.jsp", "admin/listOfVariants.jsp", "admin/listOfUsers.jsp", "admin/listOfPayments.jsp"})
-//public class AdminFilter implements Filter {
+//@WebFilter(filterName = "AdminFilter", urlPatterns = {"admin/productForm.jsp", "admin/categoryForm.jsp", "admin/brandForm.jsp", "admin/variantForm.jsp", "admin/productWithVariantForm.jsp", "admin/listOfOrders.jsp", "admin/listOfProducts.jsp", "admin/listOfVariants.jsp", "admin/listOfPayments.jsp"})
+//public class AdminAndStaffFilter implements Filter {
 //
 //    private static final boolean debug = true;
 //
@@ -34,7 +34,7 @@
 //    // configured. 
 //    private FilterConfig filterConfig = null;
 //
-//    public AdminFilter() {
+//    public AdminAndStaffFilter() {
 //    }
 //
 //    private void doBeforeProcessing(ServletRequest request, ServletResponse response)

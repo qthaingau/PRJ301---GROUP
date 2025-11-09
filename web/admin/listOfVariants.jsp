@@ -11,6 +11,9 @@
         <link rel="stylesheet" href="assets/css/adminTable.css">
     </head>
     <body class="product-list-body">
+        <a href="MainController?txtAction=viewProducts" class="btn btn-secondary" style="margin-left: 10px;">
+            Back to Home
+        </a>
         <div class="container variant-list-wrapper">
             <!-- Tiêu đề -->
             <h3 class="product-list-title">Variant List</h3>

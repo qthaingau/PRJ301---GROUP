@@ -11,7 +11,9 @@
     </head>
     <!-- body dùng nền gradient giống các trang admin -->
     <body class="brand-list-body">
-
+<a href="MainController?txtAction=viewProducts" class="btn btn-secondary" style="margin-left: 10px;">
+            Back to Home
+        </a>
         <!-- Khung form kính mờ ở giữa -->
         <div class="container brand-form-wrapper">
             <h3 class="product-list-title">
