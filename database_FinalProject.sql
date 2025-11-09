@@ -25,9 +25,12 @@ CREATE TABLE [User] ( -- Tạo bảng Users
     fullName NVARCHAR(100),                     -- Họ và tên
     phoneNumber VARCHAR(20),                    -- Số điện thoại
     role VARCHAR(20) DEFAULT 'customer',        -- Vai trò: admin/staff/customer
-    createdAt DATETIME DEFAULT GETDATE()        -- Ngày tạo tài khoản
+    createdAt DATETIME DEFAULT GETDATE(),        -- Ngày tạo tài khoản
+	avatar NVARCHAR(MAX) NULL
 ); -- Bảng lưu người dùng
 GO
+ALTER TABLE [User]
+ADD active BIT DEFAULT 1;
 INSERT INTO [User] (userID, username, email, [password], fullName, phoneNumber, role, createdAt)
 VALUES
 ('U001', 'admin01', 'admin01@example.com', 'admin123', N'Nguyễn Văn Admin', '0901000001', 'admin', GETDATE()),
@@ -126,6 +129,7 @@ CREATE TABLE Product ( -- Tạo bảng Product
     brandID NVARCHAR(50) NOT NULL,             -- FK Brand
     createdAt DATETIME DEFAULT GETDATE(),      -- Ngày tạo
     isActive BIT DEFAULT 1,                    -- Trạng thái hiển thị
+	productImage NVARCHAR(MAX) NULL
     FOREIGN KEY (categoryID) REFERENCES Category(categoryID),
     FOREIGN KEY (brandID) REFERENCES Brand(brandID)
 ); -- Bảng sản phẩm
@@ -174,6 +178,7 @@ CREATE TABLE ProductVariant ( -- Tạo bảng biến thể sản phẩm
     stock INT DEFAULT 0,                         -- Tồn kho
     price DECIMAL(18,2) NOT NULL,                -- Giá bán
 	salesCount INT DEFAULT 0,					-- Lượt bán
+	variantImage NVARCHAR(MAX) NULL
     CONSTRAINT UQProductVariant UNIQUE (productID, size, color), -- Không trùng biến thể
     FOREIGN KEY (productID) REFERENCES Product(productID) -- FK Product
 ); -- Mỗi variant là 1 combo product+size+color
@@ -303,7 +308,7 @@ SELECT * FROM ProductVariant;
 /* ===========================
    6. PRODUCTIMAGE
    =========================== */
-CREATE TABLE ProductImage ( -- Tạo bảng ảnh sản phẩm
+/*CREATE TABLE ProductImage ( -- Tạo bảng ảnh sản phẩm
     imageID NVARCHAR(50) PRIMARY KEY,          -- Khoá chính ảnh
     productID NVARCHAR(50) NOT NULL,           -- FK tới Product (ảnh gắn chung cho product)
     imageUrl NVARCHAR(max) NOT NULL,           -- URL hoặc đường dẫn file ảnh
@@ -311,7 +316,7 @@ CREATE TABLE ProductImage ( -- Tạo bảng ảnh sản phẩm
     FOREIGN KEY (productID) REFERENCES Product(productID) -- FK Product
 ); -- Ảnh lưu theo product để tiện load gallery
 GO
-
+*/
 /* ===========================
    7. FAVORITE
    =========================== */
@@ -353,20 +358,33 @@ GO*/
 CREATE TABLE Cart ( -- Tạo bảng giỏ hàng
     cartID NVARCHAR(50) PRIMARY KEY,           -- ID giỏ hàng
     userID NVARCHAR(50) UNIQUE NOT NULL,       -- Mỗi user có 1 cart duy nhất
-    createdAt DATETIME DEFAULT GETDATE(),      -- Ngày tạo giỏ
     FOREIGN KEY (userID) REFERENCES [User](userID) -- FK Users
 ); -- Giỏ hàng trên mỗi user
 GO
 
-CREATE TABLE CartItem ( -- Tạo bảng chi tiết giỏ hàng
+CREATE TABLE CartItem ( 
     cartItemID NVARCHAR(50) PRIMARY KEY,        -- ID mục giỏ hàng
     cartID NVARCHAR(50) NOT NULL,               -- FK tới Cart
-    variantID NVARCHAR(50) NOT NULL,                     -- FK tới ProductVariant
-    quantity INT DEFAULT 1,                     -- Số lượng
-    FOREIGN KEY (cartID) REFERENCES Cart(cartID), -- FK Cart
-    FOREIGN KEY (variantID) REFERENCES ProductVariant(variantID) -- FK Variant
-); -- Lưu biến thể + số lượng trong giỏ
+    variantID NVARCHAR(50) NOT NULL,            -- FK tới ProductVariant
+    quantity INT DEFAULT 1 CHECK (quantity > 0),-- Số lượng
+    FOREIGN KEY (cartID) REFERENCES Cart(cartID) ON DELETE CASCADE,
+    FOREIGN KEY (variantID) REFERENCES ProductVariant(variantID)
+);
 GO
+
+-- Dữ liệu mẫu (tuỳ chọn)
+INSERT INTO Cart (cartID, userID)
+VALUES ('CART_U003', 'U003'); -- Giỏ hàng cho customer01
+
+INSERT INTO CartItem (cartItemID, cartID, variantID, quantity)
+VALUES 
+('CI001', 'CART_U003', 'PV001', 2),
+('CI002', 'CART_U003', 'PV004', 1);
+GO
+
+SELECT * FROM Cart;
+SELECT * FROM CartItem;
+
 
 /* ===========================
    10. ORDERS (đổi tên tránh dùng từ khoá)

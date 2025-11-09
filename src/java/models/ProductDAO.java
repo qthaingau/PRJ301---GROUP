@@ -128,6 +128,7 @@ public class ProductDAO {
                 product.setBrandID(rs.getString("brandID"));
                 product.setCreatedAt(rs.getDate("createdAT").toLocalDate());
                 product.setIsActive(rs.getBoolean("isActive"));
+                product.setProductImage(rs.getString("productImage"));
                 return product;
             }
         } catch (Exception e) {

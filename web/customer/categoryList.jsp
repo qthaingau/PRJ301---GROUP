@@ -12,13 +12,6 @@
     <!-- dùng chung class body với brandList -->
     <body class="brand-list-body">
 
-        <!-- Back to Home -->
-        <div class="text-start">
-            <a href="MainController?txtAction=viewProducts" class="btn btn-back">
-                ← Back to Home
-            </a>
-        </div>
-
         <!-- Khung chính ở giữa -->
         <div class="container brand-list-wrapper">
             <h3 class="brand-list-title">Category List</h3>

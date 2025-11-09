@@ -10,11 +10,9 @@
     color: #f5f5f5;
     min-height: 100vh;
     margin: 0;
-    padding: 20px 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    padding: 20px 0 40px;
 }
+
 @keyframes gradientMove {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
@@ -26,8 +24,9 @@
    =========================== */
 .brand-list-wrapper,
 .product-list-wrapper {
-    width: 100%;
-    max-width: 1100px;
+    width: 90%;
+    max-width: 1200px;
+    margin: 30px auto 0;
     background: rgba(255, 255, 255, 0.05);
     border-radius: 18px;
     border: 1px solid rgba(255, 255, 255, 0.15);
@@ -37,18 +36,18 @@
 }
 
 /* ===========================
-   NÚT BACK
+   NÚT BACK (góc trái)
    =========================== */
 .btn-back,
 .btn-outline-light {
     margin-left: 20px;
-    margin-bottom: 10px;
+    margin-top: 10px;
     background: rgba(255, 255, 255, 0.05);
     color: #fff;
     border: 1px solid rgba(255, 255, 255, 0.4);
     font-weight: 600;
-    border-radius: 6px;
-    padding-inline: 14px;
+    border-radius: 999px;
+    padding: 6px 16px;
 }
 .btn-back:hover,
 .btn-outline-light:hover {
@@ -70,8 +69,6 @@
     text-transform: uppercase;
     letter-spacing: 1.6px;
     margin-bottom: 24px;
-
-    /* chữ gradient */
     background: linear-gradient(
         120deg,
         #ffffff,
@@ -84,15 +81,11 @@
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-
-    /* glow nhẹ */
     text-shadow:
         0 0 6px rgba(255, 255, 255, 0.4),
         0 0 12px rgba(255, 59, 48, 0.55);
-
     animation: titleShimmer 4s linear infinite;
 }
-
 .brand-list-title::after,
 .product-list-title::after {
     content: "";
@@ -104,8 +97,6 @@
     border-radius: 999px;
     box-shadow: 0 0 10px rgba(255, 59, 48, 0.7);
 }
-
-/* Hiệu ứng shimmer chạy qua chữ */
 @keyframes titleShimmer {
     0%   { background-position: 0% 50%; }
     50%  { background-position: 100% 50%; }
@@ -201,7 +192,7 @@
 }
 
 /* ===========================
-   BẢNG HIỂN THỊ (Tất cả loại)
+   BẢNG HIỂN THỊ
    =========================== */
 .product-table {
     width: 100%;
@@ -214,7 +205,8 @@
     font-weight: 700;
     text-transform: uppercase;
 }
-.product-table th, .product-table td {
+.product-table th,
+.product-table td {
     padding: 12px;
     text-align: center;
     vertical-align: middle;
@@ -269,74 +261,7 @@ a.product-link:hover {
 }
 
 /* ===========================
-   BRAND / CATEGORY FORM WRAPPER
-   =========================== */
-.brand-form-wrapper {
-    max-width: 600px;
-    margin-top: 40px;
-    background: rgba(0, 0, 0, 0.78);
-    border-radius: 18px;
-    padding: 24px 26px 28px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.85);
-}
-
-/* Giảm khoảng cách dưới tiêu đề trong form */
-.brand-form-wrapper .product-list-title {
-    margin-bottom: 18px;
-}
-
-/* ===========================
-   FORM FIELDS
-   =========================== */
-.category-form .form-label {
-    color: #f9fafb;
-    margin-bottom: 4px;
-}
-
-.category-form .form-control {
-    background: rgba(0, 0, 0, 0.7);
-    border: 1px solid #444;
-    color: #f9fafb;
-    border-radius: 8px;
-}
-.category-form .form-control::placeholder {
-    color: #9ca3af;
-}
-.category-form .form-control:focus {
-    border-color: #ff3b30;
-    box-shadow: 0 0 0 2px rgba(255, 59, 48, 0.4);
-}
-
-/* Radio */
-.category-form input[type="radio"] {
-    accent-color: #ff3b30;
-}
-
-/* ===========================
-   NÚT CANCEL
-   =========================== */
-.btn-cancel {
-    background: transparent;
-    color: #f5f5f5;
-    border: 1px solid #777;
-    border-radius: 8px;
-    padding-inline: 16px;
-}
-.btn-cancel:hover {
-    background: #333;
-    color: #ff3b30;
-    border-color: #ff3b30;
-    box-shadow: 0 0 8px rgba(255, 59, 48, 0.4);
-}
-
-/* Khoảng cách 2 nút trong form */
-.category-form .mt-4.d-flex.gap-2 .btn {
-    min-width: 140px;
-}
-
-/* ===========================
-   FORM WRAPPER FULL-SCREEN STYLE
+   FORM WRAPPER (Brand / Category / Product)
    =========================== */
 .brand-form-wrapper {
     max-width: 1200px;
@@ -349,16 +274,7 @@ a.product-link:hover {
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.85);
 }
 
-/* Tiêu đề trong form (kế thừa shimmer ở trên rồi) */
-.brand-form-wrapper .product-list-title {
-    margin-bottom: 25px;
-    text-align: center;
-    font-size: 1.8rem;
-}
-
-/* ===========================
-   FORM FIELDS
-   =========================== */
+/* layout form */
 .category-form {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -372,8 +288,8 @@ a.product-link:hover {
     margin-bottom: 6px;
 }
 
-.category-form .form-control, 
-.category-form select, 
+.category-form .form-control,
+.category-form select,
 .category-form textarea {
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid #555;
@@ -394,52 +310,12 @@ a.product-link:hover {
     box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.3);
 }
 
-/* ===========================
-   RADIO BUTTONS
-   =========================== */
 .category-form input[type="radio"] {
     accent-color: #ff3b30;
     transform: scale(1.2);
 }
 
-/* ===========================
-   BUTTONS TRONG FORM
-   =========================== */
-.btn-apply {
-    background: linear-gradient(135deg, #ff3b30, #ff6a00);
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    padding: 12px 30px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    transition: all 0.2s ease-in-out;
-}
-.btn-apply:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px rgba(255, 59, 48, 0.5);
-}
-
-.btn-cancel {
-    background: transparent;
-    color: #f5f5f5;
-    border: 1px solid #888;
-    border-radius: 10px;
-    padding: 12px 30px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    transition: all 0.2s ease-in-out;
-}
-.btn-cancel:hover {
-    background: #333;
-    color: #ff3b30;
-    border-color: #ff3b30;
-    box-shadow: 0 0 10px rgba(255, 59, 48, 0.4);
-}
-
-/* ===========================
-   BUTTON GROUP
-   =========================== */
+/* BUTTON GROUP TRONG FORM */
 .category-form .mt-4.d-flex.gap-2 {
     grid-column: 1 / -1;
     justify-content: center;
@@ -447,13 +323,6 @@ a.product-link:hover {
 }
 .category-form .mt-4.d-flex.gap-2 .btn {
     min-width: 180px;
-}
-
-.brand-list-body {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 /* ===========================

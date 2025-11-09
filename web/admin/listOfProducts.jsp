@@ -11,14 +11,6 @@
         <link rel="stylesheet" href="assets/css/adminTable.css">
     </head>
     <body class="product-list-body">
-
-        <!-- Nút quay về trang Home -->
-        <div class="text-start mt-3 ms-4">
-            <a href="MainController?txtAction=viewProducts" class="btn btn-outline-light">
-                ← Back to Home
-            </a>
-        </div>
-
         <div class="container product-list-wrapper">
             <!-- Tiêu đề -->
             <h3 class="product-list-title">Product List</h3>
@@ -91,10 +83,10 @@
                                         <c:param name="txtAction" value="viewCategoryList"/>
                                         <c:param name="categoryID" value="${p.categoryID}"/>
                                     </c:url>
-                                    
+
                                     <c:url var="statusUrl" value="MainController">
                                         <c:param name="txtAction" value="toggleProductStatus"/>
-                                        <c:param name="isActive" value="${p.isActive}"/>
+                                        <c:param name="productID" value="${p.productID}"/>
                                     </c:url>
 
 
@@ -108,14 +100,18 @@
                                         <td><a href="${detailUrl}" class="product-link">${p.description}</a></td>
                                         <td><a href="${categoryUrl}" class="product-link">${p.categoryID}</a></td>
                                         <td><a href="${brandUrl}" class="product-link">${p.brandID}</a></td>
-                                        <td><a href="${statusUrl}" class="product-link">${p.isActive}</a></td>
+                                        <td>
+                                            <a href="${statusUrl}" class="product-link">
+                                                ${p.isActive ? 'ACTIVE' : 'INACTIVE'}
+                                            </a>
+                                        </td>
 
 
                                         <td>
                                             <div class="d-flex justify-content-center gap-2">
-                                                <a href="MainController?txtAction=callSaveProduct&update=true&productID=${p.productID}"
+                                                <a href="MainController?txtAction=callSaveOnlyProduct&update=true&productID=${p.productID}"
                                                    class="btn btn-warning btn-sm fw-bold text-dark">Update</a>
-                                                <a href="MainController?txtAction=deleteProductWithVariant&productID=${p.productID}"
+                                                <a href="MainController?txtAction=deleteProduct&productID=${p.productID}"
                                                    class="btn btn-danger btn-sm fw-bold"
                                                    onclick="return confirm('Are you sure you want to delete this product?');">Delete</a>
                                             </div>

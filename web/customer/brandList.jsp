@@ -8,16 +8,9 @@
 
         <!-- CSS layout admin -->
         <link rel="stylesheet" href="assets/css/adminTable.css">
+
     </head>
     <body class="brand-list-body">
-
-        <!-- Back to Home -->
-        <div class="text-start">
-            <a href="MainController?txtAction=viewProducts" class="btn btn-back">
-                ← Back to Home
-            </a>
-        </div>
-
         <!-- Khung chính -->
         <div class="container brand-list-wrapper">
 

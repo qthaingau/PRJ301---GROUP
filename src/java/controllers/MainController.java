@@ -3,12 +3,18 @@ package controllers;
 import java.io.IOException;
 import java.util.Arrays;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 @WebServlet(name = "MainController", urlPatterns = {"/MainController"})
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024 * 1, // 1 MB
+    maxFileSize = 1024 * 1024 * 10,      // 10 MB
+    maxRequestSize = 1024 * 1024 * 50    // 50 MB
+)
+
 public class MainController extends HttpServlet {
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -18,14 +24,16 @@ public class MainController extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html; charset=UTF-8");
 
+        
         String txtAction = request.getParameter("txtAction");
+        System.out.println(txtAction);
         String url = "home.jsp"; // default
 
         String[] userActions = {"login", "logout", "searchUser", "addUser",
             "callUpdateUser", "updateUser", "deleteUser", "registerUser", "showRegister", "changePassword", "uploadAvatar"};
 
-        String[] productActions = {"viewProducts", "addProduct", "deleteProduct",
-            "viewProductDetail", "filterProduct", "filterProductList",
+        String[] productActions = {"viewProducts", "addProduct", "deleteProduct", "updateProduct",
+            "viewProductDetail", "filterProduct", "filterProductList", "callSaveOnlyProduct",
             "callSaveProduct", "addProductWithVariant", "updateProductWithVariant", "deleteProductWithVariant", "toggleProductStatus", "viewProductList"};
 
         String[] brandActions = {"viewBrandList", "updateBrand", "addBrand", "filterBrand", "callBrandForm", "deleteBrand"};

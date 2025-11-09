@@ -40,6 +40,38 @@ public class ProductController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    private void processCallSaveOnlyProduct(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+
+    String updateParam = request.getParameter("update");
+    boolean isUpdate = Boolean.parseBoolean(updateParam);
+
+    String productID = request.getParameter("productID");
+    if (productID != null) productID = productID.trim();
+
+    ProductDAO productDAO = new ProductDAO();
+//    ProductVariantDAO variantDAO = new ProductVariantDAO();
+    BrandDAO brandDAO = new BrandDAO();
+    CategoryDAO categoryDAO = new CategoryDAO();
+
+//    System.out.println(">>> processCallSaveOnlyProduct: update=" + isUpdate + ", productID=[" + productID + "]");
+
+    if (isUpdate && productID != null && !productID.isEmpty()) {
+        ProductDTO productDTO = productDAO.getProductByID(productID);
+        request.setAttribute("p", productDTO);
+    }
+
+    request.setAttribute("update", isUpdate);
+
+    // Dùng request scope thay vì session để tránh lỗi cache hoặc trống
+//    request.setAttribute("variantList", variantDAO.getAllVariantsByProductID(productID));
+    request.setAttribute("brandList", brandDAO.getActiveBrands());
+    request.setAttribute("categoryList", categoryDAO.getActiveCategories());
+
+    request.getRequestDispatcher("/admin/productForm.jsp").forward(request, response);
+}
+
+    
     private void processCallSaveProduct(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // Lấy cờ update từ request (true/false)
@@ -80,274 +112,152 @@ public class ProductController extends HttpServlet {
                 .forward(request, response);
     }
 
-    private void processSaveProductWithVariant(HttpServletRequest request, HttpServletResponse response, boolean update)
-            throws ServletException, IOException {
+    private void processSaveProduct(HttpServletRequest request, HttpServletResponse response, boolean update)
+        throws ServletException, IOException {
 
-        // *** CHANGED: dùng 1 dòng set luôn, không if (update == true) nữa
-        request.setAttribute("update", update);
+    // Giữ lại để JSP biết đang ở mode Add hay Update
+    request.setAttribute("update", update);
 
-        // Regex for IDs: P***, C***, B***, PV***
-        String regexP = "^P\\d{3}$";
-        String regexC = "^C\\d{3}$";
-        String regexB = "^B\\d{3}$";
-        String regexV = "^PV\\d{3}$";   // (giữ nguyên như bản gần nhất của bạn)
+    // Regex cho ID: P***, C***, B***
+    String regexP = "^[pP]\\d{3}$";
+    String regexC = "^[cC]\\d{3}$";
+    String regexB = "^[bB]\\d{3}$";
 
-        // --- Read form parameters ---
-        String productID = request.getParameter("txtProductID");
-        String productName = request.getParameter("txtProductName");
-        String description = request.getParameter("txtDescription");
-        String categoryID = request.getParameter("txtCategoryID");
-        String brandID = request.getParameter("txtBrandID");
-        String productImage = request.getParameter("txtProductImage");
+    // --- Read form parameters (CHỈ PRODUCT) ---
+    String productID = request.getParameter("txtProductID").toUpperCase();
+    String productName = request.getParameter("txtProductName");
+    String description = request.getParameter("txtDescription");
+    String categoryID = request.getParameter("txtCategoryID").toUpperCase();
+    String brandID = request.getParameter("txtBrandID").toUpperCase();
+    String productImage = request.getParameter("txtProductImage");
 
-        String variantID = request.getParameter("txtVariantID");
-        String size = request.getParameter("txtSize");
-        String color = request.getParameter("txtColor");
-        String stockStr = request.getParameter("txtStock");
-        String priceStr = request.getParameter("txtPrice");
-        String variantImage = request.getParameter("txtVariantImage");
+    // --- Prepare DAOs ---
+    ProductDAO productDAO = new ProductDAO();
+    CategoryDAO categoryDAO = new CategoryDAO();
+    BrandDAO brandDAO = new BrandDAO();
 
-        // --- Prepare DAOs ---
-        ProductDAO productDAO = new ProductDAO();
-        ProductVariantDAO variantDAO = new ProductVariantDAO();
-        CategoryDAO categoryDAO = new CategoryDAO();
-        BrandDAO brandDAO = new BrandDAO();
+    // --- Error messages ---
+    String error_productID = "";
+    String error_productName = "";
+    String error_description = "";
+    String error_categoryID = "";
+    String error_brandID = "";
+    String error = "";
 
-        // --- Error messages ---
-        String error_productID = "";
-        String error_productName = "";
-        String error_description = "";
-        String error_categoryID = "";
-        String error_brandID = "";
-        String error_variantID = "";
-        String error_size = "";
-        String error_color = "";
-        String error_stock = "";
-        String error_price = "";
+    boolean hasError = false;
 
-        boolean hasError = false;
-
-        // Lấy sẵn variant cũ khi update (để lấy salesCount)
-        ProductVariantDTO oldVariant = null;
-        if (update && variantID != null && !variantID.trim().isEmpty()) {
-            oldVariant = variantDAO.getVariantByID(variantID.trim());
-        }
-
-        // --- Validate ProductID ---
-        if (productID == null || productID.trim().isEmpty()) {
-            error_productID = "Product ID cannot be empty!";
-            hasError = true;
-        } else if (!productID.trim().matches(regexP)) {
-            error_productID = "Product ID must follow format P*** (e.g., P001).";
-            hasError = true;
-        } else {
-            if (!update) { // ADD: không được trùng
-                if (productDAO.getProductByID(productID.trim()) != null) {
-                    error_productID = "Product ID is duplicated!";
-                    hasError = true;
-                }
-            } else {       // UPDATE: phải tồn tại
-                if (productDAO.getProductByID(productID.trim()) == null) {
-                    error_productID = "Product ID does not exist!";
-                    hasError = true;
-                }
+    // --- Validate ProductID ---
+    if (productID == null || productID.trim().isEmpty()) {
+        error_productID = "Product ID cannot be empty!";
+        hasError = true;
+    } else if (!productID.trim().matches(regexP)) {
+        error_productID = "Product ID must follow format P*** (e.g., P001).";
+        hasError = true;
+    } else {
+        if (!update) { // ADD: không được trùng
+            if (productDAO.getProductByID(productID.trim()) != null) {
+                error_productID = "Product ID is duplicated!";
+                hasError = true;
             }
-        }
-
-        // --- Validate Product Name ---
-        if (productName == null || productName.trim().isEmpty()) {
-            error_productName = "Product name cannot be empty!";
-            hasError = true;
-        }
-
-        // --- Validate Description ---
-        if (description == null || description.trim().isEmpty()) {
-            error_description = "Description cannot be empty!";
-            hasError = true;
-        }
-
-        // --- Validate CategoryID ---
-        if (categoryID == null || categoryID.trim().isEmpty()) {
-            error_categoryID = "Category ID cannot be empty!";
-            hasError = true;
-        } else if (!categoryID.trim().matches(regexC)) {
-            error_categoryID = "Category ID must follow format C*** (e.g., C001).";
-            hasError = true;
-        } else if (categoryDAO.getCategoryByID(categoryID.trim()) == null) {
-            error_categoryID = "Category ID does not exist!";
-            hasError = true;
-        }
-
-        // --- Validate BrandID ---
-        if (brandID == null || brandID.trim().isEmpty()) {
-            error_brandID = "Brand ID cannot be empty!";
-            hasError = true;
-        } else if (!brandID.trim().matches(regexB)) {
-            error_brandID = "Brand ID must follow format B*** (e.g., B001).";
-            hasError = true;
-        } else if (brandDAO.getBrandByID(brandID.trim()) == null) {
-            error_brandID = "Brand ID does not exist!";
-            hasError = true;
-        }
-
-        // --- Validate VariantID ---
-        if (variantID == null || variantID.trim().isEmpty()) {
-            error_variantID = "Variant ID cannot be empty!";
-            hasError = true;
-        } else if (!variantID.trim().matches(regexV)) {
-            // *** CHANGED: message cho khớp pattern mới PV***
-            error_variantID = "Variant ID must follow format PV*** (e.g., PV001).";
-            hasError = true;
-        } else {
-            if (!update) { // ADD: không được trùng
-                if (variantDAO.getVariantByID(variantID.trim()) != null) {
-                    error_variantID = "Variant ID already exists!";
-                    hasError = true;
-                }
-            } else {       // UPDATE: bắt buộc phải tồn tại
-                if (oldVariant == null) {
-                    error_variantID = "Variant ID does not exist in database!";
-                    hasError = true;
-                }
-            }
-        }
-
-        int stock = 0;
-        double price = 0;
-
-        // *** CHANGED TOÀN BỘ KHỐI NÀY ***
-        // Trước đây: chỉ validate size/color/stock/price khi !update,
-        // còn update thì lấy lại từ oldVariant -> không bao giờ đổi được dữ liệu.
-        // Bây giờ: validate cho CẢ add & update, luôn dùng giá trị user nhập.
-        // --- Validate Size ---
-        if (size == null || size.trim().isEmpty()) {
-            error_size = "Size cannot be empty!";
-            hasError = true;
-        }
-
-        // --- Validate Color ---
-        if (color == null || color.trim().isEmpty()) {
-            error_color = "Color cannot be empty!";
-            hasError = true;
-        }
-
-        // --- Validate Stock ---
-        if (stockStr == null || stockStr.trim().isEmpty()) {
-            error_stock = "Stock cannot be empty!";
-            hasError = true;
-        } else {
-            try {
-                stock = Integer.parseInt(stockStr.trim());
-                if (stock < 0) {
-                    error_stock = "Stock cannot be negative!";
-                    hasError = true;
-                }
-            } catch (NumberFormatException e) {
-                error_stock = "Stock must be a valid integer!";
+        } else { // UPDATE: bắt buộc phải tồn tại
+            if (productDAO.getProductByID(productID.trim()) == null) {
+                error_productID = "Product ID does not exist!";
                 hasError = true;
             }
         }
-
-        // --- Validate Price ---
-        if (priceStr == null || priceStr.trim().isEmpty()) {
-            error_price = "Price cannot be empty!";
-            hasError = true;
-        } else {
-            try {
-                price = Double.parseDouble(priceStr.trim());
-                if (price < 0) {
-                    error_price = "Price cannot be negative!";
-                    hasError = true;
-                }
-            } catch (NumberFormatException e) {
-                error_price = "Price must be a valid number!";
-                hasError = true;
-            }
-        }
-
-        // --- Create DTOs ---
-        ProductDTO product = new ProductDTO(
-                productID,
-                productName,
-                description,
-                categoryID,
-                brandID,
-                null,
-                true,
-                productImage
-        );
-
-        // *** CHANGED: chỉ giữ lại salesCount cũ khi update,
-        // không override size/color/stock/price bằng oldVariant nữa
-        int salesCount = 0;
-        if (update && oldVariant != null) {
-            salesCount = oldVariant.getSalesCount();
-        }
-
-        ProductVariantDTO variant = new ProductVariantDTO(
-                variantID,
-                productID,
-                size,
-                color,
-                stock,
-                price,
-                salesCount,
-                variantImage
-        );
-
-        String error = "";
-
-        // --- If no validation error, try to insert/update DB ---
-        if (!hasError) {
-            // *** CHANGED: khởi tạo giá trị mặc định cho ok1, ok2
-            boolean ok1 = false;
-            boolean ok2 = false;
-
-            try {
-                if (update) {
-                    ok1 = productDAO.update(product);
-                    ok2 = variantDAO.update(variant);
-                } else {
-                    ok1 = productDAO.insert(product);
-                    ok2 = variantDAO.insert(variant);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                error = "System error: " + e.getMessage();
-                hasError = true;
-            }
-
-            if (!ok1 || !ok2) {
-                error = update
-                        ? "Failed to update product or variant!"
-                        : "Failed to add product or variant!";
-                hasError = true;
-            }
-        }
-
-        // --- If there is any error -> forward back to form with messages ---
-        if (hasError) {
-            request.setAttribute("p", product);
-            request.setAttribute("v", variant);
-            request.setAttribute("error_productID", error_productID);
-            request.setAttribute("error_productName", error_productName);
-            request.setAttribute("error_description", error_description);
-            request.setAttribute("error_categoryID", error_categoryID);
-            request.setAttribute("error_brandID", error_brandID);
-            request.setAttribute("error_variantID", error_variantID);
-            request.setAttribute("error_size", error_size);
-            request.setAttribute("error_color", error_color);
-            request.setAttribute("error_stock", error_stock);
-            request.setAttribute("error_price", error_price);
-            request.setAttribute("error", error);
-
-            request.getRequestDispatcher("/admin/productForm.jsp").forward(request, response);
-            return;
-        }
-
-        // --- If everything OK -> go back to product list ---
-        response.sendRedirect("MainController?txtAction=viewProducts");
     }
+
+    // --- Validate Product Name ---
+    if (productName == null || productName.trim().isEmpty()) {
+        error_productName = "Product name cannot be empty!";
+        hasError = true;
+    }
+
+    // --- Validate Description ---
+    if (description == null || description.trim().isEmpty()) {
+        error_description = "Description cannot be empty!";
+        hasError = true;
+    }
+
+    // --- Validate CategoryID ---
+    if (categoryID == null || categoryID.trim().isEmpty()) {
+        error_categoryID = "Category ID cannot be empty!";
+        hasError = true;
+    } else if (!categoryID.trim().matches(regexC)) {
+        error_categoryID = "Category ID must follow format C*** (e.g., C001).";
+        hasError = true;
+    } else if (categoryDAO.getCategoryByID(categoryID.trim()) == null) {
+        error_categoryID = "Category ID does not exist!";
+        hasError = true;
+    }
+
+    // --- Validate BrandID ---
+    if (brandID == null || brandID.trim().isEmpty()) {
+        error_brandID = "Brand ID cannot be empty!";
+        hasError = true;
+    } else if (!brandID.trim().matches(regexB)) {
+        error_brandID = "Brand ID must follow format B*** (e.g., B001).";
+        hasError = true;
+    } else if (brandDAO.getBrandByID(brandID.trim()) == null) {
+        error_brandID = "Brand ID does not exist!";
+        hasError = true;
+    }
+
+    // --- Create Product DTO ---
+    ProductDTO product = new ProductDTO(
+            productID,
+            productName,
+            description,
+            categoryID,
+            brandID,
+            null,       // tuỳ constructor của bạn: có thể là createdDate / updatedDate
+            true,       // isActive
+            productImage
+    );
+
+    // --- Nếu không có lỗi validate thì insert/update DB ---
+    if (!hasError) {
+        boolean ok1 = false;
+
+        try {
+            if (update) {
+                ok1 = productDAO.update(product);
+            } else {
+                ok1 = productDAO.insert(product);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            error = "System error: " + e.getMessage();
+            hasError = true;
+        }
+
+        if (!ok1) {
+            error = update
+                    ? "Failed to update product!"
+                    : "Failed to add product!";
+            hasError = true;
+        }
+    }
+
+    // --- Nếu có lỗi: quay lại form + đẩy error ---
+    if (hasError) {
+        request.setAttribute("p", product);
+
+        request.setAttribute("error_productID", error_productID);
+        request.setAttribute("error_productName", error_productName);
+        request.setAttribute("error_description", error_description);
+        request.setAttribute("error_categoryID", error_categoryID);
+        request.setAttribute("error_brandID", error_brandID);
+        request.setAttribute("error", error);
+
+        request.getRequestDispatcher("/admin/productForm.jsp").forward(request, response);
+        return;
+    }
+
+    // --- OK thì quay về list product ---
+    response.sendRedirect("MainController?txtAction=viewProductList");
+}
+
 
     private void processDeleteWithVariant(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -358,7 +268,37 @@ public class ProductController extends HttpServlet {
         boolean deleted = variantDAO.delete(vID, pID);
 
         if (deleted) {
-            request.getRequestDispatcher("home.jsp").forward(request, response);
+            request.getRequestDispatcher("admin/listOfProducts.jsp").forward(request, response);
+        } else {
+            request.setAttribute("msg", "Xoá thất bại!");
+            request.getRequestDispatcher("error.jsp").forward(request, response);
+        }
+    }
+
+    private void processDeleteProduct(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String pID = request.getParameter("productID");
+
+        ProductVariantDAO variantDAO = new ProductVariantDAO();
+        List<ProductVariantDTO> listVariant = variantDAO.getAllVariantsByProductID(pID);
+
+        // Giả định xoá thành công, nếu có 1 cái fail thì set = false
+        boolean deletedAll = true;
+
+        if (listVariant != null && !listVariant.isEmpty()) {
+            for (ProductVariantDTO v : listVariant) {
+                boolean ok = variantDAO.delete(v.getVariantID(), pID); // dùng đúng variantID
+                if (!ok) {
+                    deletedAll = false;
+                    break; // 1 cái lỗi là đủ
+                }
+            }
+        }
+
+        if (deletedAll) {
+            // redirect về list để tránh lỗi F5 bị submit lại
+            response.sendRedirect("MainController?txtAction=viewProductList");
         } else {
             request.setAttribute("msg", "Xoá thất bại!");
             request.getRequestDispatcher("error.jsp").forward(request, response);
@@ -383,7 +323,7 @@ public class ProductController extends HttpServlet {
             if (txtAction.equals("filterProductList")) {
                 request.getRequestDispatcher("admin/listOfProducts.jsp").forward(request, response);
             } else {
-            request.getRequestDispatcher("home.jsp").forward(request, response);
+                request.getRequestDispatcher("home.jsp").forward(request, response);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -393,69 +333,39 @@ public class ProductController extends HttpServlet {
     }
 
     private void processViewProductDetail(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-
-    String productID = request.getParameter("productID");
-    if (productID == null || productID.trim().isEmpty()) {
-        response.sendRedirect("MainController?txtAction=viewProducts");
-        return;
-    }
-
-    ProductDAO productDAO = new ProductDAO();
-    ProductVariantDAO variantDAO = new ProductVariantDAO();
-
-    ProductDTO product = productDAO.getProductByID(productID);
-    if (product == null) {
-        request.setAttribute("msg", "Sản phẩm không tồn tại!");
-        request.getRequestDispatcher("error.jsp").forward(request, response);
-        return;
-    }
-
-    // Lấy tất cả variant
-    List<ProductVariantDTO> allVariants = variantDAO.getAllVariantsByProductID(productID);
-
-    // GỘP THEO COLOR + PRICE + IMAGE (dùng Map)
-    Map<String, List<ProductVariantDTO>> grouped = new LinkedHashMap<>();
-    for (ProductVariantDTO v : allVariants) {
-        String key = v.getColor() + "|" + v.getPrice() + "|" + (v.getVariantImage() != null ? v.getVariantImage() : "");
-        grouped.computeIfAbsent(key, k -> new ArrayList<>()).add(v);
-    }
-
-    // Gửi Map trực tiếp vào JSP
-    request.setAttribute("product", product);
-    request.setAttribute("groupedVariants", grouped);
-
-    request.getRequestDispatcher("/customer/productDetail.jsp").forward(request, response);
-}
-
-    private void processViewProductsManager(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Lấy session hiện tại (nếu có)
-        HttpSession session = request.getSession(false);
-
-        // Nếu session đã tồn tại, xóa danh sách sản phẩm cũ
-        if (session != null) {
-            session.removeAttribute("listProducts");  // Xóa danh sách sản phẩm cũ trong session
-        } else {
-            session = request.getSession(true); // Nếu không có session, tạo session mới
+        String productID = request.getParameter("productID");
+        if (productID == null || productID.trim().isEmpty()) {
+            response.sendRedirect("MainController?txtAction=viewProducts");
+            return;
         }
 
-        try {
-            // Lấy danh sách sản phẩm mới nhất từ ProductDAO
-            ProductDAO productDAO = new ProductDAO();
-            List<ProductDTO> listProducts = productDAO.getAllProduct();
+        ProductDAO productDAO = new ProductDAO();
+        ProductVariantDAO variantDAO = new ProductVariantDAO();
 
-            // Đưa listProducts vào session
-            session.setAttribute("listProducts", listProducts);
-
-            // Chuyển hướng tới trang home.jsp
-            request.getRequestDispatcher("admin/listOfProducts.jsp").forward(request, response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("msg", "Error loading product list!");
-            request.getRequestDispatcher("home.jsp").forward(request, response);
+        ProductDTO product = productDAO.getProductByID(productID);
+        if (product == null) {
+            request.setAttribute("msg", "Sản phẩm không tồn tại!");
+            request.getRequestDispatcher("error.jsp").forward(request, response);
+            return;
         }
+
+        // Lấy tất cả variant
+        List<ProductVariantDTO> allVariants = variantDAO.getAllVariantsByProductID(productID);
+
+        // GỘP THEO COLOR + PRICE + IMAGE (dùng Map)
+        Map<String, List<ProductVariantDTO>> grouped = new LinkedHashMap<>();
+        for (ProductVariantDTO v : allVariants) {
+            String key = v.getColor() + "|" + v.getPrice() + "|" + (v.getVariantImage() != null ? v.getVariantImage() : "");
+            grouped.computeIfAbsent(key, k -> new ArrayList<>()).add(v);
+        }
+
+        // Gửi Map trực tiếp vào JSP
+        request.setAttribute("product", product);
+        request.setAttribute("groupedVariants", grouped);
+
+        request.getRequestDispatcher("/customer/productDetail.jsp").forward(request, response);
     }
 
     private void processViewProducts(HttpServletRequest request, HttpServletResponse response)
@@ -475,17 +385,20 @@ public class ProductController extends HttpServlet {
         try {
             // Lấy danh sách sản phẩm mới nhất từ ProductDAO
             ProductDAO productDAO = new ProductDAO();
+            ProductVariantDAO variantDAO = new ProductVariantDAO();
             List<ProductDTO> listProducts = productDAO.getAllProduct();
             String txtAction = request.getParameter("txtAction");
 
             // Đưa listProducts vào session
             session.setAttribute("listProducts", listProducts);
+            session.setAttribute("variantList", variantDAO.getAllVariants());
 
             // Chuyển hướng tới trang home.jsp
             if (txtAction.equals("viewProducts")) {
-               request.getRequestDispatcher("home.jsp").forward(request, response); 
+                request.getRequestDispatcher("home.jsp").forward(request, response);
+            } else {
+                request.getRequestDispatcher("admin/listOfProducts.jsp").forward(request, response);
             }
-            request.getRequestDispatcher("home.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("msg", "Error loading product list!");
@@ -521,24 +434,24 @@ public class ProductController extends HttpServlet {
                 txtAction = "viewProducts";
             }
 
-            if (txtAction.equals("viewProducts")) {
+            if (txtAction.equals("viewProducts") || txtAction.equals("viewProductList")) {
                 processViewProducts(request, response);
             } else if (txtAction.equals("filterProduct") || txtAction.equals("filterProductList")) {
                 processFilterProduct(request, response);
             } else if (txtAction.equals("viewProductDetail")) {
                 processViewProductDetail(request, response);
-            } else if (txtAction.equals("addProductWithVariant")) {
-                processSaveProductWithVariant(request, response, false);
+            } else if (txtAction.equals("addProduct")) {
+                processSaveProduct(request, response, false);
             } else if (txtAction.equals("callSaveProduct")) {
                 processCallSaveProduct(request, response);
-            } else if (txtAction.equals("updateProductWithVariant")) {
-                processSaveProductWithVariant(request, response, true);
-            } else if (txtAction.equals("deleteProductWithVariant")) {
-                processDeleteWithVariant(request, response);
+            } else if (txtAction.equals("updateProduct")) {
+                processSaveProduct(request, response, true);
+            } else if (txtAction.equals("deleteProduct")) {
+                processDeleteProduct(request, response);
             } else if (txtAction.equals("toggleProductStatus")) {
                 processToggleProductStatus(request, response);
-            } else if (txtAction.equals("viewProductList")) {
-                processViewProductsManager(request, response);
+            } else if (txtAction.equals("callSaveOnlyProduct")) {
+                processCallSaveOnlyProduct(request, response);
             }
         }
     }
