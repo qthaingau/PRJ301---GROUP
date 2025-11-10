@@ -175,9 +175,9 @@ public class UserController extends HttpServlet {
                 if (updated) {
                     user.setAvatar(base64Image);
                     session.setAttribute("user", user);
-                    System.out.println("✅ Avatar updated successfully as Base64 (" + base64Image.length() + " chars)");
+                    System.out.println(" Avatar updated successfully as Base64 (" + base64Image.length() + " chars)");
                 } else {
-                    System.out.println("❌ Avatar update failed in DB!");
+                    System.out.println("Avatar update failed in DB!");
                 }
 
             } catch (Exception e) {
@@ -251,8 +251,48 @@ public class UserController extends HttpServlet {
                 request.setAttribute("msg", "Lỗi khi xóa người dùng!");
                 request.getRequestDispatcher("error.jsp").forward(request, response);
             }
-        }
+        } else if (txtAction.equals("callUpdateUser")) {
+            try {
+                String uid = request.getParameter("uid");
+                UserDAO dao = new UserDAO();
+                UserDTO user = dao.getUserByID(uid); // phương thức cần thêm ở DAO
+                request.setAttribute("userToEdit", user);
+                request.getRequestDispatcher("customer/updateUser.jsp").forward(request, response);
+            } catch (Exception e) {
+                e.printStackTrace();
+                request.setAttribute("msg", "Lỗi khi mở form cập nhật!");
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            }
+        } else if (txtAction.equals("updateUser")) {
+            try {
+                String userID = request.getParameter("userID");
+                String fullName = request.getParameter("fullName");
+                String email = request.getParameter("email");
+                String phoneNumber = request.getParameter("phoneNumber");
+                String role = request.getParameter("role");
+                // checkbox hoặc select có thể trả null nếu không tick
+                String activeParam = request.getParameter("active");
+                boolean active = "on".equals(activeParam) || "1".equals(activeParam) || "true".equalsIgnoreCase(activeParam);
 
+                UserDAO dao = new UserDAO();
+                boolean updated = dao.updateUser(userID, fullName, email, phoneNumber, role, active);
+
+                if (updated) {
+                    request.setAttribute("msg", "Cập nhật người dùng thành công.");
+                } else {
+                    request.setAttribute("msg", "Cập nhật thất bại.");
+                }
+
+                // reload danh sách (chỉ users active nếu bạn muốn)
+                List<UserDTO> list = dao.getAllUsers();
+                request.setAttribute("listOfUsers", list);
+                request.getRequestDispatcher("admin/listOfUsers.jsp").forward(request, response);
+            } catch (Exception e) {
+                e.printStackTrace();
+                request.setAttribute("msg", "Lỗi khi cập nhật người dùng!");
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            }
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

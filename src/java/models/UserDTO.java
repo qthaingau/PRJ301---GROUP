@@ -25,6 +25,15 @@ public class UserDTO {
 
     public UserDTO() {
     }
+    
+    public UserDTO(String userID, String username, String fullName, String role, boolean active) {
+    this.userID = userID;
+    this.username = username;
+    this.fullName = fullName;
+    this.role = role;
+    this.active = active;
+}
+
 
     public UserDTO(String userID, String username, String email, String password, String fullName, String phoneNumber, String role, LocalDate createdAt) {
         this.userID = userID;
@@ -47,9 +56,7 @@ public class UserDTO {
         this.createdAt = createdAt;
     }
 
-    UserDTO(String string, String string0, String string1, String string2, boolean aBoolean) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+   
 
     public boolean isActive() {
         return active;
