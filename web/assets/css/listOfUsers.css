@@ -1,0 +1,147 @@
+/* ===== List of Users - Dark Red Theme ===== */
+
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Nền tổng thể: đen pha đỏ */
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #000000, #1a0000);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 0;
+  color: #eee;
+}
+
+/* Container chính */
+.container {
+  background: rgba(20, 20, 20, 0.9);
+  padding: 40px 30px;
+  border-radius: 15px;
+  width: 95%;
+  max-width: 1000px;
+  box-shadow: 0 0 25px rgba(255, 0, 0, 0.25);
+  border: 1px solid rgba(255, 0, 0, 0.4);
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+/* Tiêu đề */
+h1 {
+  color: #ff3333;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 25px;
+  text-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
+}
+
+/* Ô tìm kiếm */
+form input[type="text"] {
+  background-color: #1b1b1b;
+  border: 1px solid #333;
+  color: #eee;
+  border-radius: 8px;
+  padding: 10px;
+  transition: 0.3s;
+}
+form input[type="text"]:focus {
+  border-color: #ff3333;
+  box-shadow: 0 0 8px rgba(255, 0, 0, 0.5);
+  outline: none;
+}
+
+/* Nút tìm kiếm */
+button.btn.btn-primary {
+  background-color: #ff3333;
+  border: none;
+  font-weight: bold;
+  transition: 0.3s;
+}
+button.btn.btn-primary:hover {
+  background-color: #cc0000;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
+}
+
+/* Thẻ chứa bảng */
+.card {
+  background: rgba(15, 15, 15, 0.95);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 0, 0, 0.2);
+}
+
+/* Bảng danh sách */
+table {
+  width: 100%;
+  color: #eee;
+}
+thead {
+  background: rgba(255, 0, 0, 0.15);
+}
+thead th {
+  color: #ff6666;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+tbody tr {
+  transition: background 0.2s;
+}
+tbody tr:hover {
+  background: rgba(255, 0, 0, 0.08);
+}
+
+/* Badge (Role & Status) */
+.badge.text-bg-secondary {
+  background-color: #333;
+  color: #fff;
+}
+.badge.text-bg-success {
+  background-color: #009900;
+}
+.badge.text-bg-danger {
+  background-color: #cc0000;
+}
+
+/* Link Update & Delete */
+a {
+  color: #ff6666;
+  text-decoration: none;
+  font-weight: 600;
+}
+a:hover {
+  color: #ff3333;
+  text-decoration: underline;
+}
+.delete-btn {
+  color: #ff3333;
+  font-weight: bold;
+}
+.delete-btn:hover {
+  color: #cc0000;
+  text-decoration: underline;
+}
+
+/* No users found */
+.text-muted {
+  color: #bbb !important;
+}
+
+/* Hiệu ứng xuất hiện */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -2,32 +2,17 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-<<<<<<< HEAD
         <group>
-            <file>file:/D:/PRJ301/WebBanHang/web/admin/variantForm.jsp</file>
-            <file>file:/D:/PRJ301/WebBanHang/web/admin/productForm.jsp</file>
-            <file>file:/D:/PRJ301/WebBanHang/web/admin/categoryForm.jsp</file>
-            <file>file:/D:/PRJ301/WebBanHang/web/customer/productList.jsp</file>
-            <file>file:/D:/PRJ301/WebBanHang/src/java/controllers/VariantController.java</file>
-            <file>file:/D:/PRJ301/WebBanHang/src/java/filters/AdminAndStaffFilter.java</file>
-            <file>file:/D:/PRJ301/WebBanHang/src/java/controllers/MainController.java</file>
-            <file>file:/D:/PRJ301/WebBanHang/web/admin/productWithVariantForm.jsp</file>
-            <file>file:/D:/PRJ301/WebBanHang/src/java/models/ProductVariantDAO.java</file>
-            <file>file:/D:/PRJ301/WebBanHang/web/admin/listOfVariants.jsp</file>
-            <file>file:/D:/PRJ301/WebBanHang/web/admin/listOfProducts.jsp</file>
-            <file>file:/D:/PRJ301/WebBanHang/src/java/filters/AuthenticateFilter.java</file>
-            <file>file:/D:/PRJ301/WebBanHang/src/java/controllers/ProductController.java</file>
-            <file>file:/D:/PRJ301/WebBanHang/web/customer/productDetail.jsp</file>
-            <file>file:/D:/PRJ301/WebBanHang/src/java/filters/AdminFilter.java</file>
-            <file>file:/D:/PRJ301/WebBanHang/web/includes/header.jspf</file>
-            <file>file:/D:/PRJ301/WebBanHang/web/register.jsp</file>
-            <file>file:/D:/PRJ301/WebBanHang/src/java/models/ProductVariantDTO.java</file>
-            <file>file:/D:/PRJ301/WebBanHang/web/admin/listOfOrders.jsp</file>
-            <file>file:/D:/PRJ301/WebBanHang/web/admin/listOfPayments.jsp</file>
-            <file>file:/D:/PRJ301/WebBanHang/web/customer/checkout.jsp</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/web/includes/header.jspf</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/src/java/models/UserDAO.java</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/src/java/controllers/UserController.java</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/web/img/momo.png</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/src/java/models/UserDTO.java</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/web/customer/updateUser.jsp</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/src/java/models/AddressDAO.java</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/web/img/logo.png</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/src/java/controllers/MainController.java</file>
+            <file>file:/D:/FALL_2025_S4/PRJ301/gitHubProject/PRJ301---GROUP/web/admin/listOfUsers.jsp</file>
         </group>
-=======
-        <group/>
->>>>>>> 886808c4aa6d63ad2f536a78635f9bbc68be5242
     </open-files>
 </project-private>

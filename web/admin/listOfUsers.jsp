@@ -1,7 +1,5 @@
-
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -13,28 +11,13 @@
         <!-- Bootstrap CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
 
-        <style>
-            table td, table th {
-                vertical-align: middle;
-            }
-            thead th {
-                font-weight: 600;
-            }
-            .delete-btn {
-                color: #dc3545;
-                text-decoration: none;
-                font-weight: bold;
-            }
-            .delete-btn:hover {
-                color: #bd2130;
-                text-decoration: underline;
-            }
-        </style>
+        <!-- Link CSS riêng -->
+        <link rel="stylesheet" href="assets/css/listOfUsers.css" />
     </head>
-    <body class="bg-light">
+    <body>
 
         <div class="container py-4">
-            <h1 class="mb-4 text-primary">List of Users</h1>
+            <h1 class="mb-4">List of Users</h1>
 
             <!-- Form Search -->
             <form action="MainController" method="post" class="row g-2 mb-4">
@@ -52,7 +35,7 @@
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-striped table-hover mb-0 align-middle">
-                            <thead class="table-light">
+                            <thead>
                                 <tr>
                                     <th>UserID</th>
                                     <th>Username</th>
@@ -63,38 +46,36 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            <c:forEach var="u" items="${listOfUsers}">
-                                <tr>
-                                    <td>${u.userID}</td>
-                                    <td>${u.username}</td>
-                                    <td>${u.fullName}</td>
-                                    <td>
-                                        <span class="badge text-bg-secondary">${u.role}</span>
-                                    </td>
-                                    <td>
-                                <c:choose>
-                                    <c:when test="${u.active}">
-                                        <span class="badge text-bg-success">Active</span>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <span class="badge text-bg-danger">Inactive</span>
-                                    </c:otherwise>
-                                </c:choose>
-                                </td>
-                                <td>
-                                    <a href="MainController?txtAction=callUpdateUser&uid=${u.userID}">Update</a> |
-                                    <a href="MainController?txtAction=deleteUser&uid=${u.userID}" class="delete-btn" onclick="return confirmDelete('${u.fullName}')">Delete</a>
-                                </td>
-                                </tr>
-                            </c:forEach>
+                                <c:forEach var="u" items="${listOfUsers}">
+                                    <tr>
+                                        <td>${u.userID}</td>
+                                        <td>${u.username}</td>
+                                        <td>${u.fullName}</td>
+                                        <td><span class="badge">${u.role}</span></td>
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${u.active}">
+                                                    <span class="badge badge-success">Active</span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="badge badge-danger">Inactive</span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <td>
+                                            <a href="MainController?txtAction=callUpdateUser&uid=${u.userID}">Update</a> |
+                                            <a href="MainController?txtAction=deleteUser&uid=${u.userID}" class="delete-btn" onclick="return confirmDelete('${u.fullName}')">Delete</a>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
 
-                            <c:if test="${empty listOfUsers}">
-                                <tr>
-                                    <td colspan="6" class="text-center py-4">
-                                        <div class="text-muted">No users found.</div>
-                                    </td>
-                                </tr>
-                            </c:if>
+                                <c:if test="${empty listOfUsers}">
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4">
+                                            <div class="text-muted">No users found.</div>
+                                        </td>
+                                    </tr>
+                                </c:if>
                             </tbody>
                         </table>
                     </div>
@@ -105,10 +86,11 @@
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
+        <!-- Xác nhận xóa -->
         <script>
-                                        function confirmDelete(name) {
-                                            return confirm("Are you sure you want to delete user: " + name + "?");
-                                        }
+            function confirmDelete(name) {
+                return confirm("Are you sure you want to delete user: " + name + "?");
+            }
         </script>
 
     </body>
