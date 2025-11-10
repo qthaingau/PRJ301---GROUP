@@ -34,6 +34,6 @@
 
         <!-- External JS (nếu cần) -->
         <!-- <script src="assets/js/bootstrap.bundle.min.js"></script> -->
-        <%@ include file="includes/footer.jspf" %>
+        <%@ include file="../includes/footer.jspf" %>
     </body>
 </html>

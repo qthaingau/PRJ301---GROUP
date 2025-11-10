@@ -13,7 +13,7 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     </head>
     <body>
-         <%@ include file="../includes/header.jspf" %>
+        
         <div class="container">
             <a href="MainController?txtAction=viewProducts" class="back-btn">
                 ← Quay lại danh sách
@@ -59,7 +59,7 @@
                                 </div>
                                 <div class="product-subtitle">${product.productName}</div>
                                 <div class="color-name">${first.color}</div>
-                                <form class="add-to-cart-form" action="MainController" method="post">
+                                <form class="add-to-cart-form" onsubmit="addToCart(event, this)">
                                     <select name="variantID" class="form-select size-select" required>
                                         <option value="">Chọn size</option>
                                         <c:forEach var="v" items="${group}">
@@ -77,11 +77,11 @@
                                     <input type="number" name="quantity" class="form-control quantity-input"
                                            value="1" min="1" max="${maxStock > 0 ? maxStock : 1}" required>
                                     <input type="hidden" name="productID" value="${product.productID}">
-                                    <input type="hidden" name="maxStock" value="${maxStock}">
-                                    <button type="submit" name="txtAction" value="addToCart" class="btn-cart">
+
+                                    <button type="submit" class="btn-cart">
                                         <i class="bi bi-cart-plus"></i> Thêm vào giỏ
                                     </button>
-                                    <button type="submit" name="txtAction" value="buyNow" class="btn-buy">
+                                    <button type="button" class="btn-buy" onclick="buyNow(this)">
                                         <i class="bi bi-lightning-fill"></i> Mua ngay
                                     </button>
                                 </form>

@@ -133,27 +133,35 @@ public class CartDAO {
 
     // Lấy cart theo user, nếu chưa có thì tạo mới
     public CartDTO getOrCreateCartID(String userID) {
+        // Thử lấy cart hiện có
         CartDTO cart = getCartByUserID(userID);
-        if (cart != null) return cart;
+        if (cart != null) {
+            return cart;
+        }
 
-            try ( Connection conn = DBUtils.getConnection();  PreparedStatement ps = conn.prepareStatement(
-                    "INSERT INTO Cart(userID) OUTPUT INSERTED.cartID, VALUES(?)")) {
-                ps.setString(1, userID);
-                ResultSet rs = ps.executeQuery();
-                if (rs.next()) {
-                    return new CartDTO(rs.getString("cartID"), userID);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        // Nếu chưa có, tạo mới
+        try ( Connection conn = DBUtils.getConnection()) {
+            String cartID = "CART_" + userID + "_" + System.currentTimeMillis();
 
-            return null;
+            String sql = "INSERT INTO Cart (cartID, userID) VALUES (?, ?)";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, cartID);
+            ps.setString(2, userID);
+            ps.executeUpdate();
+
+            System.out.println("✅ Created new cart: " + cartID + " for user: " + userID);
+            return new CartDTO(cartID, userID);
+
+        } catch (Exception e) {
+            System.err.println("❌ Error creating cart:");
+            e.printStackTrace();
+        }
+        return null;
     }
-    
+
     public CartDTO getCartByUserID(String userID) {
-        try (Connection conn = DBUtils.getConnection();
-             PreparedStatement ps = conn.prepareStatement(
-                     "SELECT cartID, userID, createdAt FROM Cart WHERE userID=?")) {
+        try ( Connection conn = DBUtils.getConnection();  PreparedStatement ps = conn.prepareStatement(
+                "SELECT cartID, userID, createdAt FROM Cart WHERE userID=?")) {
             ps.setString(1, userID);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {

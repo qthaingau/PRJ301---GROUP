@@ -1,6 +1,6 @@
 <%-- footer.jspf --%>
 <%@ page pageEncoding="UTF-8" %>
-<link rel="stylesheet" href="footer.css">
+<link rel="stylesheet" href="assets/css/footer.css">
 
 <footer class="footer-htv">
     <div class="footer-content">
