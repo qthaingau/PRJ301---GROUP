@@ -1,3 +1,42 @@
-<%-- any content can be specified here e.g.: --%>
+<%-- footer.jspf --%>
 <%@ page pageEncoding="UTF-8" %>
-<h2>Hello World!</h2>
+<link rel="stylesheet" href="footer.css">
+
+<footer class="footer-htv">
+    <div class="footer-content">
+        <!-- Logo -->
+        <div class="footer-logo">
+            HTV SPORT
+        </div>
+        
+        <!-- Thông tin liên hệ -->
+        <div class="footer-info">
+            <div class="footer-info-item">
+                <span class="footer-info-icon">📍</span>
+                43A Điện Biên Phủ, Phường 15, Q. Bình Thạnh, TP.HCM
+            </div>
+            <div class="footer-info-item">
+                <span class="footer-info-icon">✉️</span>
+                HTVsport@gmail.com
+            </div>
+            <div class="footer-info-item">
+                <span class="footer-info-icon">📞</span>
+                0933 147 280
+            </div>
+        </div>
+        
+        <!-- Thông tin pháp lý -->
+        <div class="footer-legal">
+            <div class="footer-legal-title">THÔNG TIN PHÁP LÝ</div>
+            <div class="footer-legal-info">
+                <div>Ngày cấp: 21/04/2020</div>
+                <div>Nơi cấp: Sở kế hoạch và đầu tư TP.HCM</div>
+            </div>
+        </div>
+        
+        <!-- Copyright -->
+        <div class="footer-copyright">
+            &copy; 2024 HTV SPORT. All rights reserved.
+        </div>
+    </div>
+</footer>

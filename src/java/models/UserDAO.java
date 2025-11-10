@@ -160,7 +160,58 @@ public class UserDAO {
     }
     return false;
 }
+    
+    public List<UserDTO> searchUsersByName(String name) throws SQLException {
+    List<UserDTO> list = new ArrayList<>();
+    Connection con = null;
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+    try {
+        con = DBUtils.getConnection();
+        String sql = "SELECT userID, username, fullName, role, active FROM [User] WHERE fullName LIKE ? AND active = 1";
+        ps = con.prepareStatement(sql);
+        ps.setString(1, "%" + name + "%");
+        rs = ps.executeQuery();
 
+        while (rs.next()) {
+            list.add(new UserDTO(
+                rs.getString("userID"),
+                rs.getString("username"),
+                rs.getString("fullName"),
+                rs.getString("role"),
+                rs.getBoolean("active")
+            ));
+        }
+    }   catch (ClassNotFoundException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+        if (rs != null) rs.close();
+        if (ps != null) ps.close();
+        if (con != null) con.close();
+    }
+    return list;
+}
+
+    public boolean softDeleteUser(String userID) throws SQLException {
+    Connection con = null;
+    PreparedStatement ps = null;
+    boolean result = false;
+    try {
+        con = DBUtils.getConnection();
+        String sql = "UPDATE [User] SET active = 0 WHERE userID = ?";
+        ps = con.prepareStatement(sql);
+        ps.setString(1, userID);
+        result = ps.executeUpdate() > 0;
+    }   catch (ClassNotFoundException ex) {
+            Logger.getLogger(UserDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+        if (ps != null) ps.close();
+        if (con != null) con.close();
+    }
+    return result;
+}
+
+    
 
 
 
@@ -192,5 +243,51 @@ public class UserDAO {
         return list;
 
     }
+    public UserDTO getUserByID(String userID) {
+    UserDTO user = null;
+    String sql = "SELECT * FROM [User] WHERE userID = ?";
+    try (Connection conn = DBUtils.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, userID);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                user = new UserDTO();
+                user.setUserID(rs.getString("userID"));
+                user.setUsername(rs.getString("username"));
+                user.setPassword(rs.getString("password"));
+                user.setEmail(rs.getString("email"));
+                user.setFullName(rs.getString("fullName"));
+                user.setPhoneNumber(rs.getString("phoneNumber"));
+                user.setRole(rs.getString("role"));
+                if (rs.getDate("createdAt") != null) {
+                    user.setCreatedAt(rs.getDate("createdAt").toLocalDate());
+                }
+                user.setAvatar(rs.getString("avatar"));
+                user.setActive(rs.getBoolean("active"));
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return user;
+}
+
+    public boolean updateUser(String userID, String fullName, String email, String phoneNumber, String role, boolean active) {
+    String sql = "UPDATE [User] SET fullName = ?, email = ?, phoneNumber = ?, role = ?, active = ? WHERE userID = ?";
+    try (Connection conn = DBUtils.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, fullName);
+        ps.setString(2, email);
+        ps.setString(3, phoneNumber);
+        ps.setString(4, role);
+        ps.setBoolean(5, active);
+        ps.setString(6, userID);
+        return ps.executeUpdate() > 0;
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+
 
 }

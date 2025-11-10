@@ -44,10 +44,11 @@
                         <!-- Avatar -->
                         <c:choose>
                             <c:when test="${not empty sessionScope.user.avatar}">
-                                <img src="${pageContext.request.contextPath}/uploads/${sessionScope.user.avatar}"
+                                <img src="data:image/png;base64,${sessionScope.user.avatar}"
                                      alt="avatar"
                                      class="rounded-circle me-2"
                                      style="width: 35px; height: 35px; object-fit: cover; border: 2px solid #ffc107;">
+
                             </c:when>
                             <c:otherwise>
                                 <img src="${pageContext.request.contextPath}/assets/img/default-avatar.png"
@@ -105,7 +106,7 @@
                     </c:forEach>
                     <c:if test="${empty listBrand}">
                         <li><span class="dropdown-item text-muted">No brands available</span></li>
-                    </c:if>
+                        </c:if>
                 </ul>
             </li>
 
@@ -123,7 +124,7 @@
                     </c:forEach>
                     <c:if test="${empty listCategory}">
                         <li><span class="dropdown-item text-muted">No categories available</span></li>
-                    </c:if>
+                        </c:if>
                 </ul>
             </li>
 

@@ -1,3 +1,4 @@
+// src/java/models/CartItemDAO.java
 package models;
 
 import java.sql.*;
@@ -7,20 +8,26 @@ import utils.DBUtils;
 
 public class CartItemDAO {
 
-    // Lấy danh sách CartItem theo cartID
+    // ✅ Lấy danh sách CartItem - ưu tiên variantImage
     public List<CartItemDTO> getCartItemsByCartID(String cartID) {
         List<CartItemDTO> items = new ArrayList<>();
+        
+        // ✅ SQL: Ưu tiên variantImage, nếu null thì lấy productImage
         String sql = "SELECT ci.cartItemID, ci.variantID, ci.quantity, "
-                + "pv.size, pv.color, pv.price, p.productName, p.productImage "
-                + "FROM CartItem ci "
-                + "JOIN ProductVariant pv ON ci.variantID = pv.variantID "
-                + "JOIN Product p ON pv.productID = p.productID "
-                + "WHERE ci.cartID = ?";
+                   + "pv.size, pv.color, pv.price, "
+                   + "p.productName, "
+                   + "COALESCE(pv.variantImage, p.productImage) AS imageUrl "
+                   + "FROM CartItem ci "
+                   + "JOIN ProductVariant pv ON ci.variantID = pv.variantID "
+                   + "JOIN Product p ON pv.productID = p.productID "
+                   + "WHERE ci.cartID = ?";
 
         try (Connection conn = DBUtils.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
+            
             ps.setString(1, cartID);
             ResultSet rs = ps.executeQuery();
+            
             while (rs.next()) {
                 CartItemDTO item = new CartItemDTO();
                 item.setCartItemID(rs.getString("cartItemID"));
@@ -30,10 +37,14 @@ public class CartItemDAO {
                 item.setColor(rs.getString("color"));
                 item.setQuantity(rs.getInt("quantity"));
                 item.setPrice(rs.getDouble("price"));
-                item.setImageUrl(rs.getString("productImage"));
+                item.setImageUrl(rs.getString("imageUrl"));
                 items.add(item);
             }
+            
+            System.out.println("✅ Loaded " + items.size() + " items for cartID: " + cartID);
+            
         } catch (Exception e) {
+            System.err.println("❌ Error loading cart items:");
             e.printStackTrace();
         }
         return items;
@@ -58,7 +69,7 @@ public class CartItemDAO {
             rs = stockStmt.executeQuery();
             
             if (!rs.next()) {
-                System.out.println("Variant not found: " + variantID);
+                System.out.println("❌ Variant not found: " + variantID);
                 return false;
             }
             
@@ -66,7 +77,7 @@ public class CartItemDAO {
             rs.close();
             
             if (availableStock < quantity) {
-                System.out.println("Insufficient stock. Available: " + availableStock + ", Requested: " + quantity);
+                System.out.println("❌ Insufficient stock. Available: " + availableStock + ", Requested: " + quantity);
                 return false;
             }
 
@@ -82,9 +93,8 @@ public class CartItemDAO {
                 int currentQty = rs.getInt("quantity");
                 int newQty = currentQty + quantity;
                 
-                // Check if new total exceeds stock
                 if (newQty > availableStock) {
-                    System.out.println("Total quantity would exceed stock. Available: " + availableStock + ", Would be: " + newQty);
+                    System.out.println("❌ Total quantity would exceed stock. Available: " + availableStock + ", Would be: " + newQty);
                     return false;
                 }
                 
@@ -95,7 +105,7 @@ public class CartItemDAO {
                 updateStmt.setString(3, variantID);
                 int updated = updateStmt.executeUpdate();
                 
-                System.out.println("Updated cart item. Rows affected: " + updated);
+                System.out.println("✅ Updated cart item. Rows affected: " + updated);
                 return updated > 0;
             } else {
                 // Chưa có -> thêm mới
@@ -108,15 +118,14 @@ public class CartItemDAO {
                 insertStmt.setInt(4, quantity);
                 int inserted = insertStmt.executeUpdate();
                 
-                System.out.println("Inserted new cart item. Rows affected: " + inserted);
+                System.out.println("✅ Inserted new cart item. Rows affected: " + inserted);
                 return inserted > 0;
             }
         } catch (Exception e) {
-            System.err.println("Error in addOrUpdateItem:");
+            System.err.println("❌ Error in addOrUpdateItem:");
             e.printStackTrace();
             return false;
         } finally {
-            // Close resources
             try { if (rs != null) rs.close(); } catch (Exception e) { }
             try { if (checkStmt != null) checkStmt.close(); } catch (Exception e) { }
             try { if (stockStmt != null) stockStmt.close(); } catch (Exception e) { }
