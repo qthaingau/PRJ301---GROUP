@@ -1,0 +1,179 @@
+[33m81caeee[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m QT before trình bày
+[33m78b7693[m QT
+[33mf41199e[m hv
+[33me1cfa8c[m QT thêm lại list vô header
+[33mffa0f9a[m hv
+[33m19fc6cd[m QT push đi ngủ ai làm cái header bị lỗi rồi kìa
+[33mb3ee3b5[m QT up crud của variant hoàn chỉnh
+[33mc0554d2[m QT up CRUD hoàn chỉnh của variant
+[33ma357735[m hv
+[33m437c796[m QT hoàn thành CRUD product mới
+[33m165e491[m QT up css của all form
+[33m5eb7c97[m QT push code lần kế cuối dự án hoàn thành
+[33m015b192[m Update productDetail.jsp
+[33m9f57558[m hv
+[33m2396ad7[m Merge branch 'master' of https://github.com/qthaingau/PRJ301---GROUP
+[33mf915843[m hv
+[33me195862[m QT push
+[33m9781afe[m commit sửa conflic:
+[33mf2562b1[m QT update search header:
+[33m8b3e6dd[m Update header.jspf
+[33me440160[m Push tính năng header
+[33m94b7c01[m QT up thao tác với header
+[33m6ce7b61[m Update header.jspf
+[33mac21de6[m rồi nè
+[33mf89c05d[m QT up thao tác trong header
+[33m9dc779b[m TH fixbug
+[33m6020a35[m TH fixbug
+[33m65755c9[m QT push css mới
+[33m936d16d[m QT commit
+[33me898336[m Update header.jspf
+[33m25f379e[m QT add header
+[33m3328457[m QT add css
+[33md714808[m QT push css
+[33m773ffe0[m Update header.jspf
+[33m5336a38[m QT up product list
+[33mdcf6d66[m QT
+[33m31787d0[m QT push add product Image
+[33m52da68b[m Product image
+[33m6f24f9d[m Merge branch 'master' of https://github.com/qthaingau/PRJ301---GROUP
+[33m542b0f1[m up
+[33me2e2a17[m Update CartController.java
+[33m9cb763a[m hv
+[33m852945c[m hv
+[33m66d1b16[m QT
+[33m46b7a0c[m QT commit trước khi pull
+[33m6f416aa[m Update ProductVariantDTO.java
+[33ma5712e9[m Update header.jspf
+[33m9d7604f[m Update header.jspf
+[33m8c47d77[m hv
+[33m3118f4a[m hv
+[33mb0505ab[m QT x category, brand sắp
+[33m9271888[m commit trước
+[33m2594a1e[m menu nhen
+[33ma1dcb1c[m QT vẫn chưa login đuoc
+[33m5a92d27[m hv
+[33m5e49a46[m Up code
+[33md104172[m QT commit lại
+[33m5bc44fc[m QT commit before pull
+[33mfcdb3fb[m hv
+[33m5cc2412[m QT commit
+[33m6f4a87e[m Commit trước khi pull
+[33med9cc68[m QT
+[33m871af42[m TH up code load ava
+[33m53bd8b8[m Up
+[33m48b4a83[m QT làm sắp x crud của category với brand
+[33mfd4ea27[m QT Brand Category View Search, đang thêm Update, Delete
+[33ma36eadf[m hv
+[33m33ca84d[m hv
+[33me183808[m QT làm x CRUD của Product và Variant, đang thêm đường dẫn của image với promotion
+[33ma149d32[m QT làm
+[33m789a014[m QT làm á
+[33mfdf0f27[m QT làm
+[33m6e98041[m add dto, dao promotion, add command
+[33mce74f95[m QT
+[33mf54623a[m Merge branch 'master' of https://github.com/qthaingau/PRJ301---GROUP
+[33m61c8cc5[m image, promotion (chưa test)
+[33m84215a2[m TH
+[33m9acf250[m QT
+[33me14a199[m QT up delete
+[33me9c8f96[m hv
+[33mf35a807[m hv
+[33m2a0abfd[m QT update product, variant
+[33mda46a2d[m QT
+[33m3f39dca[m QT
+[33mefc2fde[m QQT
+[33mb50077e[m QT add product, variant
+[33m939ad9d[m QT
+[33m0616c1b[m QT
+[33mf20a86b[m AddressDAO
+[33m877196c[m QT cho view detail
+[33m25367b3[m QT productList
+[33m16d20e1[m QT push
+[33mccf3f6d[m QT đổi trang home.jsp
+[33me2b36b4[m Code register
+[33m07dd1a5[m Merge branch 'master' of https://github.com/qthaingau/PRJ301---GROUP
+[33ma08a154[m Save local Changes
+[33m14c12e4[m QT sửa cây thư mục js, css
+[33m29baccc[m QT down css, sửa product list
+[33maa994de[m QT up lại productList
+[33m1ec872f[m hv
+[33m63bad04[m QT merge
+[33m9824ebf[m hv
+[33m62a1761[m hv
+[33m51beb0e[m hv
+[33m5ee5be9[m QT Merging lại cho chính xác
+[33m61bb44b[m QT
+[33mb4fbc79[m TH UserDAO
+[33maec4032[m QT
+[33mb204093[m QT
+[33m0031e74[m QT
+[33m60181aa[m QT
+[33mc648411[m TH UserController
+[33m6d57987[m TH UserDAO
+[33m0e3f82a[m QT
+[33m3c11d10[m QT
+[33mac5722a[m TH up code
+[33m4f32eb2[m QT
+[33mf3cb814[m QT
+[33m95977a7[m QT
+[33m09d05d3[m QT
+[33mf0e3f26[m QT
+[33m089a768[m QT sắp xếp jsp
+[33mfb914b4[m QT thêm jsp
+[33m386b6a8[m QT
+[33m6ce1ee3[m QT
+[33m9fb6b36[m TH up AddressDTO
+[33m281a858[m Merge branch 'master' of https://github.com/qthaingau/PRJ301---GROUP
+[33ma20fe77[m huvu up code dto
+[33m1cbbb99[m TH up UserDTO
+[33m753f513[m hv
+[33meabc029[m Update UserDTO.java
+[33m1488746[m QT còn mỗi ProductImageDAO
+[33m11d78c2[m QT
+[33m0cd7696[m QT
+[33m755f65d[m QT cập nhật DAO product
+[33m4daee2e[m TH up code
+[33m39023f7[m TH up code
+[33m4c6ca4b[m QT
+[33m3d4abef[m[33m ([m[1;31morigin/Hai[m[33m)[m QT
+[33m90f92f5[m QT đang làm DAO product
+[33mec37641[m QT đang làm ProductDAO
+[33mec0ba1f[m QT mới sửa tên product variant
+[33md231fea[m QT thêm controller
+[33m0a48085[m QT mới cập nhật database như zalo
+[33m816df42[m QT xoá data base cũ
+[33mda195f7[m QT bổ sung DTO của Image
+[33mcfee971[m rồi nè
+[33m8269cc1[m QT lam ne
+[33m40d1c8d[m QT để lên cái database
+[33mfa1d7ac[m QT thêm DAO
+[33m3f3f153[m QT thêm vô á
+[33mcad515a[m QT đã xoá file CustomerDTO.java
+[33m3c44484[m QT mới làm xong
+[33m0ec7248[m Xoá file rác
+[33mb8fe86c[m tại sao
+[33mca27876[m[33m ([m[1;31morigin/origin/master[m[33m, [m[1;32morigin/master[m[33m)[m QT đã làm x mấy cái DTO
+[33m6a499d2[m QT đã làm mấy cái DTO
+[33m4d21b8b[m có sửa rồi
+[33mf7cbd64[m Add FINAL_PROJECT/djdjdjs.java
+[33mac2e318[m xxxxxx
+[33m20f9561[m Add files via upload
+[33m940ab8e[m QT mới thêm DBUtils
+[33mae6842d[m QT mới làm lại
+[33me7c8a73[m QT đã làm x mấy cái DTO
+[33mff46b28[m QT đã làm mấy cái DTO
+[33mafc6f29[m Create UserDTO.java
+[33m8d56f12[m Quốc Thái up mấy file này
+[33mb132887[m Update README with project group instructions
+[33m47dab1f[m Add CustomerDTO
+[33me3eebd6[m đã đổi
+[33mbb6cacc[m Đã upload file
+[33m30c6ccc[m đã sửa toàn bộ cái mới
+[33m3d4e740[m có sửa rồi
+[33m0e4bd7d[m Add FINAL_PROJECT/djdjdjs.java
+[33m700e463[m mmmmm
+[33m79c3e73[m xxxxxx
+[33mfeaf165[m Add files via upload
+[33m82a3e59[m Update README.md
+[33m1f2ce86[m Initial commit
