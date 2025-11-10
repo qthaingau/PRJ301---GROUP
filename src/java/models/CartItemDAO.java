@@ -52,88 +52,93 @@ public class CartItemDAO {
 
     // Thêm hoặc cập nhật số lượng
     public boolean addOrUpdateItem(String cartID, String variantID, int quantity) {
-        Connection conn = null;
-        PreparedStatement checkStmt = null;
-        PreparedStatement stockStmt = null;
-        PreparedStatement updateStmt = null;
-        PreparedStatement insertStmt = null;
-        ResultSet rs = null;
+    Connection conn = null;
+    PreparedStatement checkStmt = null;
+    PreparedStatement stockStmt = null;
+    PreparedStatement updateStmt = null;
+    PreparedStatement insertStmt = null;
+    ResultSet rs = null;
 
-        try {
-            conn = DBUtils.getConnection();
-            
-            // 1. Kiểm tra tồn kho
-            String stockSql = "SELECT stock FROM ProductVariant WHERE variantID = ?";
-            stockStmt = conn.prepareStatement(stockSql);
-            stockStmt.setString(1, variantID);
-            rs = stockStmt.executeQuery();
-            
-            if (!rs.next()) {
-                System.out.println("❌ Variant not found: " + variantID);
-                return false;
-            }
-            
-            int availableStock = rs.getInt("stock");
-            rs.close();
-            
-            if (availableStock < quantity) {
-                System.out.println("❌ Insufficient stock. Available: " + availableStock + ", Requested: " + quantity);
-                return false;
-            }
-
-            // 2. Kiểm tra đã có trong giỏ chưa
-            String checkSql = "SELECT quantity FROM CartItem WHERE cartID = ? AND variantID = ?";
-            checkStmt = conn.prepareStatement(checkSql);
-            checkStmt.setString(1, cartID);
-            checkStmt.setString(2, variantID);
-            rs = checkStmt.executeQuery();
-
-            if (rs.next()) {
-                // Đã có -> cập nhật số lượng
-                int currentQty = rs.getInt("quantity");
-                int newQty = currentQty + quantity;
-                
-                if (newQty > availableStock) {
-                    System.out.println("❌ Total quantity would exceed stock. Available: " + availableStock + ", Would be: " + newQty);
-                    return false;
-                }
-                
-                String updateSql = "UPDATE CartItem SET quantity = ? WHERE cartID = ? AND variantID = ?";
-                updateStmt = conn.prepareStatement(updateSql);
-                updateStmt.setInt(1, newQty);
-                updateStmt.setString(2, cartID);
-                updateStmt.setString(3, variantID);
-                int updated = updateStmt.executeUpdate();
-                
-                System.out.println("✅ Updated cart item. Rows affected: " + updated);
-                return updated > 0;
-            } else {
-                // Chưa có -> thêm mới
-                String itemID = "CI" + System.currentTimeMillis();
-                String insertSql = "INSERT INTO CartItem (cartItemID, cartID, variantID, quantity) VALUES (?, ?, ?, ?)";
-                insertStmt = conn.prepareStatement(insertSql);
-                insertStmt.setString(1, itemID);
-                insertStmt.setString(2, cartID);
-                insertStmt.setString(3, variantID);
-                insertStmt.setInt(4, quantity);
-                int inserted = insertStmt.executeUpdate();
-                
-                System.out.println("✅ Inserted new cart item. Rows affected: " + inserted);
-                return inserted > 0;
-            }
-        } catch (Exception e) {
-            System.err.println("❌ Error in addOrUpdateItem:");
-            e.printStackTrace();
+    try {
+        conn = DBUtils.getConnection();
+        System.out.println("🔍 Step 1: Checking stock for variant: " + variantID);
+        
+        // 1. Kiểm tra tồn kho
+        String stockSql = "SELECT stock FROM ProductVariant WHERE variantID = ?";
+        stockStmt = conn.prepareStatement(stockSql);
+        stockStmt.setString(1, variantID);
+        rs = stockStmt.executeQuery();
+        
+        if (!rs.next()) {
+            System.out.println("❌ Variant not found: " + variantID);
             return false;
-        } finally {
-            try { if (rs != null) rs.close(); } catch (Exception e) { }
-            try { if (checkStmt != null) checkStmt.close(); } catch (Exception e) { }
-            try { if (stockStmt != null) stockStmt.close(); } catch (Exception e) { }
-            try { if (updateStmt != null) updateStmt.close(); } catch (Exception e) { }
-            try { if (insertStmt != null) insertStmt.close(); } catch (Exception e) { }
-            try { if (conn != null) conn.close(); } catch (Exception e) { }
         }
+        
+        int availableStock = rs.getInt("stock");
+        System.out.println("📦 Available stock: " + availableStock + ", Requested quantity: " + quantity);
+        
+        if (availableStock < quantity) {
+            System.out.println("❌ Insufficient stock. Available: " + availableStock + ", Requested: " + quantity);
+            return false;
+        }
+
+        // 2. Kiểm tra đã có trong giỏ chưa
+        System.out.println("🔍 Step 2: Checking if item exists in cart: " + cartID);
+        String checkSql = "SELECT quantity FROM CartItem WHERE cartID = ? AND variantID = ?";
+        checkStmt = conn.prepareStatement(checkSql);
+        checkStmt.setString(1, cartID);
+        checkStmt.setString(2, variantID);
+        rs = checkStmt.executeQuery();
+
+        if (rs.next()) {
+            // Đã có -> cập nhật số lượng
+            int currentQty = rs.getInt("quantity");
+            int newQty = currentQty + quantity;
+            
+            System.out.println("🛒 Item exists - Current: " + currentQty + ", New total: " + newQty);
+            
+            if (newQty > availableStock) {
+                System.out.println("❌ Total quantity would exceed stock. Available: " + availableStock + ", Would be: " + newQty);
+                return false;
+            }
+            
+            String updateSql = "UPDATE CartItem SET quantity = ? WHERE cartID = ? AND variantID = ?";
+            updateStmt = conn.prepareStatement(updateSql);
+            updateStmt.setInt(1, newQty);
+            updateStmt.setString(2, cartID);
+            updateStmt.setString(3, variantID);
+            int updated = updateStmt.executeUpdate();
+            
+            System.out.println("✅ Updated cart item. Rows affected: " + updated);
+            return updated > 0;
+        } else {
+            // Chưa có -> thêm mới
+            System.out.println("🆕 Item not in cart, inserting new...");
+            String itemID = "CI" + System.currentTimeMillis();
+            String insertSql = "INSERT INTO CartItem (cartItemID, cartID, variantID, quantity) VALUES (?, ?, ?, ?)";
+            insertStmt = conn.prepareStatement(insertSql);
+            insertStmt.setString(1, itemID);
+            insertStmt.setString(2, cartID);
+            insertStmt.setString(3, variantID);
+            insertStmt.setInt(4, quantity);
+            int inserted = insertStmt.executeUpdate();
+            
+            System.out.println("✅ Inserted new cart item. Rows affected: " + inserted);
+            return inserted > 0;
+        }
+    } catch (Exception e) {
+        System.err.println("❌ Error in addOrUpdateItem:");
+        e.printStackTrace();
+        return false;
+    } finally {
+        try { if (rs != null) rs.close(); } catch (Exception e) { }
+        try { if (checkStmt != null) checkStmt.close(); } catch (Exception e) { }
+        try { if (stockStmt != null) stockStmt.close(); } catch (Exception e) { }
+        try { if (updateStmt != null) updateStmt.close(); } catch (Exception e) { }
+        try { if (insertStmt != null) insertStmt.close(); } catch (Exception e) { }
+        try { if (conn != null) conn.close(); } catch (Exception e) { }
     }
+}
 
     // Cập nhật số lượng
     public boolean updateQuantity(String cartID, String variantID, int quantity) {

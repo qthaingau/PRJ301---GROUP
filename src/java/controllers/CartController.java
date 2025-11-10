@@ -14,17 +14,18 @@ import models.UserDTO;
 
 @WebServlet("/CartController")
 public class CartController extends HttpServlet {
+
     private final CartDAO cartDAO = new CartDAO();
     private final CartItemDAO cartItemDAO = new CartItemDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         System.out.println("=== CartController GET ===");
         String action = request.getParameter("txtAction");
         System.out.println("Action: " + action);
-        
+
         HttpSession session = request.getSession();
         UserDTO user = (UserDTO) session.getAttribute("user");
 
@@ -36,7 +37,7 @@ public class CartController extends HttpServlet {
 
         String userID = user.getUserID();
         System.out.println("User ID: " + userID);
-        
+
         String cartID = cartDAO.getOrCreateCartID(userID).getCartID();
         System.out.println("Cart ID: " + cartID);
 
@@ -48,15 +49,15 @@ public class CartController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         System.out.println("=== CartController POST ===");
-        
+
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
-        
+
         String action = request.getParameter("txtAction");
         System.out.println("Action: " + action);
-        
+
         HttpSession session = request.getSession();
         UserDTO user = (UserDTO) session.getAttribute("user");
 
@@ -75,7 +76,7 @@ public class CartController extends HttpServlet {
 
         String userID = user.getUserID();
         System.out.println("User ID: " + userID);
-        
+
         String cartID = cartDAO.getOrCreateCartID(userID).getCartID();
         System.out.println("Cart ID: " + cartID);
 
@@ -116,83 +117,90 @@ public class CartController extends HttpServlet {
 
     // ================== HANDLE METHODS ==================
     private void handleViewCart(HttpServletRequest request, HttpServletResponse response,
-                                String cartID, HttpSession session)
+            String cartID, HttpSession session)
             throws ServletException, IOException {
-        
+
         System.out.println("=== handleViewCart ===");
         System.out.println("CartID: " + cartID);
-        
+
         List<CartItemDTO> cartItems = cartItemDAO.getCartItemsByCartID(cartID);
         System.out.println("Cart items count: " + (cartItems != null ? cartItems.size() : "null"));
-        
+
         if (cartItems != null) {
             for (CartItemDTO item : cartItems) {
                 System.out.println("  - " + item.getProductName() + " (x" + item.getQuantity() + ")");
             }
         }
-        
+
         session.setAttribute("cart", cartItems);
         request.setAttribute("cartItems", cartItems);
         request.getRequestDispatcher("customer/cart.jsp").forward(request, response);
     }
 
     private void handleAddToCart(HttpServletRequest request, HttpServletResponse response,
-                                 String cartID, HttpSession session)
+            String cartID, HttpSession session)
             throws IOException {
-        
+
         System.out.println("=== handleAddToCart ===");
-        
+
         response.setContentType("text/plain;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        
+
         String variantID = request.getParameter("variantID");
         String quantityStr = request.getParameter("quantity");
-        
+
         System.out.println("VariantID: " + variantID);
         System.out.println("Quantity: " + quantityStr);
-        
+        System.out.println("CartID: " + cartID);
+
         // Validation
         if (variantID == null || variantID.trim().isEmpty()) {
-            System.out.println("Invalid variant ID");
+            System.out.println("❌ Invalid variant ID");
             out.write("INVALID_VARIANT");
             return;
         }
-        
+
         int quantity = parseIntSafely(quantityStr, 1);
         if (quantity <= 0) {
-            System.out.println("Invalid quantity: " + quantity);
+            System.out.println("❌ Invalid quantity: " + quantity);
             out.write("INVALID_QUANTITY");
             return;
         }
-        
-        System.out.println("Adding to cart - CartID: " + cartID + ", VariantID: " + variantID + ", Qty: " + quantity);
-        
-        boolean success = cartItemDAO.addOrUpdateItem(cartID, variantID, quantity);
-        
-        System.out.println("Add result: " + success);
-        
-        if (success) {
-            updateCartSession(session, cartID);
-            System.out.println("Cart updated in session");
-            out.write("OK");
-        } else {
-            System.out.println("Failed to add to cart (likely out of stock)");
-            out.write("OUT_OF_STOCK");
+
+        try {
+            System.out.println("🔄 Adding to cart - CartID: " + cartID + ", VariantID: " + variantID + ", Qty: " + quantity);
+
+            boolean success = cartItemDAO.addOrUpdateItem(cartID, variantID, quantity);
+
+            System.out.println("✅ Add result: " + success);
+
+            if (success) {
+                updateCartSession(session, cartID);
+                System.out.println("🔄 Cart updated in session");
+                out.write("OK");
+            } else {
+                System.out.println("❌ Failed to add to cart");
+                out.write("OUT_OF_STOCK");
+            }
+        } catch (Exception e) {
+            System.err.println("❌ Exception in handleAddToCart:");
+            e.printStackTrace();
+            out.write("ERROR");
         }
     }
 
     private void handleUpdateCart(HttpServletRequest request, HttpServletResponse response,
-                                  String cartID, HttpSession session)
+            String cartID, HttpSession session)
             throws IOException {
-        
+
         System.out.println("=== handleUpdateCart ===");
-        
+
         String variantID = request.getParameter("variantID");
         String quantityStr = request.getParameter("quantity");
         int quantity = parseIntSafely(quantityStr, 1);
-        
+
         System.out.println("VariantID: " + variantID + ", New Quantity: " + quantity);
-        
+
         if (quantity <= 0) {
             // If quantity is 0 or negative, remove the item
             System.out.println("Quantity <= 0, removing item");
@@ -201,54 +209,54 @@ public class CartController extends HttpServlet {
             System.out.println("Updating quantity");
             cartItemDAO.updateQuantity(cartID, variantID, quantity);
         }
-        
+
         updateCartSession(session, cartID);
         response.sendRedirect("MainController?txtAction=viewCart");
     }
 
     private void handleRemoveFromCart(HttpServletRequest request, HttpServletResponse response,
-                                      String cartID, HttpSession session)
+            String cartID, HttpSession session)
             throws IOException {
-        
+
         System.out.println("=== handleRemoveFromCart ===");
-        
+
         String variantID = request.getParameter("variantID");
         System.out.println("Removing VariantID: " + variantID);
-        
+
         cartItemDAO.removeItem(cartID, variantID);
         updateCartSession(session, cartID);
         response.sendRedirect("MainController?txtAction=viewCart");
     }
 
     private void handleAddToCartFirst(HttpServletRequest request, HttpServletResponse response,
-                                      String cartID, HttpSession session)
+            String cartID, HttpSession session)
             throws IOException {
-        
+
         System.out.println("=== handleAddToCartFirst ===");
-        
+
         response.setContentType("text/plain;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        
+
         String productID = request.getParameter("productID");
         int quantity = parseIntSafely(request.getParameter("quantity"), 1);
-        
+
         System.out.println("ProductID: " + productID + ", Quantity: " + quantity);
-        
+
         if (productID == null || productID.trim().isEmpty()) {
             out.write("INVALID_PRODUCT");
             return;
         }
-        
+
         String variantID = cartItemDAO.getFirstAvailableVariant(productID);
         System.out.println("First available variant: " + variantID);
-        
+
         if (variantID == null) {
             out.write("OUT_OF_STOCK");
             return;
         }
-        
+
         boolean added = cartItemDAO.addOrUpdateItem(cartID, variantID, quantity);
-        
+
         if (added) {
             updateCartSession(session, cartID);
             out.write("OK");
@@ -266,7 +274,9 @@ public class CartController extends HttpServlet {
     }
 
     private int parseIntSafely(String value, int defaultValue) {
-        if (value == null || value.trim().isEmpty()) return defaultValue;
+        if (value == null || value.trim().isEmpty()) {
+            return defaultValue;
+        }
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
