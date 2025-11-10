@@ -8,36 +8,21 @@
         <title>Product List</title>
 
         <!-- CSS theme đen – đỏ – trắng -->
-        <link rel="stylesheet" href="assets/css/adminTable.css">
+        <link rel="stylesheet" href="assets/css/listOfProducts.css">
     </head>
     <body class="product-list-body">
-        <a href="MainController?txtAction=viewProducts" class="btn btn-secondary" style="margin-left: 10px;">
-            Back to Home
-        </a>
+
+        <!-- Nút quay về trang Home -->
+        <div class="text-start mt-3 ms-4">
+            <a href="MainController?txtAction=viewProducts" class="btn btn-outline-light">
+                ← Back to Home
+            </a>
+        </div>
+
         <div class="container product-list-wrapper">
             <!-- Tiêu đề -->
             <h3 class="product-list-title">Product List</h3>
 
-            <form action="MainController" method="post" class="product-search-form mb-3">
-                <input type="hidden" name="txtAction" value="filterProductList"/>
-
-                <div class="row g-2 align-items-center justify-content-center">
-                    <div class="col-md-6">
-                        <div class="input-group">
-                            <span class="input-group-text">Search</span>
-                            <input type="text"
-                                   class="form-control"
-                                   name="keyword"
-                                   value="${keyword}"
-                                   placeholder="Search products...""/>
-                        </div>
-                    </div>
-
-                    <div class="col-auto">
-                        <button type="submit" class="btn btn-apply">Apply</button>
-                    </div>
-                </div>
-            </form>
             <!-- Nút thêm sản phẩm -->
             <div class="mb-4 text-end">
                 <a href="MainController?txtAction=callSaveProduct&update=false" class="btn btn-success fw-bold">
@@ -81,15 +66,14 @@
                                         <c:param name="txtAction" value="viewBrandList"/>
                                         <c:param name="brandID" value="${p.brandID}"/>
                                     </c:url>
-
-                                    <c:url var="categoryUrl" value="MainController">
+<c:url var="categoryUrl" value="MainController">
                                         <c:param name="txtAction" value="viewCategoryList"/>
                                         <c:param name="categoryID" value="${p.categoryID}"/>
                                     </c:url>
-
+                                    
                                     <c:url var="statusUrl" value="MainController">
                                         <c:param name="txtAction" value="toggleProductStatus"/>
-                                        <c:param name="productID" value="${p.productID}"/>
+                                        <c:param name="isActive" value="${p.isActive}"/>
                                     </c:url>
 
 
@@ -103,18 +87,14 @@
                                         <td><a href="${detailUrl}" class="product-link">${p.description}</a></td>
                                         <td><a href="${categoryUrl}" class="product-link">${p.categoryID}</a></td>
                                         <td><a href="${brandUrl}" class="product-link">${p.brandID}</a></td>
-                                        <td>
-                                            <a href="${statusUrl}" class="product-link">
-                                                ${p.isActive ? 'ACTIVE' : 'INACTIVE'}
-                                            </a>
-                                        </td>
+                                        <td><a href="${statusUrl}" class="product-link">${p.isActive}</a></td>
 
 
                                         <td>
                                             <div class="d-flex justify-content-center gap-2">
-                                                <a href="MainController?txtAction=callSaveOnlyProduct&update=true&productID=${p.productID}"
+                                                <a href="MainController?txtAction=callSaveProduct&update=true&productID=${p.productID}"
                                                    class="btn btn-warning btn-sm fw-bold text-dark">Update</a>
-                                                <a href="MainController?txtAction=deleteProduct&productID=${p.productID}"
+                                                <a href="MainController?txtAction=deleteProductWithVariant&productID=${p.productID}"
                                                    class="btn btn-danger btn-sm fw-bold"
                                                    onclick="return confirm('Are you sure you want to delete this product?');">Delete</a>
                                             </div>
