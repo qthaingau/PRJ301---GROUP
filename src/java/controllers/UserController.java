@@ -146,52 +146,48 @@ public class UserController extends HttpServlet {
     }
 
     private void processUploadAvatar(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+            throws ServletException, IOException {
 
-    HttpSession session = request.getSession();
-    UserDTO user = (UserDTO) session.getAttribute("user");
+        HttpSession session = request.getSession();
+        UserDTO user = (UserDTO) session.getAttribute("user");
 
-    if (user == null) {
-        response.sendRedirect("login.jsp");
-        return;
-    }
-
-    Part filePart = request.getPart("avatar");
-    if (filePart != null && filePart.getSize() > 0) {
-        try (InputStream inputStream = filePart.getInputStream();
-             ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
-
-            byte[] data = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(data, 0, data.length)) != -1) {
-                buffer.write(data, 0, bytesRead);
-            }
-
-            byte[] imageBytes = buffer.toByteArray();
-            String base64Image = Base64.getEncoder().encodeToString(imageBytes);
-
-            UserDAO dao = new UserDAO();
-            boolean updated = dao.updateAvatar(user.getUsername(), base64Image);
-
-            if (updated) {
-                user.setAvatar(base64Image);
-                session.setAttribute("user", user);
-                System.out.println("✅ Avatar updated successfully as Base64 (" + base64Image.length() + " chars)");
-            } else {
-                System.out.println("❌ Avatar update failed in DB!");
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (user == null) {
+            response.sendRedirect("login.jsp");
+            return;
         }
+
+        Part filePart = request.getPart("avatar");
+        if (filePart != null && filePart.getSize() > 0) {
+            try ( InputStream inputStream = filePart.getInputStream();  ByteArrayOutputStream buffer = new ByteArrayOutputStream()) {
+
+                byte[] data = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(data, 0, data.length)) != -1) {
+                    buffer.write(data, 0, bytesRead);
+                }
+
+                byte[] imageBytes = buffer.toByteArray();
+                String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+
+                UserDAO dao = new UserDAO();
+                boolean updated = dao.updateAvatar(user.getUsername(), base64Image);
+
+                if (updated) {
+                    user.setAvatar(base64Image);
+                    session.setAttribute("user", user);
+                    System.out.println("✅ Avatar updated successfully as Base64 (" + base64Image.length() + " chars)");
+                } else {
+                    System.out.println("❌ Avatar update failed in DB!");
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        response.sendRedirect(request.getContextPath() + "/customer/profile.jsp");
+
     }
-
-    response.sendRedirect(request.getContextPath() + "/customer/profile.jsp");
-
-}
-
-
-
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -216,13 +212,43 @@ public class UserController extends HttpServlet {
             processUploadAvatar(request, response);
         } else if (txtAction.equals("searchUser")) {
             try {
+                String name = request.getParameter("txtName");
                 UserDAO dao = new UserDAO();
-                List<UserDTO> list = dao.getAllUsers();
+                List<UserDTO> list;
+
+                if (name == null || name.trim().isEmpty()) {
+                    list = dao.getAllUsers(); // nếu không nhập gì thì hiển thị toàn bộ
+                } else {
+                    list = dao.searchUsersByName(name.trim());
+                }
+
+                request.setAttribute("name", name);
                 request.setAttribute("listOfUsers", list);
                 request.getRequestDispatcher("admin/listOfUsers.jsp").forward(request, response);
             } catch (Exception e) {
                 e.printStackTrace();
                 request.setAttribute("msg", "Lỗi khi tải danh sách người dùng!");
+                request.getRequestDispatcher("error.jsp").forward(request, response);
+            }
+        } else if (txtAction.equals("deleteUser")) {
+            try {
+                String uid = request.getParameter("uid");
+                UserDAO dao = new UserDAO();
+                boolean result = dao.softDeleteUser(uid);
+
+                if (result) {
+                    request.setAttribute("msg", "Xóa người dùng thành công (đã chuyển sang Inactive).");
+                } else {
+                    request.setAttribute("msg", "Không thể xóa người dùng!");
+                }
+
+                // Sau khi xóa, load lại danh sách
+                List<UserDTO> list = dao.getAllUsers();
+                request.setAttribute("listOfUsers", list);
+                request.getRequestDispatcher("admin/listOfUsers.jsp").forward(request, response);
+            } catch (Exception e) {
+                e.printStackTrace();
+                request.setAttribute("msg", "Lỗi khi xóa người dùng!");
                 request.getRequestDispatcher("error.jsp").forward(request, response);
             }
         }
